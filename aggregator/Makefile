@@ -4,7 +4,6 @@ GOPATH:=$(shell go env GOPATH)
 init:
 	@go get -u google.golang.org/protobuf/proto
 	@go install github.com/golang/protobuf/protoc-gen-go@latest
-	@go install github.com/go-micro/generator/cmd/protoc-gen-micro@latest
 
 .PHONY: proto
 proto:

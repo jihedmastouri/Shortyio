@@ -2,7 +2,7 @@ CREATE SCHEMA blocks;
 
 set schema 'blocks';
 
-create table if not exists block_type
+create table if not exists block_types
 (
     id           uuid    default gen_random_uuid() not null
         primary key,
@@ -11,7 +11,7 @@ create table if not exists block_type
     name         varchar(20)
 );
 
-create table if not exists comment_type
+create table if not exists comment_types
 (
     id        uuid     default gen_random_uuid() not null
         primary key,
@@ -21,15 +21,15 @@ create table if not exists comment_type
     editable  boolean  default false
 );
 
-create table if not exists block
+create table if not exists blocks
 (
     id  uuid default gen_random_uuid() not null primary key,
 
     block_type_id  uuid
-        references block_type,
+        references block_types,
 
     comments_type  uuid
-        references comment_type,
+        references comment_types,
 
     has_comments   boolean,
     has_likes      boolean,
@@ -38,37 +38,37 @@ create table if not exists block
     author         uuid                                not null
 );
 
-create table if not exists block_lang
+create table if not exists block_langs
 (
     id  serial primary key,
-    block_id  uuid  not null references block,
+    block_id  uuid  not null references blocks,
     lang_name varchar(20) not null,
     lang_code varchar(10) not null
 );
 
-create table if not exists block_image
+create table if not exists block_images
 (
     id  serial primary key,
-    block_lang_id serial references block_lang,
+    block_lang_id serial references block_langs,
     file          varchar(100) not null,
     alt           varchar(100),
     title         varchar(50)  not null
 );
 
-create table if not exists block_text
+create table if not exists block_texts
 (
     id  serial primary key,
-    block_lang_id serial references block_lang,
+    block_lang_id serial references block_langs,
     content       text        not null,
     name          varchar(50) not null,
     hint          varchar(200)
 );
 
 
-create table if not exists block_rich_text
+create table if not exists block_rich_texts
 (
     id  serial primary key,
-    block_lang_id serial references block_lang,
+    block_lang_id serial references block_langs,
     content       text        not null,
     name          varchar(50) not null,
     hint          varchar(200)
@@ -76,15 +76,15 @@ create table if not exists block_rich_text
 
 create table if not exists block_nested
 (
-    parent uuid references block,
-    child  uuid references block
+    parent uuid references blocks,
+    child  uuid references blocks
 );
 
 create table if not exists comments
 (
     id  serial primary key,
 
-    block_id  uuid not null references block,
+    block_id  uuid not null references blocks,
     parent_id serial references comments,
 
     user_id   uuid not null,
@@ -97,7 +97,7 @@ create table if not exists likes
     user_id    uuid not null,
     created_at timestamp default now(),
 
-    block_id   uuid not null references block,
+    block_id   uuid not null references blocks,
     comment_id serial references comments
 );
 
@@ -111,8 +111,7 @@ create table if not exists tags
 
 create table if not exists block_tags
 (
-    block_id uuid references block,
-
+    block_id uuid references blocks,
     tag_id   uuid references tags
 );
 
@@ -125,7 +124,7 @@ create table if not exists categories
 
 create table if not exists block_categ
 (
-    block_id uuid references block,
+    block_id uuid references blocks,
     categ_id uuid references categories
 );
 
@@ -138,12 +137,12 @@ DECLARE
 BEGIN
     IF (NEW.has_comments IS NULL) THEN
         Select has_comments as temp
-        from blocks."block_type" as bt
+        from blocks."block_types" as bt
         where bt.id = NEW.id;
         NEW.has_likes := temp;
     elsif(NEW.has_likes IS NUll) THEN
         Select has_comments as temp
-        from blocks."block_type" as bt
+        from blocks."block_types" as bt
         where bt.id = NEW.id;
         NEW.has_comments := temp;
     end if;
@@ -153,7 +152,7 @@ $$;
 
 create trigger set_default_values_block_trigger
     before insert
-    on block
+    on blocks
     for each row
     when (new.has_comments IS NULL OR new.has_likes IS NULL)
 execute procedure set_default_block();
