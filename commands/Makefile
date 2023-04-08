@@ -7,7 +7,7 @@ init:
 
 .PHONY: proto
 proto:
-	@protoc --proto_path=. --go_out=:. proto/commands.proto
+	@protoc --proto_path=. --go_out=:./proto proto/commands.proto
 
 .PHONY: update
 update:

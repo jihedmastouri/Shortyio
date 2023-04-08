@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-option go_package = "github.com/shorty-io/go-shorty/commands/proto";
-
 package commands;
+
+option go_package = "github.com/shorty-io/go-shorty/commands/proto;proto";
 
 service CommandsService {
   rpc CreateCommand(CreateCommandRequest) returns (CreateCommandResponse) {}
