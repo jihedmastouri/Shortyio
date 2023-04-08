@@ -1,4 +1,4 @@
-module github.com/shorty-io/go-shorty/commands
+module github.com/shorty-io/go-shorty/BuildNuke
 
 go 1.19
 
