@@ -4,8 +4,7 @@ set schema 'blocks';
 
 create table if not exists block_types
 (
-    id           uuid    default gen_random_uuid() not null
-        primary key,
+    id  uuid default gen_random_uuid() not null primary key,
     has_comments boolean default false,
     has_likes    boolean default false,
     name         varchar(20)
@@ -13,8 +12,7 @@ create table if not exists block_types
 
 create table if not exists comment_types
 (
-    id        uuid     default gen_random_uuid() not null
-        primary key,
+    id  uuid default gen_random_uuid() not null primary key,
     nested    boolean  default false,
     max_nest  smallint default 3,
     has_likes boolean  default true,
@@ -24,18 +22,18 @@ create table if not exists comment_types
 create table if not exists blocks
 (
     id  uuid default gen_random_uuid() not null primary key,
+    has_comments   boolean,
+    has_likes      boolean,
+    version_number  interger default 1 not null,
+    created_at     timestamp default now(),
+    updated_at     timestamp default now(),
+    author  uuid not null
 
     block_type_id  uuid
         references block_types,
 
     comments_type  uuid
         references comment_types,
-
-    has_comments   boolean,
-    has_likes      boolean,
-    created_at     timestamp default now(),
-    updated_at     timestamp default now(),
-    author         uuid                                not null
 );
 
 create table if not exists block_langs
@@ -150,9 +148,28 @@ BEGIN
 END;
 $$;
 
+-- Increment version number on update
+
 create trigger set_default_values_block_trigger
     before insert
     on blocks
     for each row
     when (new.has_comments IS NULL OR new.has_likes IS NULL)
 execute procedure set_default_block();
+
+
+create or replace function update_version_table_on_change() returns trigger
+    language plpgsql
+as
+$$
+BEGIN
+    NEW.version_number := OLD.version_number + 1;
+    RETURN NEW;
+END
+$$;
+
+create trigger update_block_version_trigger
+    before update
+    on blocks
+    for each row
+execute procedure update_version_table_on_change();

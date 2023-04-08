@@ -2,6 +2,9 @@
 select id, author, created_at, updated_at from blocks.Blocks;
 
 -- name: GetBlockByID :one
+select b.version_number,
+from blocks b
+where b.id = $1;
 
 -- name: GetBlockImages :many
 select bi.title, bi.alt, bi.file
