@@ -1,71 +1,18 @@
 version: '3'
 
 services:
-  consul:
-    image: consul
-    container_name: consul
-    command: consul agent -config-file=/consul/config/consul-config.json
-    volumes:
-      - ./consul-config.json:/consul/config/consul-config.json
-    ports:
-      - "8500:8500"
-      - "8600:8600/udp"
-      - "8301:8301/tcp"
-      - "8301:8301/udp"
-      - "8302:8302/tcp"
-      - "8302:8302/udp"
-      - "8502:8502/tcp"
-      - "8600:8600/tcp"
-      - "8600:8600/udp"
-    networks:
-      - consul-network
 
-  grpc-service-1:
-    build: ./grpc-service-1
-    container_name: grpc-service-1
-    command: python3 app.py
-    depends_on:
-      - consul
-    networks:
-      - consul-network
-    labels:
-      - "consul.service.name=grpc-service-1"
-      - "consul.service.port=50051"
-      - "consul.service.tags=grpc"
+  commands:
+    build: ./commands
+    container_name: commands
     expose:
       - "50051"
     environment:
       - "CONSUL_HTTP_ADDR=consul:8500"
 
-  grpc-service-2:
-    build: ./grpc-service-2
-    container_name: grpc-service-2
-    command: python3 app.py
-    depends_on:
-      - consul
-    networks:
-      - consul-network
-    labels:
-      - "consul.service.name=grpc-service-2"
-      - "consul.service.port=50052"
-      - "consul.service.tags=grpc"
-    expose:
-      - "50052"
-    environment:
-      - "CONSUL_HTTP_ADDR=consul:8500"
-
-  rest-service:
-    build: ./rest-service
-    container_name: rest-service
-    command: python3 app.py
-    depends_on:
-      - consul
-    networks:
-      - consul-network
-    labels:
-      - "consul.service.name=rest-service"
-      - "consul.service.port=8080"
-      - "consul.service.tags=rest"
+  web:
+    build: ./web
+    container_name: web
     expose:
       - "8080"
     ports:
@@ -73,7 +20,13 @@ services:
     environment:
       - "CONSUL_HTTP_ADDR=consul:8500"
 
-networks:
-  consul-network:
-    driver: bridge
-
+  db:
+    image: postgres:13-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: shortyio
+    volumes:
+      - ./common/schema.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
