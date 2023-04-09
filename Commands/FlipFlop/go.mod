@@ -1,4 +1,4 @@
-module github.com/shorty-io/go-shorty/BuildNuke
+module github.com/shorty-io/go-shorty/FlipFlop
 
 go 1.19
 

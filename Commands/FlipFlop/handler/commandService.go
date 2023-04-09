@@ -1,7 +1,7 @@
 package handler
 
 import (
-	pb "github.com/shorty-io/go-shorty/commands/proto"
+	pb "github.com/shorty-io/go-shorty/FlipFlop/proto"
 )
 
 type commandService struct{}
