@@ -2,4 +2,6 @@ go 1.19
 
 use (
     ./Commands/FlipFlop
+    ./Shared
+    ./Web
 )

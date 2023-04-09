@@ -2,23 +2,19 @@ version: '3'
 
 services:
 
-  commands:
-    build: ./commands
-    container_name: commands
+  flipflop:
+    build: ./Commands/FlipFlop
     expose:
       - "50051"
-    environment:
-      - "CONSUL_HTTP_ADDR=consul:8500"
 
   web:
-    build: ./web
-    container_name: web
+    build: ./Web
     expose:
       - "8080"
     ports:
       - "80:8080"
     environment:
-      - "CONSUL_HTTP_ADDR=consul:8500"
+      - SERVER_ADDRESS=flipflop:50051
 
   db:
     image: postgres:13-alpine
@@ -27,6 +23,6 @@ services:
       POSTGRES_PASSWORD: root
       POSTGRES_DB: shortyio
     volumes:
-      - ./common/schema.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./Shared/db/schemas/schema.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - "5432:5432"
