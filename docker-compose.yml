@@ -1,6 +1,14 @@
 version: '3'
 
 services:
+  consul:
+    image: consul
+    container_name: consul
+    command: consul agent -config-file=/consul/config/consul-config.json
+    volumes:
+      - ./consul-config.json:/consul/config/consul-config.json
+    networks:
+      - consul-network
 
   flipflop:
     build:
@@ -17,10 +25,19 @@ services:
       context: .
       args:
         - DIR=Web
+    depends_on:
+      - consul
+    networks:
+      - consul-network
+    labels:
+      - "consul.service.name=web"
+      - "consul.service.port=8080"
+      - "consul.service.tags=grpc,rest"
     ports:
       - "42069:8080"
     environment:
-      FF_ADDRESS: flipflop:50051
+      - FF_ADDRESS=flipflop:50051
+      - "CONSUL_HTTP_ADDR=consul:8500"
 
   # db:
   #   image: postgres:13-alpine
@@ -32,3 +49,8 @@ services:
   #     - ./Shared/db/schemas/schema.sql:/docker-entrypoint-initdb.d/init.sql
   #   ports:
   #     - "5432:5432"
+
+networks:
+  consul-network:
+    driver: bridge
+
