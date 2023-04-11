@@ -1,5 +1,3 @@
-GOPATH:=$(shell go env GOPATH)
-
 .PHONY: init
 init:
 	@go get -u google.golang.org/protobuf/proto
@@ -7,7 +5,7 @@ init:
 
 .PHONY: proto
 proto:
-	@protoc --proto_path=. --micro_out=. --go_out=:. proto/hipstershop.proto
+	@protoc --proto_path=. --go_out=plugins=grpc:. proto/commands.proto
 
 .PHONY: update
 update:
@@ -27,8 +25,4 @@ test:
 
 .PHONY: docker
 docker:
-	@docker build -t frontend:latest .
-
-.PHONY: generate
-generate:
-	@docker run --rm -v $(shell pwd):/src -w /src kjconroy/sqlc generate
+	@docker build --build-arg DIR=Web -t web:latest -f ../Web/dockerfile ../

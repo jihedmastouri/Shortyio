@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "./proto;proto";
+
+service CommandsService {
+  rpc CreateCommand(CreateCommandRequest) returns (CreateCommandResponse) {}
+}
+
+message CreateCommandRequest {
+  string name = 1;
+  string description = 2;
+}
+
+message CreateCommandResponse {
+  string id = 1;
+}
