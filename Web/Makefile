@@ -1,5 +1,3 @@
-GOPATH:=$(shell go env GOPATH)
-
 .PHONY: init
 init:
 	@go get -u google.golang.org/protobuf/proto
@@ -27,4 +25,4 @@ test:
 
 .PHONY: docker
 docker:
-	@docker build --build-arg DIR=Commands/FlipFlop -t FlipFlop:latest -f ../../Commands/FlipFlop/dockerfile ../../
+	@docker build --build-arg DIR=Web -t web:latest -f ../Web/dockerfile ../

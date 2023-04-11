@@ -7,10 +7,11 @@ import (
 	pb "github.com/shorty-io/go-shorty/FlipFlop/proto"
 )
 
-type commandService struct{}
+type CommandService struct {
+	pb.UnimplementedCommandsServiceServer
+}
 
-func (cs *commandService) CreateCommand(ctx context.Context, rq *pb.CreateCommandRequest) (*pb.CreateCommandResponse, error) {
+func (cs *CommandService) CreateCommand(ctx context.Context, rq *pb.CreateCommandRequest) (*pb.CreateCommandResponse, error) {
 	resp := fmt.Sprintf("name: %v, descr: %v", rq.GetName(), rq.GetDescription())
-
 	return &pb.CreateCommandResponse{Id: resp}, nil
 }

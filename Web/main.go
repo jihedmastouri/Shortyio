@@ -1,41 +1,21 @@
 package main
 
 import (
-	"context"
-	"log"
-	"net/http"
-	"os"
-
 	"github.com/labstack/echo/v4"
-	pb "github.com/shorty-io/go-shorty/FlipFlop/proto"
-	"google.golang.org/grpc"
+	"github.com/shorty-io/go-shorty/web/config"
+	"github.com/shorty-io/go-shorty/web/handler"
 )
 
 func main() {
-	serverAddress := os.Getenv("SERVER_ADDRESS")
-	if serverAddress == "" {
-		serverAddress = "localhost:50051"
-	}
-
-	conn, err := grpc.Dial(serverAddress, grpc.WithInsecure())
-	if err != nil {
-		log.Fatalf("failed to connect: %v", err)
-	}
-
-	defer conn.Close()
-
-	client := pb.NewCommandsServiceClient(conn)
-	req := &pb.CreateCommandRequest{Name: "Mj", Description: "LoL"}
 
 	e := echo.New()
 
+	conn := config.Connect()
+    defer conn.Close()
+
 	e.GET("/", func(c echo.Context) error {
-		res, err := client.CreateCommand(context.Background(), req)
-		if err != nil {
-			return c.String(http.StatusOK, res.GetId())
-		}
-		return err
+		return handler.CallService(c, conn)
 	})
 
-	e.Logger.Fatal(e.Start(":80"))
+	e.Logger.Fatal(e.Start("localhost:8080"))
 }

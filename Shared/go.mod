@@ -1,4 +1,4 @@
-module github.com/shorty-io/go-shorty/common
+module github.com/shorty-io/go-shorty/Shared
 
 go 1.19
 

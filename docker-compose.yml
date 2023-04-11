@@ -3,26 +3,32 @@ version: '3'
 services:
 
   flipflop:
-    build: ./Commands/FlipFlop
+    build:
+      dockerfile: ./Commands/FlipFlop/dockerfile
+      context: .
+      args:
+        - DIR=Commands/FlipFlop
     expose:
       - "50051"
 
   web:
-    build: ./Web
-    expose:
-      - "8080"
+    build:
+      dockerfile: ./Web/dockerfile
+      context: .
+      args:
+        - DIR=Web
     ports:
-      - "80:8080"
+      - "8080:8080"
     environment:
-      - SERVER_ADDRESS=flipflop:50051
+      - FF_ADDRESS=flipflop:50051
 
-  db:
-    image: postgres:13-alpine
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: root
-      POSTGRES_DB: shortyio
-    volumes:
-      - ./Shared/db/schemas/schema.sql:/docker-entrypoint-initdb.d/init.sql
-    ports:
-      - "5432:5432"
+  # db:
+  #   image: postgres:13-alpine
+  #   environment:
+  #     POSTGRES_USER: postgres
+  #     POSTGRES_PASSWORD: root
+  #     POSTGRES_DB: shortyio
+  #   volumes:
+  #     - ./Shared/db/schemas/schema.sql:/docker-entrypoint-initdb.d/init.sql
+  #   ports:
+  #     - "5432:5432"
