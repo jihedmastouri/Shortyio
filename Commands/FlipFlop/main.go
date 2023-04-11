@@ -1,10 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net"
-	"os"
 
 	"github.com/shorty-io/go-shorty/FlipFlop/handler"
 	pb "github.com/shorty-io/go-shorty/FlipFlop/proto"
@@ -13,15 +11,9 @@ import (
 
 func main() {
 
-	serverAddress := os.Getenv("SERVER_ADDRESS")
-
-	if serverAddress == "" {
-		serverAddress = "localhost:50051"
-	}
-
-	lis, err := net.Listen("tcp", fmt.Sprintf("%v", serverAddress))
+    lis, err := net.Listen("tcp", "0.0.0.0:50051")
 	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
+        log.Fatalf("failed to listen: %v", err)
 	}
 
 	s := grpc.NewServer()

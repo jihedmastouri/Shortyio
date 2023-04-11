@@ -18,9 +18,9 @@ services:
       args:
         - DIR=Web
     ports:
-      - "8080:8080"
+      - "42069:8080"
     environment:
-      - FF_ADDRESS=flipflop:50051
+      FF_ADDRESS: flipflop:50051
 
   # db:
   #   image: postgres:13-alpine

@@ -9,17 +9,12 @@ import (
 
 func Connect() *grpc.ClientConn {
 	flipFlopAddress := os.Getenv("FF_ADDRESS")
-	serverAddress := os.Getenv("SERVER_ADDRESS")
-
-	if serverAddress == "" {
-		serverAddress = "localhost:50051"
-	}
 
 	if flipFlopAddress == "" {
-		flipFlopAddress = "localhost:8080"
+		flipFlopAddress = "localhost:50051"
 	}
 
-	conn, err := grpc.Dial(serverAddress, grpc.WithInsecure())
+	conn, err := grpc.Dial(flipFlopAddress, grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("failed to connect: %v", err)
 	}
