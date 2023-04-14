@@ -24,16 +24,16 @@ create table if not exists blocks
     id  uuid default gen_random_uuid() not null primary key,
     has_comments   boolean,
     has_likes      boolean,
-    version_number  interger default 1 not null,
+    version_number  integer default 1 not null,
     created_at     timestamp default now(),
     updated_at     timestamp default now(),
-    author  uuid not null
+    author  uuid not null,
 
     block_type_id  uuid
         references block_types,
 
     comments_type  uuid
-        references comment_types,
+        references comment_types
 );
 
 create table if not exists block_langs

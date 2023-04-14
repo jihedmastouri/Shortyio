@@ -1,23 +1,66 @@
 version: '3'
 
 services:
+
+  ###  CONSUL :
   consul:
-    image: consul
+    image: consul:latest
     container_name: consul
-    command: consul agent -config-file=/consul/config/consul-config.json
-    volumes:
-      - ./consul-config.json:/consul/config/consul-config.json
+    command: "agent -server -ui -bootstrap-expect=1 -client=0.0.0.0"
+    ports:
+      - "8500:8500"
     networks:
       - consul-network
 
+  ###################
+  ###  NATS : Msg Q
+  nats:
+    image: nats
+    ports:
+      - "8222:8222"
+    command: "--cluster_name NATS --cluster nats://0.0.0.0:6222 --http_port 8222 "
+    networks: ["nats"]
+
+  nats-1:
+    image: nats
+    command: "--cluster_name NATS --cluster nats://0.0.0.0:6222 --routes=nats://ruser:T0pS3cr3t@nats:6222"
+    networks: ["nats"]
+    depends_on: ["nats"]
+
+  nats-2:
+    image: nats
+    command: "--cluster_name NATS --cluster nats://0.0.0.0:6222 --routes=nats://ruser:T0pS3cr3t@nats:6222"
+    networks: ["nats"]
+    depends_on: ["nats"]
+
+  ###################
+  ###  Databases
+  db:
+    image: postgres:14-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: shortyio
+    volumes:
+      - ./Shared/db/schemas/:/docker-entrypoint-initdb.d/
+    expose:
+      - "5432"
+
+  #################
+  ###  Services
   flipflop:
     build:
       dockerfile: ./Commands/FlipFlop/dockerfile
       context: .
       args:
         - DIR=Commands/FlipFlop
+    networks:
+      - consul-network
     expose:
       - "50051"
+    environment:
+      - CONSUL_HTTP_ADDR=consul:8500
 
   web:
     build:
@@ -29,28 +72,17 @@ services:
       - consul
     networks:
       - consul-network
-    labels:
-      - "consul.service.name=web"
-      - "consul.service.port=8080"
-      - "consul.service.tags=grpc,rest"
     ports:
       - "42069:8080"
     environment:
+      - CONSUL_HTTP_ADDR=consul:8500
       - FF_ADDRESS=flipflop:50051
-      - "CONSUL_HTTP_ADDR=consul:8500"
 
-  # db:
-  #   image: postgres:13-alpine
-  #   environment:
-  #     POSTGRES_USER: postgres
-  #     POSTGRES_PASSWORD: root
-  #     POSTGRES_DB: shortyio
-  #   volumes:
-  #     - ./Shared/db/schemas/schema.sql:/docker-entrypoint-initdb.d/init.sql
-  #   ports:
-  #     - "5432:5432"
-
+#################
+### Networks:
 networks:
   consul-network:
     driver: bridge
 
+  nats:
+    name: nats

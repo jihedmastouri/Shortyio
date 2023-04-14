@@ -3,6 +3,7 @@ module github.com/shorty-io/go-shorty/Shared
 go 1.19
 
 require (
+	github.com/google/uuid v1.3.0
 	github.com/hashicorp/consul/api v1.20.0
 	google.golang.org/grpc v1.54.0
 )

@@ -36,4 +36,3 @@ func (r *consulResolver) ResolveTarget(target string) (resolver.Resolution, erro
 
     return resolver.Resolution{Addresses: addrs}, nil
 }
-
