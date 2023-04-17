@@ -14,41 +14,41 @@ services:
 
   ###################
   ###  NATS : Msg Q
-  nats:
-    image: nats
-    ports:
-      - "8222:8222"
-    command: "--cluster_name NATS --cluster nats://0.0.0.0:6222 --http_port 8222 "
-    networks: ["nats"]
-
-  nats-1:
-    image: nats
-    command: "--cluster_name NATS --cluster nats://0.0.0.0:6222 --routes=nats://ruser:T0pS3cr3t@nats:6222"
-    networks: ["nats"]
-    depends_on: ["nats"]
-
-  nats-2:
-    image: nats
-    command: "--cluster_name NATS --cluster nats://0.0.0.0:6222 --routes=nats://ruser:T0pS3cr3t@nats:6222"
-    networks: ["nats"]
-    depends_on: ["nats"]
-
-  ###################
-  ###  Databases
-  db:
-    image: postgres:14-alpine
-    restart: always
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: root
-      POSTGRES_DB: shortyio
-    volumes:
-      - ./Shared/db/schemas/:/docker-entrypoint-initdb.d/
-    expose:
-      - "5432"
-
-  #################
-  ###  Services
+#   nats:
+#     image: nats
+#     ports:
+#       - "8222:8222"
+#     command: "--cluster_name NATS --cluster nats://0.0.0.0:6222 --http_port 8222 "
+#     networks: ["nats"]
+#
+#   nats-1:
+#     image: nats
+#     command: "--cluster_name NATS --cluster nats://0.0.0.0:6222 --routes=nats://ruser:T0pS3cr3t@nats:6222"
+#     networks: ["nats"]
+#     depends_on: ["nats"]
+#
+#   nats-2:
+#     image: nats
+#     command: "--cluster_name NATS --cluster nats://0.0.0.0:6222 --routes=nats://ruser:T0pS3cr3t@nats:6222"
+#     networks: ["nats"]
+#     depends_on: ["nats"]
+#
+#   ###################
+#   ###  Databases
+#   db:
+#     image: postgres:14-alpine
+#     restart: always
+#     environment:
+#       POSTGRES_USER: postgres
+#       POSTGRES_PASSWORD: root
+#       POSTGRES_DB: shortyio
+#     volumes:
+#       - ./Shared/db/schemas/:/docker-entrypoint-initdb.d/
+#     expose:
+#       - "5432"
+#
+#   #################
+#   ###  Services
   flipflop:
     build:
       dockerfile: ./Commands/FlipFlop/dockerfile
@@ -61,28 +61,28 @@ services:
       - "50051"
     environment:
       - CONSUL_HTTP_ADDR=consul:8500
-
-  web:
-    build:
-      dockerfile: ./Web/dockerfile
-      context: .
-      args:
-        - DIR=Web
-    depends_on:
-      - consul
-    networks:
-      - consul-network
-    ports:
-      - "42069:8080"
-    environment:
-      - CONSUL_HTTP_ADDR=consul:8500
-      - FF_ADDRESS=flipflop:50051
-
-#################
-### Networks:
+#
+#   web:
+#     build:
+#       dockerfile: ./Web/dockerfile
+#       context: .
+#       args:
+#         - DIR=Web
+#     depends_on:
+#       - consul
+#     networks:
+#       - consul-network
+#     ports:
+#       - "42069:8080"
+#     environment:
+#       - CONSUL_HTTP_ADDR=consul:8500
+#       - FF_ADDRESS=flipflop:50051
+#
+# #################
+# ### Networks:
 networks:
   consul-network:
     driver: bridge
-
-  nats:
-    name: nats
+#
+#   nats:
+#     name: nats

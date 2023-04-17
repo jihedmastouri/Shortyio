@@ -1,8 +1,10 @@
 package consul
 
 import (
-	"github.com/hashicorp/consul/api"
 	"log"
+	"time"
+
+	"github.com/hashicorp/consul/api"
 )
 
 // Init the Condig
@@ -10,35 +12,21 @@ import (
 type serviceConfig struct {
 	name             string
 	address          string
-	serviceDiscovery serviceDiscovery
 }
 
-
-func NewService(serviceName, serviceAddress string, serviceDiscovery serviceDiscovery) *serviceConfig {
-	return &serviceConfig{serviceName, serviceAddress, serviceDiscovery}
+func NewService(serviceName, serviceAddress string) serviceConfig {
+	return serviceConfig{serviceName, serviceAddress}
 }
 
-// Register Service: Service Discovery Agnostic
-
-type serviceDiscovery int8
+// Register Service
 
 const (
-	Consul serviceDiscovery = iota
+	TTLInterval                       = time.Second * 15
+	TTLRefreshInterval                = time.Second * 10
+	TTLDeregisterCriticalServiceAfter = time.Minute
 )
 
 func (sc serviceConfig) Register() {
-	switch sc.serviceDiscovery {
-	case Consul:
-		sc.registerWithConsul()
-	}
-}
-
-/***
-* Registration Mehtods:
-***/
-
-// RegisterWithConsul registers the gRPC service with Consul
-func (sc serviceConfig) registerWithConsul() {
 	config := api.DefaultConfig()
 	client, err := api.NewClient(config)
 	if err != nil {
