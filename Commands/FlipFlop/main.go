@@ -6,10 +6,13 @@ import (
 
 	"github.com/shorty-io/go-shorty/FlipFlop/handler"
 	pb "github.com/shorty-io/go-shorty/FlipFlop/proto"
+	"github.com/shorty-io/go-shorty/Shared/config"
 	"google.golang.org/grpc"
 )
 
 func main() {
+
+
 
     lis, err := net.Listen("tcp", "0.0.0.0:50051")
 	if err != nil {
