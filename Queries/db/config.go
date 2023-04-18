@@ -10,7 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var Collection *mongo.Collection
+var collection *mongo.Collection
 
 func init() {
 
@@ -36,5 +36,5 @@ func init() {
 		log.Fatal(err)
 	}
 
-	Collection = client.Database("shortyio").Collection("blocks")
+	collection = client.Database("shortyio").Collection("blocks")
 }

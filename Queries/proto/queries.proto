@@ -1,18 +1,20 @@
 syntax = "proto3";
 
+import "google/protobuf/any.proto";
+
 package proto;
 
 option go_package = "./proto;proto";
 
 service Queries {
-    rpc GetBlocks(GetBlocksMessage) returns (ListBlocks) {}
-    rpc GetBlock(BlockID) returns (Block) {}
-    rpc GetBlockRules(BlockID) returns (BlockRules) {}
+    rpc GetBlockList(BlockListRequest) returns (BlockList) {}
+    rpc GetBlock(BlockRequest) returns (Block) {}
+    rpc GetBlockRules(BlockRequest) returns (BlockRules) {}
 }
 
-message GetBlocksMessage {
+message BlockListRequest {
     Selectors selectors = 1;
-    Pagination pagination = 2;
+    optional Pagination pagination = 2;
 }
 
 message Selectors {
@@ -29,7 +31,7 @@ message Pagination {
     int32 total  = 4;
 }
 
-message ListBlocks {
+message BlockList {
     repeated BlockMeta block = 1;
 }
 
@@ -58,16 +60,12 @@ message CommentRules {
 
 message Block {
     BlockMeta meta = 1;
-    repeated Element elements = 2;
+    repeated google.protobuf.Any content = 2;
 }
 
-message BlockID {
+message BlockRequest {
     string id = 1;
-}
-
-message Element {
-    string key = 1;
-    string value = 2;
+    string lang = 2;
 }
 
 message Author {
