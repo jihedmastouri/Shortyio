@@ -1,0 +1,77 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "./proto;proto";
+
+service Queries {
+    rpc GetBlocks(GetBlocksMessage) returns (ListBlocks) {}
+    rpc GetBlock(BlockID) returns (Block) {}
+    rpc GetBlockRules(BlockID) returns (BlockRules) {}
+}
+
+message GetBlocksMessage {
+    Selectors selectors = 1;
+    Pagination pagination = 2;
+}
+
+message Selectors {
+    repeated string authors = 1;
+    repeated string categories = 2;
+    repeated string tags = 3;
+    string type = 4;
+}
+
+message Pagination {
+    int32 count  = 1;
+    int32 offset = 2;
+    int32 limit  = 3;
+    int32 total  = 4;
+}
+
+message ListBlocks {
+    repeated BlockMeta block = 1;
+}
+
+message BlockMeta {
+    string block_id = 1;
+    string type = 2;
+    string lang = 3;
+    string update_at = 4;
+    repeated Author authors = 5;
+    repeated string categories = 6;
+    repeated string tags = 7;
+}
+
+message BlockRules {
+    bool has_comments = 1;
+    bool has_likes = 2;
+    CommentRules comments = 3;
+}
+
+message CommentRules {
+    bool nested = 1;
+    int32 max_nested = 2;
+    bool has_likes = 3;
+    bool editable = 4;
+}
+
+message Block {
+    BlockMeta meta = 1;
+    repeated Element elements = 2;
+}
+
+message BlockID {
+    string id = 1;
+}
+
+message Element {
+    string key = 1;
+    string value = 2;
+}
+
+message Author {
+    string id = 1;
+    string name = 2;
+    string image = 3;
+}
