@@ -1,7 +1,5 @@
 syntax = "proto3";
 
-import "google/protobuf/any.proto";
-
 package proto;
 
 option go_package = "./proto;proto";
@@ -60,7 +58,12 @@ message CommentRules {
 
 message Block {
     BlockMeta meta = 1;
-    repeated google.protobuf.Any content = 2;
+    repeated Element content = 2;
+}
+
+message Element {
+    string k = 1;
+    string v = 2;
 }
 
 message BlockRequest {

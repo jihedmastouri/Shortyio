@@ -7,20 +7,22 @@ import (
 	pb "github.com/shorty-io/go-shorty/queries/proto"
 )
 
+var q = &Queries{}
+
 func TestGetBlock(t *testing.T) {
-	q := &Queries{}
 	ctx := context.Background()
 
 	rq := &pb.BlockRequest{
-		Id: "fc4afa73f1e7",
-        Lang: "english",
+		Id:   "fc4afa73f1e7",
+		Lang: "english",
 	}
 
-	 res , err := q.GetBlock(ctx, rq)
-     t.Log(res)
-     t.Log("lol")
+	res, err := q.GetBlock(ctx, rq)
 
-    if err != nil {
+	if err != nil {
 		t.Fatal(err)
 	}
+
+	t.Log(res.GetMeta())
+	t.Log(res.GetContent())
 }
