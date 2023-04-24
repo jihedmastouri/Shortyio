@@ -2,24 +2,27 @@ package handler
 
 import (
 	"context"
+	"log"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
-	pb "github.com/shorty-io/go-shorty/FlipFlop/proto"
+	pb "github.com/shorty-io/go-shorty/queries/proto"
 	"google.golang.org/grpc"
 )
 
-
 func CallService(c echo.Context, conn *grpc.ClientConn) error {
-	client := pb.NewCommandsServiceClient(conn)
-	req := &pb.CreateCommandRequest{Name: "Mj", Description: "LoL"}
+	client := pb.NewQueriesClient(conn)
+	req := &pb.BlockRequest{Id: c.Param("id"), Lang: c.Param("lang")}
+	e := c.Echo()
+	e.Logger.Info("Done")
 
-	c.Echo().Logger.Info("Request Processing")
-
-	res, err := client.CreateCommand(context.Background(), req)
+	res, err := client.GetBlock(context.Background(), req)
 	if err != nil {
-		return err
+		e.Logger.Error(err)
+		log.Print(err)
+        return c.JSON(http.StatusNotFound, echo.Map{ "err": err })
 	}
 
-	return c.String(http.StatusOK, res.GetId())
+	e.Logger.Info(res)
+	return c.JSON(http.StatusOK, res)
 }
