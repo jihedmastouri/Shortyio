@@ -1,26 +1,54 @@
 version: '3'
 
 services:
+  consul:
+    command: "agent -server -ui -bootstrap-expect=1 -client=0.0.0.0"
+    container_name: consul
+    image: consul:latest
+    networks:
+      - consul-network
+    ports:
+      - "8500:8500"
+      - "8600:8600/udp"
 
-  flipflop:
+  query:
     build:
-      dockerfile: ./Commands/FlipFlop/dockerfile
-      context: .
       args:
-        - DIR=Commands/FlipFlop
+        - DIR=Queries
+      context: .
+      dockerfile: ./Queries/dockerfile
+    depends_on:
+      - consul
+    deploy:
+      mode: replicated
+      replicas: 3
+    environment:
+      - CONSUL_HTTP_ADDR=consul:8500
     expose:
       - "50051"
+      - "8500"
+    networks:
+      - consul-network
+    restart: always
 
   web:
     build:
-      dockerfile: ./Web/dockerfile
-      context: .
       args:
         - DIR=Web
+      context: .
+      dockerfile: ./Web/dockerfile
+    depends_on:
+      - consul
+    environment:
+      - CONSUL_HTTP_ADDR=consul:8500
+    expose:
+      - "50051"
+      - "8500"
+    networks:
+      - consul-network
     ports:
       - "42069:8080"
-    environment:
-      FF_ADDRESS: flipflop:50051
+    restart: always
 
   # db:
   #   image: postgres:13-alpine
@@ -32,3 +60,7 @@ services:
   #     - ./Shared/db/schemas/schema.sql:/docker-entrypoint-initdb.d/init.sql
   #   ports:
   #     - "5432:5432"
+
+networks:
+  consul-network:
+    driver: bridge

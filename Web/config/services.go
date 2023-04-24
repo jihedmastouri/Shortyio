@@ -5,17 +5,16 @@ import (
 	"os"
 
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 )
 
 func Connect() *grpc.ClientConn {
-	flipFlopAddress := os.Getenv("FF_ADDRESS")
+	service := os.Getenv("service")
 
-	if flipFlopAddress == "" {
-		flipFlopAddress = "localhost:50051"
+	if service == "" {
+		service = "localhost:50051"
 	}
 
-	conn, err := grpc.Dial(flipFlopAddress, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.Dial(service, grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("failed to connect: %v", err)
 	}

@@ -1,24 +1,28 @@
 package main
 
 import (
-    "log"
-    "net"
+	"time"
+
+	"github.com/shorty-io/go-shorty/Shared/service"
+	"github.com/shorty-io/go-shorty/queries/handler"
+	pb "github.com/shorty-io/go-shorty/queries/proto"
 	"google.golang.org/grpc"
 )
 
-func main() {
+const TTL = time.Second * 8
 
-    lis, err := net.Listen("tcp", "0.0.0.0:50051")
-	if err != nil {
-        log.Fatalf("failed to listen: %v", err)
+func main() {
+	srv := service.New("Queries")
+
+    // Not necessary at the moment
+	c := service.InitConfig{
+		ServiceRegister: service.Consul,
+		ConfigProvider: service.ConsulConfig,
 	}
+	srv.Init(c)
+
+	srv.Start()
 
 	s := grpc.NewServer()
-	// pb.RegisterCommandsServiceServer(s, &handler.CommandService{})
-
-	log.Printf("server listening at %v", lis.Addr())
-	if err := s.Serve(lis); err != nil {
-		log.Fatalf("failed to serve: %v", err)
-	}
-
+	pb.RegisterQueriesServer(s, &handler.Queries{})
 }
