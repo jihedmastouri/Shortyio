@@ -14,10 +14,10 @@ const TTL = time.Second * 8
 func main() {
 	srv := service.New("Queries")
 
-    // Not necessary at the moment
+	// Not necessary at the moment
 	c := service.InitConfig{
 		ServiceRegister: service.Consul,
-		ConfigProvider: service.ConsulConfig,
+		ConfigProvider:  service.ConsulConfig,
 	}
 	srv.Init(c)
 
@@ -25,4 +25,6 @@ func main() {
 
 	s := grpc.NewServer()
 	pb.RegisterQueriesServer(s, &handler.Queries{})
+
+	srv.GRPCListener(s)
 }

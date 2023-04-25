@@ -11,10 +11,10 @@ import (
 func main() {
 	srv := service.New("Web")
 
-    // Not necessary at the moment
+	// Not necessary at the moment
 	c := service.InitConfig{
 		ServiceRegister: service.Consul,
-		ConfigProvider: service.ConsulConfig,
+		ConfigProvider:  service.ConsulConfig,
 	}
 	srv.Init(c)
 
@@ -22,16 +22,19 @@ func main() {
 
 	e := echo.New()
 
-    e.GET("/:lang/:id", func(c echo.Context) error {
+	e.GET("/:lang/:id", func(c echo.Context) error {
 		e.Logger.Info("Start")
 		conn, err := srv.Dial("Queries", "")
+
+		e.Logger.Debug(conn)
+
 		if err != nil {
 			e.Logger.Fatal(err)
 		}
 		return handler.CallService(c, conn)
 	})
 
-    e.GET("/", func(c echo.Context) error {
+	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Hello, World!")
 	})
 

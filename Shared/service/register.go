@@ -47,7 +47,7 @@ type InitConfig struct {
 // Initialize a new Service
 // You must set Consul  Address as Environment variable `CONSUL_HTTP_ADDR`
 func New(name string) *service {
-	id := fmt.Sprintf("%s-%s", "my-service", uuid.NewString())
+	id := fmt.Sprintf("%s-%s", name, uuid.NewString())
 	consul := os.Getenv("CONSUL_HTTP_ADDR")
 
 	client, err := api.NewClient(api.DefaultConfig())
@@ -82,19 +82,19 @@ func (s *service) Start() {
 		Name:    s.name,
 		ID:      s.id,
 		Address: ownAddress,
-		Port:    50051,
+		Port:    8500,
 		Check: &api.AgentServiceCheck{
 			DeregisterCriticalServiceAfter: ttl.String(),
 			TTL:                            ttl.String(),
 			CheckID:                        s.id,
 			TLSSkipVerify:                  true,
+			// GRPC:                           "50051",
 		},
 	}
 
 	if err := s.agent.ServiceRegister(serviceDef); err != nil {
 		log.Fatal("Registeration:", err)
 	}
-
 
 	go s.keepAlive()
 	go s.acceptLoop()
@@ -107,10 +107,8 @@ func (s *service) acceptLoop() {
 		log.Fatal("Listening | Registeration:", err)
 	}
 
-	for {
-		if _, err = ln.Accept(); err != nil {
-			log.Fatal("Accept Loop | Registeration:", err)
-		}
+	if _, err = ln.Accept(); err != nil {
+		log.Fatal("Accept Loop | Registeration:", err)
 	}
 }
 
