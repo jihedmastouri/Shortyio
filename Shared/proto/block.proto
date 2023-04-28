@@ -4,10 +4,8 @@ package proto;
 
 option go_package = "./proto;proto";
 
-message Block {
-  BlockMeta meta = 1;
-  BlockRules rules = 2;
-  string lang = 3
+message BlockContent {
+  string lang = 3;
   message Element {
         string id = 1;
         string type = 2;
@@ -22,6 +20,12 @@ message BlockMeta {
   string type = 2;
   repeated string tags = 3;
   repeated string categories = 4;
+  message Author {
+    string id = 1;
+    string name = 2;
+    string image = 3;
+  }
+  repeated Author authors = 5;
 }
 
 message BlockRules {
@@ -33,5 +37,5 @@ message BlockRules {
       optional bool editable = 3;
       optional int32 max_nested = 4;
     }
-  optional CommentRules commentRules = 5;
+ optional CommentRules commentRules = 5;
 }

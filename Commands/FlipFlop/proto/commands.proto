@@ -4,6 +4,8 @@ package proto;
 
 option go_package = "./proto;proto";
 
+import "Shared/proto/block.proto";
+
 service FlipFlopService {
   rpc CreateBlock(CreateRequest) returns (ActionResponse) {}
   rpc DeleteBlock(DeleteRequest) returns (ActionResponse) {}

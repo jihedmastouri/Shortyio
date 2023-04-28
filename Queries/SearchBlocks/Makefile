@@ -22,7 +22,7 @@ tidy:
 
 .PHONY: build
 build:
-	@go build -o frontend *.go
+	@go build -o service *.go
 
 .PHONY: test
 test:
@@ -30,4 +30,4 @@ test:
 
 .PHONY: docker
 docker:
-	@docker build --build-arg DIR=Commands/FlipFlop -t FlipFlop:latest -f ../../Commands/FlipFlop/dockerfile ../../
+	@docker build --build-arg DIR=Queries/SearchBlocks -t SearchBlocks:latest -f ../../Queries/SearchBlocks/dockerfile ../../

@@ -4,20 +4,34 @@ package proto;
 
 option go_package = "./proto;proto";
 
+import "Shared/proto/block.proto";
+
 service Queries {
-    rpc GetBlockList(BlockListRequest) returns (BlockListResponse) {}
     rpc GetBlock(BlockRequest) returns (Block) {}
+
+    rpc GetBlockContent(BlockRequest) returns (Block) {}
+    rpc GetBlockMeta(BlockRequest) returns (BlockMetas) {}
     rpc GetBlockRules(BlockRequest) returns (BlockRules) {}
+
+    rpc GetVersions(VersionsRequest) returns (VersionList) {}
+
+    rpc GetLanguages(LanguageRequest) returns (LanguageList) {}
 }
 
-message BlockListRequest {
-    Selectors selectors = 1;
-    optional Pagination pagination = 2;
+message BlockRequest {
+    string id = 1;
+    string lang = 2;
+    optional int32 version = 2;
 }
 
-message BlockListResponse {
-    BlockList blockList = 1;
-    Pagination pagination = 2;
+message VersionRequest {
+    string id = 1;
+    string language = 2;
+}
+
+message VersionRequest {
+    string id = 1;
+    string version = 2;
 }
 
 message Selectors {
@@ -33,50 +47,3 @@ message Pagination {
     int32 total = 3;
 }
 
-message BlockList {
-    repeated BlockMeta block = 1;
-}
-
-message BlockMeta {
-    string block_id = 1;
-    string type = 2;
-    string lang = 3;
-    string update_at = 4;
-    repeated Author authors = 5;
-    repeated string categories = 6;
-    repeated string tags = 7;
-}
-
-message BlockRules {
-    bool has_comments = 1;
-    bool has_likes = 2;
-    CommentRules comments = 3;
-}
-
-message CommentRules {
-    bool nested = 1;
-    int32 max_nested = 2;
-    bool has_likes = 3;
-    bool editable = 4;
-}
-
-message Block {
-    BlockMeta meta = 1;
-    repeated Element content = 2;
-}
-
-message Element {
-    string k = 1;
-    string v = 2;
-}
-
-message BlockRequest {
-    string id = 1;
-    string lang = 2;
-}
-
-message Author {
-    string id = 1;
-    string name = 2;
-    string image = 3;
-}
