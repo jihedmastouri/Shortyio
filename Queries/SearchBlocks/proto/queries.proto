@@ -1,0 +1,35 @@
+
+syntax = "proto3";
+
+package proto;
+
+option go_package = "./proto;proto";
+
+import "Shared/proto/block.proto";
+
+service SearchBlocks {
+    rpc Search(SearchRequest) returns (SearchResponse);
+    // rpc GetLastVersion(VersionRequest) returns (VersionResponse);
+}
+
+message SearchRequest {
+  message Selectors {
+    optional repeated string authors = 1;
+    optional repeated string categories = 2;
+    optional repeated string tags = 3;
+    optional string type = 4;
+  }
+  Selectors selectors = 1;
+  optional Pagination pagination = 2;
+}
+
+message SearchResponse {
+  repeated BlockMeta blocks;
+  optional Pagination pagination = 2;
+}
+
+message Pagination {
+    int32 pageSize = 1;
+    int32 pageNum = 2;
+    int32 total = 3;
+}

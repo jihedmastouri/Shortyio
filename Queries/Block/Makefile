@@ -1,4 +1,5 @@
 GOPATH:=$(shell go env GOPATH)
+PATH:="../../Queries/Block/proto"
 
 .PHONY: init
 init:
@@ -7,7 +8,10 @@ init:
 
 .PHONY: proto
 proto:
-	@protoc --proto_path=. --go_out=plugins=grpc:. proto/queries.proto
+	@protoc --proto_path=../../ \
+		--go_out=plugins=grpc:{PATH}/ \
+		../../Shared/proto/block.proto \
+		{PATH}/queries.proto
 
 .PHONY: update
 update:
