@@ -7,6 +7,9 @@ services:
     image: consul:latest
     networks:
       - consul-network
+    expose:
+      - "8600"
+      - "8500"
     ports:
       - "8500:8500"
       - "8600:8600/udp"
@@ -19,9 +22,23 @@ services:
       dockerfile: ./Queries/dockerfile
     depends_on:
       - consul
-    deploy:
-      mode: replicated
-      replicas: 3
+    environment:
+      - CONSUL_HTTP_ADDR=consul:8500
+    expose:
+      - "50051"
+      - "8500"
+    networks:
+      - consul-network
+    restart: always
+
+  flipflop:
+    build:
+      args:
+        - DIR=Commands/FlipFlop/
+      context: .
+      dockerfile: ./Commands/FlipFlop/dockerfile
+    depends_on:
+      - consul
     environment:
       - CONSUL_HTTP_ADDR=consul:8500
     expose:
@@ -41,6 +58,9 @@ services:
       - consul
     environment:
       - CONSUL_HTTP_ADDR=consul:8500
+      - "target=consul://consul:8500/Queries"
+      - QUERIES=query
+      - FLIPFLOP=flipflop
     expose:
       - "50051"
       - "8500"

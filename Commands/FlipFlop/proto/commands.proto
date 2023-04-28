@@ -4,15 +4,30 @@ package proto;
 
 option go_package = "./proto;proto";
 
-service CommandsService {
-  rpc CreateCommand(CreateCommandRequest) returns (CreateCommandResponse) {}
+service FlipFlopService {
+  rpc CreateBlock(CreateRequest) returns (BlockId) {}
+  rpc DeleteBlock(BlockId) returns (DeleteResponse) {}
 }
 
-message CreateCommandRequest {
-  string name = 1;
-  string description = 2;
+message CreateRequest {
+  string type = 1;
+  optional string parent = 2;
+  optional bool has_likes = 3;
+  optional bool has_comments = 4;
+  optional CommentRules commentRules = 5;
 }
 
-message CreateCommandResponse {
+message CommentRules {
+    optional bool nested = 1;
+    optional bool has_likes = 2;
+    optional bool editable = 3;
+    optional int32 max_nested = 4;
+}
+
+message BlockId {
   string id = 1;
+}
+
+message DeleteResponse {
+    bool isDeleted = 1;
 }

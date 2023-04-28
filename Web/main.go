@@ -1,41 +1,49 @@
 package main
 
 import (
-	"net/http"
 
 	"github.com/labstack/echo/v4"
 	"github.com/shorty-io/go-shorty/Shared/service"
+	"github.com/shorty-io/go-shorty/web/config"
 	"github.com/shorty-io/go-shorty/web/handler"
 )
 
 func main() {
 	srv := service.New("Web")
-
-	// Not necessary at the moment
-	c := service.InitConfig{
-		ServiceRegister: service.Consul,
-		ConfigProvider:  service.ConsulConfig,
-	}
-	srv.Init(c)
-
 	srv.Start()
 
 	e := echo.New()
 
+	m := config.NewMicroS()
+
+	// Get Block Metadata and content for a language
 	e.GET("/:lang/:id", func(c echo.Context) error {
-		e.Logger.Info("Start")
-		conn, err := srv.Dial("Queries", "")
-
-		e.Logger.Debug(conn)
-
-		if err != nil {
-			e.Logger.Fatal(err)
-		}
-		return handler.CallService(c, conn)
+		return handler.GetBlock(c, m.Queries)
 	})
 
-	e.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello, World!")
+	// Get Block Metadata and list of languages
+	e.GET("/:id", func(c echo.Context) error {
+		return handler.GetBlock(c, m.Queries)
+	})
+
+	// Create a new Block
+	e.POST("/newBlock", func(c echo.Context) error {
+		return handler.GetBlock(c, &m.FlipFlop)
+	})
+
+	// Create a new Language for a Block
+	e.POST("/newBlockLang", func(c echo.Context) error {
+		return handler.GetBlock(c, &m.FlipFlop)
+	})
+
+	// Delete a Whole Block
+	e.DELETE("/:id", func(c echo.Context) error {
+		return handler.GetBlock(c, &m.FlipFlop)
+	})
+
+	// Delete a Block language
+	e.DELETE("/:lang/:id", func(c echo.Context) error {
+		return handler.GetBlock(c, &m.FlipFlop)
 	})
 
 	e.Logger.Fatal(e.Start(":8080"))

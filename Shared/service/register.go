@@ -17,6 +17,7 @@ const (
 
 type service struct {
 	agent      *api.Agent
+	client      *api.Client
 	name       string
 	id         string
 	consulAddr string
@@ -48,7 +49,12 @@ type InitConfig struct {
 // You must set Consul  Address as Environment variable `CONSUL_HTTP_ADDR`
 func New(name string) *service {
 	id := fmt.Sprintf("%s-%s", name, uuid.NewString())
+
 	consul := os.Getenv("CONSUL_HTTP_ADDR")
+	if consul == "" {
+		consul = "localhost:8500"
+	}
+	log.Println(consul)
 
 	client, err := api.NewClient(api.DefaultConfig())
 	if err != nil {
@@ -59,6 +65,7 @@ func New(name string) *service {
 
 	return &service{
 		agent:      agent,
+		client:     client,
 		id:         id,
 		name:       name,
 		consulAddr: consul,
