@@ -5,29 +5,35 @@ package proto;
 option go_package = "./proto;proto";
 
 service FlipFlopService {
-  rpc CreateBlock(CreateRequest) returns (BlockId) {}
-  rpc DeleteBlock(BlockId) returns (DeleteResponse) {}
+  rpc CreateBlock(CreateRequest) returns (ActionResponse) {}
+  rpc DeleteBlock(DeleteRequest) returns (ActionResponse) {}
+
+  rpc CreateBlockLang(CreateLangRequest) returns (ActionResponse) {}
+  rpc DeleteBlockLang(DeleteLangRequest) returns (ActionResponse) {}
 }
 
 message CreateRequest {
-  string type = 1;
-  optional string parent = 2;
-  optional bool has_likes = 3;
-  optional bool has_comments = 4;
-  optional CommentRules commentRules = 5;
+    BlockMeta meta = 1;
+    optional BlockRules rules = 2;
 }
 
-message CommentRules {
-    optional bool nested = 1;
-    optional bool has_likes = 2;
-    optional bool editable = 3;
-    optional int32 max_nested = 4;
+message CreateLangRequest {
+    string id = 1;
+    string langName = 2;
+    optional string previousLang = 3;
 }
 
-message BlockId {
-  string id = 1;
+message DeleteRequest {
+    string id = 1;
 }
 
-message DeleteResponse {
-    bool isDeleted = 1;
+message DeleteLangRequest {
+    string id = 1;
+    string langName = 2;
+}
+
+message ActionResponse {
+    bool isSuceess = 1;
+    string id = 2;
+    string message = 3;
 }

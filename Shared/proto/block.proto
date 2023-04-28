@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "./proto;proto";
+
+message Block {
+  BlockMeta meta = 1;
+  BlockRules rules = 2;
+  string lang = 3
+  message Element {
+        string id = 1;
+        string type = 2;
+        string key = 3;
+        string value = 4;
+    }
+  repeated Element elements = 4;
+}
+
+message BlockMeta {
+  string block_id = 1;
+  string type = 2;
+  repeated string tags = 3;
+  repeated string categories = 4;
+}
+
+message BlockRules {
+  optional bool has_likes = 3;
+  optional bool has_comments = 4;
+  message CommentRules {
+      optional bool nested = 1;
+      optional bool has_likes = 2;
+      optional bool editable = 3;
+      optional int32 max_nested = 4;
+    }
+  optional CommentRules commentRules = 5;
+}

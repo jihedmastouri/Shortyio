@@ -7,7 +7,7 @@ init:
 
 .PHONY: proto
 proto:
-	@protoc --proto_path=. --go_out=plugins=grpc:. proto/commands.proto
+	@protoc --proto_path=. --go_out=plugins=grpc:. proto/commands.proto ../../Shared/proto/block.proto
 
 .PHONY: update
 update:

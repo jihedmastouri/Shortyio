@@ -1,4 +1,4 @@
-module github.com/shorty-io/go-shorty/FlipFlop
+module github.com/shorty-io/go-shorty/flipFlop
 
 go 1.19
 
