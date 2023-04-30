@@ -1,5 +1,5 @@
 GOPATH:=$(shell go env GOPATH)
-PROTO:= "../../Commands/FlipFlop/proto"
+PROTO:= "../../Commands/FlipFlop"
 
 .PHONY: init
 init:
@@ -11,7 +11,7 @@ proto:
 	@protoc --proto_path=../../ \
 		--go_out=plugins=grpc:${PROTO}/ \
 		../../Shared/proto/block.proto \
-		${PROTO}/commands.proto
+		${PROTO}/proto/commands.proto
 
 .PHONY: update
 update:

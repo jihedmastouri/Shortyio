@@ -43,12 +43,33 @@ SELECT name, descr
   INNER JOIN blocks
   ON block_categ.block_id = block.id;
 
--- name: DeleteBlock
-DELETE FROM blocks
-    WHERE b.id = $1;
+-- name: CreateBlock :exec
+INSERT INTO block (
+    has_likes, has_comments, type, comment_type
+) VALUE ($1,$2,$3,$4);
 
--- name: DeleteBlockLang
+-- name: AddTagToBlock :exec
+INSERT INTO block_tags(
+    block_id, tag_id
+) VALUE ($1,$2);
+
+-- name: AddCategToBlock :exec
+INSERT INTO block_categ(
+    block_id, categ_id
+) VALUE ($1,$2);
+
+-- name: AddCommentRules :exec
+INSERT INTO comment_type(
+    nested, has_likes, editable, max_nested
+) VALUE ($1,$2,$3,$4) RETURNING id;
+
+-- name: DeleteBlock :exec
+DELETE FROM blocks
+    WHERE id = $1
+    RETURNING id;
+
+-- name: DeleteBlockLang :exec
 DELETE FROM block_lang
     WHERE block_id = $1
-    AND lang_name = $2;
-
+    AND lang_name = $2
+    RETURNING id;

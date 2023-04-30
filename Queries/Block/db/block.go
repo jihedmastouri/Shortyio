@@ -15,46 +15,34 @@ func GetBlockMeta(id, lang string) (*pb.BlockMeta, error) {
 	return meta, err
 }
 
-func GetBlock(id, lang string) (*pb.Block, error) {
+func GetBlock(bq pb.BlockRequest) (*pb.Block, error) {
 
-	query := bson.M{"block_id": id, "lang": lang, "deleted": false}
-	cusror := collection.FindOne(context.Background(), query)
+    query, option := buildQuery(bq)
+	cusror := collection.FindOne(context.Background(), query, option)
 
 	block := &pb.Block{}
 	if err := cusror.Decode(block); err != nil {
 		return nil, err
 	}
 
-	meta := &pb.BlockMeta{}
-	if err := cusror.Decode(meta); err != nil {
-		return nil, err
-	}
-
-	block.Meta = meta
 	return block, nil
 }
 
-type blockQuery struct {
-    id int32
-    lang string
-    deleted bool
-    version int32
-}
+func buildQuery(bq pb.BlockRequest) (bson.M, *options.FindOptions)  {
 
-func buildQuery(bq blockQuery) basn.M, opts {
-    opts := options.Find().SetSort(bson.D{{"enrollment", -1}, {"title", 1}})
-
-    if (bq.version != 0) {
+    if (bq.hasVersion()) {
         return bson.M{
             "block_id": bq.id,
             "lang": bq.lang,
-            "version": version,
-        },
+            "version": bq.version,
+        }, nil
     }
 
+    opts := options.Find().SetSort(bson.D{{Key: "version", Value: -1}})
     return bson.M{
         "block_id": bq.id,
         "lang": bq.lang,
+        "deleted": false,
     }, opts
 }
 

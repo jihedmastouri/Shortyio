@@ -3,6 +3,6 @@ go 1.19
 use (
 	./Commands/FlipFlop
 	./Web
-    ./Queries
+    ./Queries/Block/
     ./Shared
 )

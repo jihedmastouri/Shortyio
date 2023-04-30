@@ -8,9 +8,9 @@ import "Shared/proto/block.proto";
 
 service FlipFlopService {
   rpc CreateBlock(CreateRequest) returns (ActionResponse) {}
-  rpc DeleteBlock(DeleteRequest) returns (ActionResponse) {}
-
   rpc CreateBlockLang(CreateLangRequest) returns (ActionResponse) {}
+
+  rpc DeleteBlock(DeleteRequest) returns (ActionResponse) {}
   rpc DeleteBlockLang(DeleteLangRequest) returns (ActionResponse) {}
 }
 

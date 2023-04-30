@@ -147,7 +147,6 @@ BEGIN
 END;
 $$;
 
--- Increment version number on update
 
 create trigger set_default_values_block_trigger
     before insert
@@ -157,6 +156,7 @@ create trigger set_default_values_block_trigger
 execute procedure set_default_block();
 
 
+-- Increment version number on update
 create or replace function update_version_table_on_change() returns trigger
     language plpgsql
 as

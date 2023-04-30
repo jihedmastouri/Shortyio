@@ -13,18 +13,19 @@ service SearchBlocks {
 }
 
 message SearchRequest {
-  message Selectors {
-    optional repeated string authors = 1;
-    optional repeated string categories = 2;
-    optional repeated string tags = 3;
+  Selects selectors = 1;
+  optional Pagination pagination = 2;
+
+  message Selects {
+    repeated string authors = 1;
+    repeated string categories = 2;
+    repeated string tags = 3;
     optional string type = 4;
   }
-  Selectors selectors = 1;
-  optional Pagination pagination = 2;
 }
 
 message SearchResponse {
-  repeated BlockMeta blocks;
+  repeated BlockMeta blocks = 1;
   optional Pagination pagination = 2;
 }
 
