@@ -78,27 +78,26 @@ create table if not exists block_nested
     child  uuid references blocks
 );
 
-create table if not exists comments
-(
-    id  serial primary key,
-
-    block_id  uuid not null references blocks,
-    parent_id serial references comments,
-
-    user_id   uuid not null,
-    content   text,
-    image     varchar(250)
-);
-
-create table if not exists likes
-(
-    user_id    uuid not null,
-    created_at timestamp default now(),
-
-    block_id   uuid not null references blocks,
-    comment_id serial references comments
-);
-
+-- create table if not exists comments
+-- (
+--     id  serial primary key,
+--
+--     block_id  uuid not null references blocks,
+--     parent_id serial references comments,
+--
+--     user_id   uuid not null,
+--     content   text,
+--     image     varchar(250)
+-- );
+--
+-- create table if not exists likes
+-- (
+--     user_id    uuid not null,
+--     created_at timestamp default now(),
+--
+--     block_id   uuid not null references blocks,
+--     comment_id serial references comments
+-- );
 
 create table if not exists tags
 (

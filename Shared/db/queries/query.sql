@@ -26,3 +26,29 @@ from block_rich_text brt
 inner join block_lang bl
 on block_lang.id = brt.block_lang_id
 where bl.lang_code = $1 and  bl.block_id = $2;
+
+-- name: GetBlockCategories :many
+SELECT name, descr
+  FROM categories
+  INNER JOIN block_categ
+  ON categories.id = block_categ.categ_id
+  INNER JOIN blocks
+  ON block_categ.block_id = block.id;
+
+-- name: GetBlockTags :many
+SELECT name, descr
+  FROM categories
+  INNER JOIN block_tags
+  ON categories.id = block_categ.tag_id
+  INNER JOIN blocks
+  ON block_categ.block_id = block.id;
+
+-- name: DeleteBlock
+DELETE FROM blocks
+    WHERE b.id = $1;
+
+-- name: DeleteBlockLang
+DELETE FROM block_lang
+    WHERE block_id = $1
+    AND lang_name = $2;
+

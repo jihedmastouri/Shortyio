@@ -4,15 +4,27 @@ package proto;
 
 option go_package = "./proto;proto";
 
+message Block {
+  string block_id = 1;
+  string type = 2;
+  string lang = 3;
+  repeated string tags = 4;
+  repeated string categories = 5;
+
+  message Author {
+    string id = 1;
+    string name = 2;
+    string image = 3;
+  }
+  repeated Author authors = 6;
+
+  repeated Element content = 7;
+  BlockRules rules = 8;
+}
+
 message BlockContent {
   string lang = 3;
-  message Element {
-        string id = 1;
-        string type = 2;
-        string key = 3;
-        string value = 4;
-    }
-  repeated Element elements = 4;
+  repeated Element content = 4;
 }
 
 message BlockMeta {
@@ -38,4 +50,28 @@ message BlockRules {
       optional int32 max_nested = 4;
     }
  optional CommentRules commentRules = 5;
+}
+
+message Element {
+  message Image{
+    string  title = 1;
+    string file = 2;
+    string alt = 3;
+  }
+  message RichText{
+    string  name = 1;
+    string content = 2;
+    string hint = 3;
+  }
+  message Text{
+    string  name = 1;
+    string content = 2;
+    string hint = 3;
+  }
+
+  oneof {
+    Image image = 1;
+    Text text = 2;
+    RichText richText = 3;
+  }
 }
