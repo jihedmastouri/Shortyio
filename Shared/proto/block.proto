@@ -8,22 +8,20 @@ message Block {
   string block_id = 1;
   string type = 2;
   string lang = 3;
-  repeated string tags = 4;
-  repeated string categories = 5;
-
-  message Author {
-    string id = 1;
-    string name = 2;
-    string image = 3;
-  }
-  repeated Author authors = 6;
-
-  repeated Element content = 7;
-  BlockRules rules = 8;
+  int32 version = 4;
+  repeated string tags = 5;
+  repeated string categories = 6;
+  repeated Author authors = 7;
+  repeated Element content = 8;
+  BlockRules rules = 9;
+  string updated_at = 10;
+  string created_at = 11;
 }
 
 message BlockContent {
-  string lang = 3;
+  string block_id = 1;
+  string lang = 2;
+  int32 version = 3;
   repeated Element content = 4;
 }
 
@@ -32,12 +30,15 @@ message BlockMeta {
   string type = 2;
   repeated string tags = 3;
   repeated string categories = 4;
-  message Author {
-    string id = 1;
-    string name = 2;
-    string image = 3;
-  }
   repeated Author authors = 5;
+  string updated_at = 6;
+  string created_at = 7;
+}
+
+message Author {
+  string id = 1;
+  string name = 2;
+  string image = 3;
 }
 
 message BlockRules {
@@ -60,7 +61,7 @@ message Element {
   }
   message RichText{
     string  name = 1;
-    string content = 2;
+    string html = 2;
     string hint = 3;
   }
   message Text{
@@ -73,5 +74,6 @@ message Element {
     Image image = 1;
     Text text = 2;
     RichText richText = 3;
+    BlockContent child = 4;
   }
 }

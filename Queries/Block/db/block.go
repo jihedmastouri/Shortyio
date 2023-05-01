@@ -8,16 +8,22 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func GetBlockMeta(id, lang string) (*pb.BlockMeta, error) {
+func GetBlockMeta(bq *pb.BlockRequest) (*pb.BlockMeta, error) {
+
+	query, option := buildQuery(bq)
+	cusror := collection.FindOne(context.Background(), query, option)
+
 	meta := &pb.BlockMeta{}
-	query := bson.M{"block_id": id, "lang": lang}
-	err := collection.FindOne(context.Background(), query).Decode(meta)
-	return meta, err
+	if err := cusror.Decode(meta); err != nil {
+		return nil, err
+	}
+
+	return meta, nil
 }
 
-func GetBlock(bq pb.BlockRequest) (*pb.Block, error) {
+func GetBlock(bq *pb.BlockRequest) (*pb.Block, error) {
 
-    query, option := buildQuery(bq)
+	query, option := buildQuery(bq)
 	cusror := collection.FindOne(context.Background(), query, option)
 
 	block := &pb.Block{}
@@ -28,22 +34,19 @@ func GetBlock(bq pb.BlockRequest) (*pb.Block, error) {
 	return block, nil
 }
 
-func buildQuery(bq pb.BlockRequest) (bson.M, *options.FindOptions)  {
+func buildQuery(bq *pb.BlockRequest) (bson.M, *options.FindOneOptions) {
 
-    if (bq.hasVersion()) {
-        return bson.M{
-            "block_id": bq.id,
-            "lang": bq.lang,
-            "version": bq.version,
-        }, nil
-    }
+	if bq.GetVersion() != 0 {
+		return bson.M{
+			"block_id": bq.GetId(),
+			"lang":     bq.GetLang(),
+			"version":  bq.GetVersion(),
+		}, nil
+	}
 
-    opts := options.Find().SetSort(bson.D{{Key: "version", Value: -1}})
-    return bson.M{
-        "block_id": bq.id,
-        "lang": bq.lang,
-        "deleted": false,
-    }, opts
+	opts := options.FindOne().SetSort(bson.D{{Key: "version", Value: -1}})
+	return bson.M{
+		"block_id": bq.GetId(),
+		"lang":     bq.GetLang(),
+	}, opts
 }
-
-

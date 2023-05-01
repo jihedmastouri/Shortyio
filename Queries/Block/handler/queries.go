@@ -12,23 +12,39 @@ type Queries struct {
 }
 
 func (q *Queries) GetBlock(ctx context.Context, rq *pb.BlockRequest) (*pb.Block, error) {
-
-    block, err := db.GetBlock(rq.GetId() ,rq.GetLang())
-    if err != nil {
-        return nil, err
-    }
-	return block, nil
+	return db.GetBlock(rq)
 }
 
-func (q *Queries) GetBlockList(ctx context.Context, rq *pb.BlockListRequest) (*pb.BlockList, error) {
-
-    block, err := db.GetBlockList(rq.GetSelectors(), rq.GetPagination())
-    if err != nil {
-        return nil, err
-    }
-	return block, nil
+func (q *Queries) GetBlockMeta(ctx context.Context, rq *pb.BlockRequest) (*pb.BlockMeta, error) {
+	return db.GetBlockMeta(rq)
 }
 
-// rpc GetBlockList(BlockListRequest) returns (BlockList) {}
-// rpc GetBlock(BlockRequest) returns (Block) {}
-// rpc GetBlockRules(BlockRequest) returns (BlockRules) {}
+func (q *Queries) GetBlockRules(ctx context.Context, rq *pb.BlockRequest) (*pb.BlockRules, error) {
+	block, err := db.GetBlock(rq)
+	if err != nil {
+		return nil, err
+	}
+	return block.GetRules(), nil
+}
+
+func (q *Queries) GetBlockContent(ctx context.Context, rq *pb.BlockRequest) (*pb.BlockContent, error) {
+	block, err := db.GetBlock(rq)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.BlockContent{
+		BlockId: block.GetBlockId(),
+		Content: block.GetContent(),
+		Lang:    block.GetLang(),
+		Version: block.GetVersion(),
+	}, nil
+}
+
+func (q *Queries) GetVersions(ctx context.Context, rq *pb.VersionsRequest) (*pb.VersionList, error) {
+	return nil, nil
+}
+
+func (q *Queries) GetLanguages(ctx context.Context, rq *pb.LanguageRequest) (*pb.LanguageList, error) {
+	return nil, nil
+}

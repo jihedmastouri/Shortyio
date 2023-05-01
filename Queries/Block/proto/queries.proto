@@ -9,7 +9,7 @@ import "Shared/proto/block.proto";
 service Queries {
     rpc GetBlock(BlockRequest) returns (Block) {}
 
-    rpc GetBlockContent(BlockRequest) returns (Block) {}
+    rpc GetBlockContent(BlockRequest) returns (BlockContent) {}
     rpc GetBlockMeta(BlockRequest) returns (BlockMeta) {}
     rpc GetBlockRules(BlockRequest) returns (BlockRules) {}
 
