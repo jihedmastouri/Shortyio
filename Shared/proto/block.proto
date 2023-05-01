@@ -71,9 +71,9 @@ message Element {
   }
 
   oneof element{
-    Image image = 1;
-    Text text = 2;
-    RichText richText = 3;
+    Image i = 1;
+    Text t = 2;
+    RichText rt = 3;
     BlockContent child = 4;
   }
 }

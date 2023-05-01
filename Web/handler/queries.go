@@ -14,7 +14,9 @@ func GetBlock(c echo.Context, client pb.QueriesClient) error {
     log.Println("GetBlock", "Starting")
 
 	res, err := client.GetBlock(context.Background(), req)
+
 	if err != nil {
+        log.Println(err)
         return c.JSON(http.StatusNotFound, echo.Map{ "err": err })
 	}
 

@@ -23,28 +23,28 @@ func main() {
 
 	// Get Block Metadata and list of languages
 	e.GET("/:id", func(c echo.Context) error {
-		return handler.GetBlock(c, m.Queries)
+		return c.String(200,"Hello world!")
 	})
 
-	// Create a new Block
-	e.POST("/newBlock", func(c echo.Context) error {
-		return handler.GetBlock(c, &m.FlipFlop)
-	})
-
-	// Create a new Language for a Block
-	e.POST("/newBlockLang", func(c echo.Context) error {
-		return handler.GetBlock(c, &m.FlipFlop)
-	})
-
-	// Delete a Whole Block
-	e.DELETE("/:id", func(c echo.Context) error {
-		return handler.GetBlock(c, &m.FlipFlop)
-	})
-
-	// Delete a Block language
-	e.DELETE("/:lang/:id", func(c echo.Context) error {
-		return handler.GetBlock(c, &m.FlipFlop)
-	})
+	// // Create a new Block
+	// e.POST("/newBlock", func(c echo.Context) error {
+	// 	return handler.GetBlock(c, &m.FlipFlop)
+	// })
+	//
+	// // Create a new Language for a Block
+	// e.POST("/newBlockLang", func(c echo.Context) error {
+	// 	return handler.GetBlock(c, &m.FlipFlop)
+	// })
+	//
+	// // Delete a Whole Block
+	// e.DELETE("/:id", func(c echo.Context) error {
+	// 	return handler.GetBlock(c, &m.FlipFlop)
+	// })
+	//
+	// // Delete a Block language
+	// e.DELETE("/:lang/:id", func(c echo.Context) error {
+	// 	return handler.GetBlock(c, &m.FlipFlop)
+	// })
 
 	e.Logger.Fatal(e.Start(":8080"))
 }

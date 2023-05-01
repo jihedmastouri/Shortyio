@@ -4,8 +4,8 @@ import (
 	"log"
 	"net"
 
-	"github.com/shorty-io/go-shorty/flipFlop/handler"
-	pb "github.com/shorty-io/go-shorty/flipFlop/proto"
+	// "github.com/shorty-io/go-shorty/flipFlop/handler"
+	// pb "github.com/shorty-io/go-shorty/flipFlop/proto"
 	"google.golang.org/grpc"
 )
 
@@ -17,7 +17,7 @@ func main() {
 	}
 
 	s := grpc.NewServer()
-	pb.RegisterCommandsServiceServer(s, &handler.CommandService{})
+	// pb.RegisterFlipFlopServiceServer(s, &handler.CommandService{})
 
 	log.Printf("server listening at %v", lis.Addr())
 	if err := s.Serve(lis); err != nil {
