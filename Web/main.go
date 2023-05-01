@@ -16,20 +16,21 @@ func main() {
 
 	m := config.NewMicroS()
 
-	// Get Block Metadata and content for a language
-    e.GET("/:lang/:id", func(c echo.Context) error {
-		return handler.GetBlock(c, m.Queries)
-	})
-
 	// Get Block Metadata and list of languages
 	e.GET("/", func(c echo.Context) error {
 		return c.String(200,"Hello world!")
 	})
 
-	// // Create a new Block
-	// e.POST("/newBlock", func(c echo.Context) error {
-	// 	return handler.GetBlock(c, &m.FlipFlop)
-	// })
+	// Get Block Metadata and content for a language
+    e.GET("/:lang/:id", func(c echo.Context) error {
+		return handler.GetBlock(c, m.Queries)
+	})
+
+	// Get All Versions
+    e.POST("/:lang/:id/version", func(c echo.Context) error {
+		return handler.GetVersions(c, m.Queries)
+	})
+
 	//
 	// // Create a new Language for a Block
 	// e.POST("/newBlockLang", func(c echo.Context) error {

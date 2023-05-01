@@ -26,7 +26,7 @@ message BlockRequest {
 
 message VersionsRequest {
     string id = 1;
-    string language = 2;
+    string lang = 2;
 }
 
 message VersionList {
@@ -38,7 +38,7 @@ message LanguageRequest {
 }
 
 message LanguageList {
-    repeated string languages = 1;
+    repeated string langs = 1;
 }
 
 message Selectors {

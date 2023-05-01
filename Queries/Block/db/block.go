@@ -29,22 +29,10 @@ func GetBlock(bq *pb.BlockRequest) (*pb.Block, error) {
 
 	block := &pb.Block{}
 
-	// _ = &pb.Element{
-	// 	Element: &pb.Element_Image_{
- //            Image: &pb.Element_Image{
- //                Title: "I am",
- //                File: "not",
- //                Alt: "here",
- //            },
-	// 	},
-	// }
-
 	if err := cusror.Decode(block); err != nil {
 		log.Panic(err)
 		return nil, err
 	}
-
-	log.Print(block.GetContent())
 
 	return block, nil
 }
