@@ -44,9 +44,9 @@ func (q *Queries) GetBlockContent(ctx context.Context, rq *pb.BlockRequest) (*pb
 }
 
 func (q *Queries) GetVersions(ctx context.Context, rq *pb.VersionsRequest) (*pb.VersionList, error) {
-	return nil, nil
+	return db.GetVersions(rq)
 }
 
 func (q *Queries) GetLanguages(ctx context.Context, rq *pb.LanguageRequest) (*pb.LanguageList, error) {
-	return nil, nil
+	return db.GetLanguages(rq)
 }

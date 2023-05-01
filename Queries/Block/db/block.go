@@ -37,6 +37,52 @@ func GetBlock(bq *pb.BlockRequest) (*pb.Block, error) {
 	return block, nil
 }
 
+func GetLanguages(bq *pb.LanguageRequest) (*pb.LanguageList, error) {
+
+	pipeline := bson.A{
+		bson.M{"$match": bson.M{"block_id": bq.GetId()}},
+		bson.M{"$group": bson.M{"_id": "$lang"}},
+		bson.M{"$project": bson.M{"lang": "$_id", "_id": 0}},
+	}
+
+	// Execute the aggregation pipeline and get the results.
+	cursor, err := collection.Aggregate(context.Background(), pipeline)
+	if err != nil {
+		log.Fatal(err)
+        return nil, err
+	}
+
+	var results *pb.LanguageList
+	if err = cursor.Decode(results); err != nil {
+		log.Fatal(err)
+        return nil, err
+	}
+
+	return results, nil
+}
+
+func GetVersions(bq *pb.VersionsRequest) (*pb.VersionList, error) {
+	pipeline := bson.A{
+        bson.M{"$match": bson.M{"block_id": bq.GetId(), "lang": bq.GetLang()}},
+		bson.M{"$group": bson.M{"_id": "$version"}},
+		bson.M{"$project": bson.M{"version": "$_id", "_id": 0}},
+	}
+
+	cursor, err := collection.Aggregate(context.Background(), pipeline)
+	if err != nil {
+		log.Fatal(err)
+        return nil, err
+	}
+
+	var results *pb.VersionList
+	if err = cursor.Decode(results); err != nil {
+		log.Fatal(err)
+        return nil, err
+	}
+
+	return results, nil
+}
+
 func buildQuery(bq *pb.BlockRequest) (bson.M, *options.FindOneOptions) {
 
 	if bq.GetVersion() != 0 {
