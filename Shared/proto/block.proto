@@ -12,7 +12,7 @@ message Block {
   repeated string tags = 5;
   repeated string categories = 6;
   repeated Author authors = 7;
-  repeated Element content = 8;
+  optional Content content = 8;
   BlockRules rules = 9;
   string updated_at = 10;
   string created_at = 11;
@@ -22,7 +22,7 @@ message BlockContent {
   string block_id = 1;
   string lang = 2;
   int32 version = 3;
-  repeated Element content = 4;
+  optional Content content = 4;
 }
 
 message BlockMeta {
@@ -50,30 +50,30 @@ message BlockRules {
       optional bool editable = 3;
       optional int32 max_nested = 4;
     }
- optional CommentRules commentRules = 5;
+ optional CommentRules comments = 5;
 }
 
-message Element {
-  message Image{
+message Content {
+  repeated Image images = 1;
+  repeated Text text = 2;
+  repeated RichText html = 3;
+  repeated BlockContent children = 4;
+
+  message Image {
     string  title = 1;
     string file = 2;
     string alt = 3;
   }
-  message RichText{
+
+  message RichText {
     string  name = 1;
     string html = 2;
     string hint = 3;
   }
-  message Text{
+
+  message Text {
     string  name = 1;
     string content = 2;
     string hint = 3;
-  }
-
-  oneof element{
-    Image i = 1;
-    Text t = 2;
-    RichText rt = 3;
-    BlockContent child = 4;
   }
 }
