@@ -1,7 +1,6 @@
 package main
 
 import (
-
 	"github.com/labstack/echo/v4"
 	"github.com/shorty-io/go-shorty/Shared/service"
 	"github.com/shorty-io/go-shorty/web/config"
@@ -16,23 +15,31 @@ func main() {
 
 	m := config.NewMicroS()
 
-	// Get Block Metadata and list of languages
+	// Block/full/Lang/id
+	// Block/meta/lang/id
+	// Block/content/lang/id
+	// Block/rules/lang/id
+	// Block/languages/id
+
 	e.GET("/", func(c echo.Context) error {
-		return c.String(200,"Hello world!")
+		return c.String(200, "Hello world!")
 	})
 
+	block := e.Group("/block")
+
+
 	// Get Block Metadata and content for a language
-    e.GET("/get-block/:lang/:id", func(c echo.Context) error {
+	block.GET("/full/:lang/:id", func(c echo.Context) error {
 		return handler.GetBlock(c, m.Queries)
 	})
 
 	// Get All Versions
-    e.GET("/versions/:lang/:id/version", func(c echo.Context) error {
+	block.GET("/versions/:lang/:id", func(c echo.Context) error {
 		return handler.GetVersions(c, m.Queries)
 	})
 
 	// Get All Versions
-    e.GET("/langs/:id", func(c echo.Context) error {
+	block.GET("/languages/:id", func(c echo.Context) error {
 		return handler.GetLanguages(c, m.Queries)
 	})
 

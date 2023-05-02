@@ -27,4 +27,5 @@ func main() {
 	pb.RegisterQueriesServer(s, &handler.Queries{})
 
 	srv.GRPCListener(s)
+
 }
