@@ -22,13 +22,18 @@ func main() {
 	})
 
 	// Get Block Metadata and content for a language
-    e.GET("/:lang/:id", func(c echo.Context) error {
+    e.GET("/get-block/:lang/:id", func(c echo.Context) error {
 		return handler.GetBlock(c, m.Queries)
 	})
 
 	// Get All Versions
-    e.POST("/:lang/:id/version", func(c echo.Context) error {
+    e.GET("/versions/:lang/:id/version", func(c echo.Context) error {
 		return handler.GetVersions(c, m.Queries)
+	})
+
+	// Get All Versions
+    e.GET("/langs/:id", func(c echo.Context) error {
+		return handler.GetLanguages(c, m.Queries)
 	})
 
 	//

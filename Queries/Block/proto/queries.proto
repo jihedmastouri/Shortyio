@@ -13,7 +13,7 @@ service Queries {
     rpc GetBlockMeta(BlockRequest) returns (BlockMeta) {}
     rpc GetBlockRules(BlockRequest) returns (BlockRules) {}
 
-    rpc GetVersions(VersionsRequest) returns (VersionList) {}
+    rpc GetVersions(VersionsRequest) returns (VersionResponse) {}
 
     rpc GetLanguages(LanguageRequest) returns (LanguageList) {}
 }
@@ -29,8 +29,13 @@ message VersionsRequest {
     string lang = 2;
 }
 
-message VersionList {
-    repeated int32 versions = 1;
+message VersionResponse {
+  repeated ver versions = 1;
+}
+
+message ver {
+  int32 version = 1;
+  optional string changeLog = 2;
 }
 
 message LanguageRequest {

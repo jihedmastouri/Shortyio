@@ -42,45 +42,46 @@ func GetLanguages(bq *pb.LanguageRequest) (*pb.LanguageList, error) {
 	pipeline := bson.A{
 		bson.M{"$match": bson.M{"block_id": bq.GetId()}},
 		bson.M{"$group": bson.M{"_id": "$lang"}},
-		bson.M{"$project": bson.M{"lang": "$_id", "_id": 0}},
+		bson.M{"$project": bson.M{"_id": 0, "lang": "$_id"}},
 	}
 
-	// Execute the aggregation pipeline and get the results.
 	cursor, err := collection.Aggregate(context.Background(), pipeline)
 	if err != nil {
 		log.Fatal(err)
-        return nil, err
+		return nil, err
 	}
 
-	var results *pb.LanguageList
-	if err = cursor.Decode(results); err != nil {
+	results := &pb.LanguageList{}
+	if err = cursor.All(context.Background(), &results.Langs); err != nil {
 		log.Fatal(err)
-        return nil, err
+		return nil, err
 	}
 
 	return results, nil
 }
 
-func GetVersions(bq *pb.VersionsRequest) (*pb.VersionList, error) {
+func GetVersions(bq *pb.VersionsRequest) (*pb.VersionResponse, error) {
 	pipeline := bson.A{
-        bson.M{"$match": bson.M{"block_id": bq.GetId(), "lang": bq.GetLang()}},
-		bson.M{"$group": bson.M{"_id": "$version"}},
-		bson.M{"$project": bson.M{"version": "$_id", "_id": 0}},
+		bson.M{"$match": bson.M{"block_id": bq.GetId(), "lang": bq.GetLang()}},
+		bson.M{"$group": bson.M{"_id": "$version", "changeLog": bson.M{"$first": "$changeLog"}}},
+        bson.M{"$project": bson.M{"_id": 0, "version": "$_id", "changeLog": 1}},
 	}
 
 	cursor, err := collection.Aggregate(context.Background(), pipeline)
 	if err != nil {
 		log.Fatal(err)
-        return nil, err
+		return nil, err
 	}
 
-	var results *pb.VersionList
-	if err = cursor.Decode(results); err != nil {
+	var verList []*pb.Ver
+	if err := cursor.All(context.Background(), &verList); err != nil {
 		log.Fatal(err)
-        return nil, err
+		return nil, err
 	}
 
-	return results, nil
+	return &pb.VersionResponse{
+		Versions: verList,
+	}, nil
 }
 
 func buildQuery(bq *pb.BlockRequest) (bson.M, *options.FindOneOptions) {

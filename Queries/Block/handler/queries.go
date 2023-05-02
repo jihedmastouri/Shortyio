@@ -43,7 +43,7 @@ func (q *Queries) GetBlockContent(ctx context.Context, rq *pb.BlockRequest) (*pb
 	}, nil
 }
 
-func (q *Queries) GetVersions(ctx context.Context, rq *pb.VersionsRequest) (*pb.VersionList, error) {
+func (q *Queries) GetVersions(ctx context.Context, rq *pb.VersionsRequest) (*pb.VersionResponse, error) {
 	return db.GetVersions(rq)
 }
 
