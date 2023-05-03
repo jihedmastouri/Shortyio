@@ -19,17 +19,20 @@ func init() {
 
 	// username := os.Getenv("MongoUSR")
 	// pwd := os.Getenv("MongoPWD")
-	connString := fmt.Sprintf("mongodb+srv://%s:%s@cluster0.ptlgsef.mongodb.net/?w=majority", username, pwd)
+	connString := fmt.Sprintf(
+        "mongodb+srv://%s:%s@cluster0.ptlgsef.mongodb.net/?w=majority",
+        username,
+        pwd,
+    )
 	log.Print(connString)
 
 	clientOptions := options.Client().ApplyURI(connString)
-    ctx := context.Background()
-
+	ctx := context.Background()
 
 	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
-		log.Fatal(err)
-	}
+        log.Fatal(err)
+    }
 
 	err = client.Ping(ctx, nil)
 	if err != nil {

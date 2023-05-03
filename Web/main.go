@@ -40,8 +40,8 @@ func main() {
 
 	// Get All Versions
 	block.GET("/languages/:id", func(c echo.Context) error {
-		return handler.GetLanguages(c, m.Queries)
-	})
+        return handler.GetLanguages(c, m.Queries)
+    })
 
 	//
 	// // Create a new Language for a Block
