@@ -27,13 +27,13 @@ create table if not exists blocks
     version_number  interger default 1 not null,
     created_at     timestamp default now(),
     updated_at     timestamp default now(),
-    author  uuid not null
+    author  uuid not null,
 
-    block_type_id  uuid
+    block_type  uuid
         references block_types,
 
     comments_type  uuid
-        references comment_types,
+        references comment_types
 );
 
 create table if not exists block_langs
@@ -61,7 +61,6 @@ create table if not exists block_texts
     name          varchar(50) not null,
     hint          varchar(200)
 );
-
 
 create table if not exists block_rich_texts
 (
@@ -134,19 +133,18 @@ DECLARE
 BEGIN
     IF (NEW.has_comments IS NULL) THEN
         Select has_comments as temp
-        from blocks."block_types" as bt
+        from block_types as bt
         where bt.id = NEW.id;
         NEW.has_likes := temp;
     elsif(NEW.has_likes IS NUll) THEN
         Select has_comments as temp
-        from blocks."block_types" as bt
+        from block_types as bt
         where bt.id = NEW.id;
         NEW.has_comments := temp;
     end if;
     return NEW;
 END;
 $$;
-
 
 create trigger set_default_values_block_trigger
     before insert
