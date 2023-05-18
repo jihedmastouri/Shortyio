@@ -13,6 +13,7 @@ create table if not exists block_types
 create table if not exists comment_types
 (
     id  uuid default gen_random_uuid() not null primary key,
+    name      varchar(20)
     nested    boolean  default false,
     max_nest  smallint default 3,
     has_likes boolean  default true,

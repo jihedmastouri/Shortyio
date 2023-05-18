@@ -17,7 +17,6 @@ const (
 
 type service struct {
 	agent      *api.Agent
-	client      *api.Client
 	name       string
 	id         string
 	consulAddr string
@@ -65,7 +64,6 @@ func New(name string) *service {
 
 	return &service{
 		agent:      agent,
-		client:     client,
 		id:         id,
 		name:       name,
 		consulAddr: consul,
@@ -89,13 +87,13 @@ func (s *service) Start() {
 		Name:    s.name,
 		ID:      s.id,
 		Address: ownAddress,
-		Port:    8500,
+		Port:    50051,
 		Check: &api.AgentServiceCheck{
 			DeregisterCriticalServiceAfter: ttl.String(),
 			TTL:                            ttl.String(),
 			CheckID:                        s.id,
 			TLSSkipVerify:                  true,
-			// GRPC:                           "50051",
+			// HTTP: ":8500",
 		},
 	}
 
@@ -104,7 +102,7 @@ func (s *service) Start() {
 	}
 
 	go s.keepAlive()
-	go s.acceptLoop()
+	// go s.acceptLoop()
 
 }
 

@@ -2,7 +2,7 @@ version: '3'
 
 services:
 
-  consul:
+  consulserver:
     command: "agent -server -ui -bootstrap-expect=1 -client=0.0.0.0"
     container_name: consul
     expose:
@@ -16,12 +16,12 @@ services:
       - "8600:8600/udp"
 
   keycloak:
-    container_name: keycloak
     command: "start-dev"
-    image: quay.io/keycloak/keycloak:latest
+    container_name: keycloak
     environment:
       - KEYCLOAK_ADMIN=admin
       - KEYCLOAK_ADMIN_PASSWORD=admin
+    image: quay.io/keycloak/keycloak:latest
     ports:
       - "2020:8080"
     restart: always
@@ -33,9 +33,9 @@ services:
       context: .
       dockerfile: ./Queries/Block/Dockerfile
     depends_on:
-      - consul
+      - consulserver
     environment:
-      - CONSUL_HTTP_ADDR=consul:8500
+      - CONSUL_HTTP_ADDR=consulserver:8500
     expose:
       - "50051"
       - "8500"
@@ -67,13 +67,12 @@ services:
       context: .
       dockerfile: ./Web/Dockerfile
     depends_on:
-      - consul
+      - consulserver
       - keycloak
     environment:
-      - CONSUL_HTTP_ADDR=consul:8500
-      - "target=consul://consul:8500/Queries"
-      - QUERIES=query:50051
-      # - FLIPFLOP=flipflop
+      - CONSUL_HTTP_ADDR=consulserver:8500
+      - target=consul://consulserver:8500/Queries
+        # "consul://127.0.0.1:8500/whoami?wait=14s&tag=manual"
     expose:
       - "50051"
       - "8500"
