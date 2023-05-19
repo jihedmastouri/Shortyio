@@ -341,26 +341,25 @@ var file_Commands_FlipFlop_proto_commands_proto_rawDesc = []byte{
 	0x63, 0x65, 0x65, 0x73, 0x73, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28,
 	0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x18, 0x0a, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65,
 	0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x32,
-	0x99, 0x02, 0x0a, 0x0f, 0x46, 0x6c, 0x69, 0x70, 0x46, 0x6c, 0x6f, 0x70, 0x53, 0x65, 0x72, 0x76,
-	0x69, 0x63, 0x65, 0x12, 0x3c, 0x0a, 0x0b, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x42, 0x6c, 0x6f,
-	0x63, 0x6b, 0x12, 0x14, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74,
-	0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x15, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
-	0x2e, 0x41, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22,
-	0x00, 0x12, 0x44, 0x0a, 0x0f, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x42, 0x6c, 0x6f, 0x63, 0x6b,
-	0x4c, 0x61, 0x6e, 0x67, 0x12, 0x18, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x43, 0x72, 0x65,
-	0x61, 0x74, 0x65, 0x4c, 0x61, 0x6e, 0x67, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x15,
-	0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x41, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73,
-	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x3c, 0x0a, 0x0b, 0x44, 0x65, 0x6c, 0x65, 0x74,
-	0x65, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x12, 0x14, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x44,
-	0x65, 0x6c, 0x65, 0x74, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x15, 0x2e, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x41, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f,
-	0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x0f, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x42,
-	0x6c, 0x6f, 0x63, 0x6b, 0x4c, 0x61, 0x6e, 0x67, 0x12, 0x18, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
-	0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x4c, 0x61, 0x6e, 0x67, 0x52, 0x65, 0x71, 0x75, 0x65,
-	0x73, 0x74, 0x1a, 0x15, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x41, 0x63, 0x74, 0x69, 0x6f,
-	0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x42, 0x0f, 0x5a, 0x0d, 0x2e,
-	0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x3b, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x06, 0x70, 0x72,
-	0x6f, 0x74, 0x6f, 0x33,
+	0x92, 0x02, 0x0a, 0x08, 0x46, 0x6c, 0x69, 0x70, 0x46, 0x6c, 0x6f, 0x70, 0x12, 0x3c, 0x0a, 0x0b,
+	0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x12, 0x14, 0x2e, 0x70, 0x72,
+	0x6f, 0x74, 0x6f, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
+	0x74, 0x1a, 0x15, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x41, 0x63, 0x74, 0x69, 0x6f, 0x6e,
+	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x0f, 0x43, 0x72,
+	0x65, 0x61, 0x74, 0x65, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x4c, 0x61, 0x6e, 0x67, 0x12, 0x18, 0x2e,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x4c, 0x61, 0x6e, 0x67,
+	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x15, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e,
+	0x41, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00,
+	0x12, 0x3c, 0x0a, 0x0b, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x12,
+	0x14, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x52, 0x65,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x15, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x41, 0x63,
+	0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x44,
+	0x0a, 0x0f, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x4c, 0x61, 0x6e,
+	0x67, 0x12, 0x18, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65,
+	0x4c, 0x61, 0x6e, 0x67, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x15, 0x2e, 0x70, 0x72,
+	0x6f, 0x74, 0x6f, 0x2e, 0x41, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
+	0x73, 0x65, 0x22, 0x00, 0x42, 0x0f, 0x5a, 0x0d, 0x2e, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x3b,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -388,14 +387,14 @@ var file_Commands_FlipFlop_proto_commands_proto_goTypes = []interface{}{
 var file_Commands_FlipFlop_proto_commands_proto_depIdxs = []int32{
 	5, // 0: proto.CreateRequest.meta:type_name -> proto.BlockMeta
 	6, // 1: proto.CreateRequest.rules:type_name -> proto.BlockRules
-	0, // 2: proto.FlipFlopService.CreateBlock:input_type -> proto.CreateRequest
-	1, // 3: proto.FlipFlopService.CreateBlockLang:input_type -> proto.CreateLangRequest
-	2, // 4: proto.FlipFlopService.DeleteBlock:input_type -> proto.DeleteRequest
-	3, // 5: proto.FlipFlopService.DeleteBlockLang:input_type -> proto.DeleteLangRequest
-	4, // 6: proto.FlipFlopService.CreateBlock:output_type -> proto.ActionResponse
-	4, // 7: proto.FlipFlopService.CreateBlockLang:output_type -> proto.ActionResponse
-	4, // 8: proto.FlipFlopService.DeleteBlock:output_type -> proto.ActionResponse
-	4, // 9: proto.FlipFlopService.DeleteBlockLang:output_type -> proto.ActionResponse
+	0, // 2: proto.FlipFlop.CreateBlock:input_type -> proto.CreateRequest
+	1, // 3: proto.FlipFlop.CreateBlockLang:input_type -> proto.CreateLangRequest
+	2, // 4: proto.FlipFlop.DeleteBlock:input_type -> proto.DeleteRequest
+	3, // 5: proto.FlipFlop.DeleteBlockLang:input_type -> proto.DeleteLangRequest
+	4, // 6: proto.FlipFlop.CreateBlock:output_type -> proto.ActionResponse
+	4, // 7: proto.FlipFlop.CreateBlockLang:output_type -> proto.ActionResponse
+	4, // 8: proto.FlipFlop.DeleteBlock:output_type -> proto.ActionResponse
+	4, // 9: proto.FlipFlop.DeleteBlockLang:output_type -> proto.ActionResponse
 	6, // [6:10] is the sub-list for method output_type
 	2, // [2:6] is the sub-list for method input_type
 	2, // [2:2] is the sub-list for extension type_name
@@ -501,180 +500,180 @@ var _ grpc.ClientConnInterface
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion6
 
-// FlipFlopServiceClient is the client API for FlipFlopService service.
+// FlipFlopClient is the client API for FlipFlop service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
-type FlipFlopServiceClient interface {
+type FlipFlopClient interface {
 	CreateBlock(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*ActionResponse, error)
 	CreateBlockLang(ctx context.Context, in *CreateLangRequest, opts ...grpc.CallOption) (*ActionResponse, error)
 	DeleteBlock(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*ActionResponse, error)
 	DeleteBlockLang(ctx context.Context, in *DeleteLangRequest, opts ...grpc.CallOption) (*ActionResponse, error)
 }
 
-type flipFlopServiceClient struct {
+type flipFlopClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewFlipFlopServiceClient(cc grpc.ClientConnInterface) FlipFlopServiceClient {
-	return &flipFlopServiceClient{cc}
+func NewFlipFlopClient(cc grpc.ClientConnInterface) FlipFlopClient {
+	return &flipFlopClient{cc}
 }
 
-func (c *flipFlopServiceClient) CreateBlock(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*ActionResponse, error) {
+func (c *flipFlopClient) CreateBlock(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*ActionResponse, error) {
 	out := new(ActionResponse)
-	err := c.cc.Invoke(ctx, "/proto.FlipFlopService/CreateBlock", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/proto.FlipFlop/CreateBlock", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *flipFlopServiceClient) CreateBlockLang(ctx context.Context, in *CreateLangRequest, opts ...grpc.CallOption) (*ActionResponse, error) {
+func (c *flipFlopClient) CreateBlockLang(ctx context.Context, in *CreateLangRequest, opts ...grpc.CallOption) (*ActionResponse, error) {
 	out := new(ActionResponse)
-	err := c.cc.Invoke(ctx, "/proto.FlipFlopService/CreateBlockLang", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/proto.FlipFlop/CreateBlockLang", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *flipFlopServiceClient) DeleteBlock(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*ActionResponse, error) {
+func (c *flipFlopClient) DeleteBlock(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*ActionResponse, error) {
 	out := new(ActionResponse)
-	err := c.cc.Invoke(ctx, "/proto.FlipFlopService/DeleteBlock", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/proto.FlipFlop/DeleteBlock", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *flipFlopServiceClient) DeleteBlockLang(ctx context.Context, in *DeleteLangRequest, opts ...grpc.CallOption) (*ActionResponse, error) {
+func (c *flipFlopClient) DeleteBlockLang(ctx context.Context, in *DeleteLangRequest, opts ...grpc.CallOption) (*ActionResponse, error) {
 	out := new(ActionResponse)
-	err := c.cc.Invoke(ctx, "/proto.FlipFlopService/DeleteBlockLang", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/proto.FlipFlop/DeleteBlockLang", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// FlipFlopServiceServer is the server API for FlipFlopService service.
-type FlipFlopServiceServer interface {
+// FlipFlopServer is the server API for FlipFlop service.
+type FlipFlopServer interface {
 	CreateBlock(context.Context, *CreateRequest) (*ActionResponse, error)
 	CreateBlockLang(context.Context, *CreateLangRequest) (*ActionResponse, error)
 	DeleteBlock(context.Context, *DeleteRequest) (*ActionResponse, error)
 	DeleteBlockLang(context.Context, *DeleteLangRequest) (*ActionResponse, error)
 }
 
-// UnimplementedFlipFlopServiceServer can be embedded to have forward compatible implementations.
-type UnimplementedFlipFlopServiceServer struct {
+// UnimplementedFlipFlopServer can be embedded to have forward compatible implementations.
+type UnimplementedFlipFlopServer struct {
 }
 
-func (*UnimplementedFlipFlopServiceServer) CreateBlock(context.Context, *CreateRequest) (*ActionResponse, error) {
+func (*UnimplementedFlipFlopServer) CreateBlock(context.Context, *CreateRequest) (*ActionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateBlock not implemented")
 }
-func (*UnimplementedFlipFlopServiceServer) CreateBlockLang(context.Context, *CreateLangRequest) (*ActionResponse, error) {
+func (*UnimplementedFlipFlopServer) CreateBlockLang(context.Context, *CreateLangRequest) (*ActionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateBlockLang not implemented")
 }
-func (*UnimplementedFlipFlopServiceServer) DeleteBlock(context.Context, *DeleteRequest) (*ActionResponse, error) {
+func (*UnimplementedFlipFlopServer) DeleteBlock(context.Context, *DeleteRequest) (*ActionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteBlock not implemented")
 }
-func (*UnimplementedFlipFlopServiceServer) DeleteBlockLang(context.Context, *DeleteLangRequest) (*ActionResponse, error) {
+func (*UnimplementedFlipFlopServer) DeleteBlockLang(context.Context, *DeleteLangRequest) (*ActionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteBlockLang not implemented")
 }
 
-func RegisterFlipFlopServiceServer(s *grpc.Server, srv FlipFlopServiceServer) {
-	s.RegisterService(&_FlipFlopService_serviceDesc, srv)
+func RegisterFlipFlopServer(s *grpc.Server, srv FlipFlopServer) {
+	s.RegisterService(&_FlipFlop_serviceDesc, srv)
 }
 
-func _FlipFlopService_CreateBlock_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _FlipFlop_CreateBlock_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(FlipFlopServiceServer).CreateBlock(ctx, in)
+		return srv.(FlipFlopServer).CreateBlock(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/proto.FlipFlopService/CreateBlock",
+		FullMethod: "/proto.FlipFlop/CreateBlock",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FlipFlopServiceServer).CreateBlock(ctx, req.(*CreateRequest))
+		return srv.(FlipFlopServer).CreateBlock(ctx, req.(*CreateRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _FlipFlopService_CreateBlockLang_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _FlipFlop_CreateBlockLang_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateLangRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(FlipFlopServiceServer).CreateBlockLang(ctx, in)
+		return srv.(FlipFlopServer).CreateBlockLang(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/proto.FlipFlopService/CreateBlockLang",
+		FullMethod: "/proto.FlipFlop/CreateBlockLang",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FlipFlopServiceServer).CreateBlockLang(ctx, req.(*CreateLangRequest))
+		return srv.(FlipFlopServer).CreateBlockLang(ctx, req.(*CreateLangRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _FlipFlopService_DeleteBlock_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _FlipFlop_DeleteBlock_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(FlipFlopServiceServer).DeleteBlock(ctx, in)
+		return srv.(FlipFlopServer).DeleteBlock(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/proto.FlipFlopService/DeleteBlock",
+		FullMethod: "/proto.FlipFlop/DeleteBlock",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FlipFlopServiceServer).DeleteBlock(ctx, req.(*DeleteRequest))
+		return srv.(FlipFlopServer).DeleteBlock(ctx, req.(*DeleteRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _FlipFlopService_DeleteBlockLang_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _FlipFlop_DeleteBlockLang_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteLangRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(FlipFlopServiceServer).DeleteBlockLang(ctx, in)
+		return srv.(FlipFlopServer).DeleteBlockLang(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/proto.FlipFlopService/DeleteBlockLang",
+		FullMethod: "/proto.FlipFlop/DeleteBlockLang",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FlipFlopServiceServer).DeleteBlockLang(ctx, req.(*DeleteLangRequest))
+		return srv.(FlipFlopServer).DeleteBlockLang(ctx, req.(*DeleteLangRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-var _FlipFlopService_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "proto.FlipFlopService",
-	HandlerType: (*FlipFlopServiceServer)(nil),
+var _FlipFlop_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "proto.FlipFlop",
+	HandlerType: (*FlipFlopServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "CreateBlock",
-			Handler:    _FlipFlopService_CreateBlock_Handler,
+			Handler:    _FlipFlop_CreateBlock_Handler,
 		},
 		{
 			MethodName: "CreateBlockLang",
-			Handler:    _FlipFlopService_CreateBlockLang_Handler,
+			Handler:    _FlipFlop_CreateBlockLang_Handler,
 		},
 		{
 			MethodName: "DeleteBlock",
-			Handler:    _FlipFlopService_DeleteBlock_Handler,
+			Handler:    _FlipFlop_DeleteBlock_Handler,
 		},
 		{
 			MethodName: "DeleteBlockLang",
-			Handler:    _FlipFlopService_DeleteBlockLang_Handler,
+			Handler:    _FlipFlop_DeleteBlockLang_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

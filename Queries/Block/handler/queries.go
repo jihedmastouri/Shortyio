@@ -27,7 +27,6 @@ func (q *Queries) GetBlockRules(ctx context.Context, rq *pb.BlockRequest) (*pb.B
 	return block.GetRules(), nil
 }
 
-// NOTE
 // Fix this later
 func (q *Queries) GetBlockContent(ctx context.Context, rq *pb.BlockRequest) (*pb.BlockContent, error) {
 	block, err := db.GetBlock(rq)

@@ -6,7 +6,7 @@ option go_package = "./proto;proto";
 
 import "Shared/proto/block.proto";
 
-service FlipFlopService {
+service FlipFlop {
   rpc CreateBlock(CreateRequest) returns (ActionResponse) {}
   rpc CreateBlockLang(CreateLangRequest) returns (ActionResponse) {}
 
