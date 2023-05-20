@@ -1,173 +1,179 @@
-CREATE SCHEMA blocks;
+--    _____      __
+--   / ___/_____/ /_  ___  ____ ___  ____ _
+--   \__ \/ ___/ __ \/ _ \/ __ `__ \/ __ `/
+--  ___/ / /__/ / / /  __/ / / / / / /_/ /
+-- /____/\___/_/ /_/\___/_/ /_/ /_/\__,_/
+--------------------------------------------
 
-set schema 'blocks';
+CREATE SCHEMA IF NOT EXISTS blocks;
 
-create table if not exists block_types
+SET SCHEMA 'blocks';
+
+CREATE TABLE IF NOT EXISTS block_types
 (
-    id  uuid default gen_random_uuid() not null primary key,
-    has_comments boolean default false,
-    has_likes    boolean default false,
-    name         varchar(20)
-);
-
-create table if not exists comment_types
-(
-    id  uuid default gen_random_uuid() not null primary key,
-    name      varchar(20)
-    nested    boolean  default false,
-    max_nest  smallint default 3,
-    has_likes boolean  default true,
-    editable  boolean  default false
-);
-
-create table if not exists blocks
-(
-    id  uuid default gen_random_uuid() not null primary key,
-    has_comments   boolean,
-    has_likes      boolean,
-    version_number  interger default 1 not null,
-    created_at     timestamp default now(),
-    updated_at     timestamp default now(),
-    author  uuid not null,
-
-    block_type  uuid
-        references block_types,
-
-    comments_type  uuid
-        references comment_types
-);
-
-create table if not exists block_langs
-(
-    id  serial primary key,
-    block_id  uuid  not null references blocks,
-    lang_name varchar(20) not null,
-    lang_code varchar(10) not null
-);
-
-create table if not exists block_images
-(
-    id  serial primary key,
-    block_lang_id serial references block_langs,
-    file          varchar(100) not null,
-    alt           varchar(100),
-    title         varchar(50)  not null
-);
-
-create table if not exists block_texts
-(
-    id  serial primary key,
-    block_lang_id serial references block_langs,
-    content       text        not null,
-    name          varchar(50) not null,
-    hint          varchar(200)
-);
-
-create table if not exists block_rich_texts
-(
-    id  serial primary key,
-    block_lang_id serial references block_langs,
-    content       text        not null,
-    name          varchar(50) not null,
-    hint          varchar(200)
-);
-
-create table if not exists block_nested
-(
-    parent uuid references blocks,
-    child  uuid references blocks
-);
-
--- create table if not exists comments
--- (
---     id  serial primary key,
---
---     block_id  uuid not null references blocks,
---     parent_id serial references comments,
---
---     user_id   uuid not null,
---     content   text,
---     image     varchar(250)
--- );
---
--- create table if not exists likes
--- (
---     user_id    uuid not null,
---     created_at timestamp default now(),
---
---     block_id   uuid not null references blocks,
---     comment_id serial references comments
--- );
-
-create table if not exists tags
-(
-    id    uuid        not null primary key,
-    name  varchar(20) not null,
+    id    serial             NOT NULL PRIMARY KEY,
+    name  varchar(20) UNIQUE NOT NULL,
     descr varchar(200)
 );
 
-create table if not exists block_tags
+CREATE TABLE IF NOT EXISTS block_rules
 (
-    block_id uuid references blocks,
-    tag_id   uuid references tags
+    id                 SERIAL      NOT NULL PRIMARY KEY,
+    name               VARCHAR(20) NOT NULL,
+    nested             BOOLEAN  DEFAULT FALSE,
+    has_comments       BOOLEAN  DEFAULT FALSE,
+    has_likes          BOOLEAN  DEFAULT FALSE,
+    comments_max_nest  SMALLINT DEFAULT 3,
+    comments_has_likes BOOLEAN  DEFAULT TRUE,
+    comment_editable   BOOLEAN  DEFAULT FALSE
 );
 
-create table if not exists categories
+CREATE TABLE IF NOT EXISTS blocks
 (
-    id    uuid        not null primary key,
-    name  varchar(20) not null,
-    descr varchar(200)
+    id                 UUID      DEFAULT gen_random_uuid() PRIMARY KEY,
+    name               VARCHAR(20) NOT NULL,
+    created_at         TIMESTAMP DEFAULT Now(),
+    author             UUID      NOT NULL,
+
+    -- Rules:
+    rules_name         VARCHAR(20) DEFAULT 'Custom',
+    nested             BOOLEAN   NOT NULL,
+    has_likes          BOOLEAN   NOT NULL,
+
+    -- Comments Rules:
+    has_comments       BOOLEAN   NOT NULL,
+    comments_max_nest  SMALLINT  NOT NULL,
+    comments_has_likes BOOLEAN   NOT NULL,
+    comment_editable   BOOLEAN   NOT NULL,
+
+    type               SERIAL
+        REFERENCES block_types NOT NULL
 );
 
-create table if not exists block_categ
+CREATE TABLE IF NOT EXISTS block_langs
 (
-    block_id uuid references blocks,
-    categ_id uuid references categories
+    id             SERIAL PRIMARY KEY,
+    lang_name      VARCHAR(20) NOT NULL,
+    lang_code      VARCHAR(10) NOT NULL,
+    version_number INT  DEFAULT 1,
+    created_at     TIMESTAMP DEFAULT NOW(),
+    updated_at     TIMESTAMP DEFAULT NOW(),
+
+
+    block_id       UUID
+        REFERENCES blocks NOT NULL
 );
 
-create or replace function set_default_block() returns trigger
-    language plpgsql
-as
-$$
-DECLARE
-    temp BOOLEAN;
-BEGIN
-    IF (NEW.has_comments IS NULL) THEN
-        Select has_comments as temp
-        from block_types as bt
-        where bt.id = NEW.id;
-        NEW.has_likes := temp;
-    elsif(NEW.has_likes IS NUll) THEN
-        Select has_comments as temp
-        from block_types as bt
-        where bt.id = NEW.id;
-        NEW.has_comments := temp;
-    end if;
-    return NEW;
-END;
-$$;
+CREATE TABLE IF NOT EXISTS block_images
+(
+    id            SERIAL PRIMARY KEY,
+    file          VARCHAR(100) NOT NULL,
+    alt           VARCHAR(100),
+    title         VARCHAR(50)  NOT NULL,
 
-create trigger set_default_values_block_trigger
-    before insert
-    on blocks
-    for each row
-    when (new.has_comments IS NULL OR new.has_likes IS NULL)
-execute procedure set_default_block();
+    block_lang_id SERIAL
+        REFERENCES block_langs NOT NULL
+);
 
+CREATE TABLE IF NOT EXISTS block_texts
+(
+    id            SERIAL PRIMARY KEY,
+    content       TEXT        NOT NULL,
+    name          VARCHAR(50) NOT NULL,
+    hint          VARCHAR(200),
 
--- Increment version number on update
-create or replace function update_version_table_on_change() returns trigger
-    language plpgsql
-as
+    block_lang_id SERIAL
+        REFERENCES block_langs
+);
+
+CREATE TABLE IF NOT EXISTS block_rich_texts
+(
+    id            SERIAL PRIMARY KEY,
+    content       TEXT        NOT NULL,
+    name          VARCHAR(50) NOT NULL,
+    hint          VARCHAR(200),
+
+    block_lang_id SERIAL
+        REFERENCES block_langs
+);
+
+CREATE TABLE IF NOT EXISTS block_nested
+(
+    parent UUID REFERENCES blocks,
+    child  UUID REFERENCES blocks
+);
+
+CREATE TABLE IF NOT EXISTS tags
+(
+    id    SERIAL      NOT NULL PRIMARY KEY,
+    name  VARCHAR(20) NOT NULL,
+    descr VARCHAR(200)
+);
+
+CREATE TABLE IF NOT EXISTS block_tags
+(
+    block_id UUID REFERENCES blocks,
+    tag_id   SERIAL REFERENCES tags
+);
+
+CREATE TABLE IF NOT EXISTS categories
+(
+    id    SERIAL      NOT NULL PRIMARY KEY,
+    name  VARCHAR(20) NOT NULL,
+    descr VARCHAR(200)
+);
+
+CREATE TABLE IF NOT EXISTS block_categ
+(
+    block_id UUID REFERENCES blocks,
+    categ_id SERIAL REFERENCES categories
+);
+
+---------------------------
+-- Triggers
+---------------------------
+
+-- Increment block_langs version number on update
+CREATE OR REPLACE FUNCTION increment_version_block_lang()
+    RETURNS TRIGGER AS
 $$
 BEGIN
     NEW.version_number := OLD.version_number + 1;
     RETURN NEW;
 END
-$$;
+$$ LANGUAGE plpgsql;
 
-create trigger update_block_version_trigger
-    before update
-    on blocks
-    for each row
-execute procedure update_version_table_on_change();
+CREATE TRIGGER trigger_increment_version_block_lang
+    AFTER UPDATE
+    ON block_langs
+    FOR EACH ROW
+EXECUTE FUNCTION increment_version_block_lang();
+
+
+-- Update 'updated_at' timestamp on every change
+CREATE OR REPLACE FUNCTION update_block_updated_at()
+    RETURNS TRIGGER AS
+$$
+BEGIN
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_update_block_updated_at
+    AFTER UPDATE
+    ON block_langs
+    FOR EACH ROW
+EXECUTE FUNCTION update_block_updated_at();
+
+---------------------------
+-- Insertions
+---------------------------
+
+INSERT INTO block_types (name, descr)
+VALUES ('Post', 'Main block used for building blogs');
+
+INSERT INTO block_rules (name, nested, has_comments, has_likes, comments_max_nest, comments_has_likes, comment_editable)
+VALUES ('default', false, false, false, 0, false, false),
+       ('Interactive', false, true, true, 3, true, true);
+

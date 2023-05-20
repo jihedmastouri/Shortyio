@@ -76,13 +76,14 @@ type BlockType struct {
 }
 
 type Category struct {
-	ID    uuid.UUID
+	ID    int32
 	Name  string
 	Descr sql.NullString
 }
 
 type CommentType struct {
 	ID       uuid.UUID
+	Name     sql.NullString
 	Nested   sql.NullBool
 	MaxNest  sql.NullInt16
 	HasLikes sql.NullBool
@@ -90,7 +91,7 @@ type CommentType struct {
 }
 
 type Tag struct {
-	ID    uuid.UUID
+	ID    int32
 	Name  string
 	Descr sql.NullString
 }

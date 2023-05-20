@@ -12,76 +12,25 @@ import (
 	"github.com/google/uuid"
 )
 
-const addCategToBlock = `-- name: AddCategToBlock :exec
-INSERT INTO block_categ(
-    block_id, categ_id
-) VALUES ($1,$2)
-`
+const addBlock = `-- name: AddBlock :exec
 
-type AddCategToBlockParams struct {
-	BlockID uuid.NullUUID
-	CategID uuid.NullUUID
-}
-
-func (q *Queries) AddCategToBlock(ctx context.Context, arg AddCategToBlockParams) error {
-	_, err := q.db.ExecContext(ctx, addCategToBlock, arg.BlockID, arg.CategID)
-	return err
-}
-
-const addCommentRules = `-- name: AddCommentRules :exec
-INSERT INTO comment_types(
-    nested, has_likes, editable, max_nest
-) VALUES ($1,$2,$3,$4) RETURNING id
-`
-
-type AddCommentRulesParams struct {
-	Nested   sql.NullBool
-	HasLikes sql.NullBool
-	Editable sql.NullBool
-	MaxNest  sql.NullInt16
-}
-
-func (q *Queries) AddCommentRules(ctx context.Context, arg AddCommentRulesParams) error {
-	_, err := q.db.ExecContext(ctx, addCommentRules,
-		arg.Nested,
-		arg.HasLikes,
-		arg.Editable,
-		arg.MaxNest,
-	)
-	return err
-}
-
-const addTagToBlock = `-- name: AddTagToBlock :exec
-INSERT INTO block_tags(
-    block_id, tag_id
-) VALUES ($1,$2)
-`
-
-type AddTagToBlockParams struct {
-	BlockID uuid.NullUUID
-	TagID   uuid.NullUUID
-}
-
-func (q *Queries) AddTagToBlock(ctx context.Context, arg AddTagToBlockParams) error {
-	_, err := q.db.ExecContext(ctx, addTagToBlock, arg.BlockID, arg.TagID)
-	return err
-}
-
-const createBlock = `-- name: CreateBlock :exec
 INSERT INTO blocks (
     has_likes, has_comments, block_type, comments_type
 ) VALUES ($1,$2,$3,$4)
 `
 
-type CreateBlockParams struct {
+type AddBlockParams struct {
 	HasLikes     sql.NullBool
 	HasComments  sql.NullBool
 	BlockType    uuid.NullUUID
 	CommentsType uuid.NullUUID
 }
 
-func (q *Queries) CreateBlock(ctx context.Context, arg CreateBlockParams) error {
-	_, err := q.db.ExecContext(ctx, createBlock,
+// ----------------
+// 2- Adding
+// ----------------
+func (q *Queries) AddBlock(ctx context.Context, arg AddBlockParams) error {
+	_, err := q.db.ExecContext(ctx, addBlock,
 		arg.HasLikes,
 		arg.HasComments,
 		arg.BlockType,
@@ -90,12 +39,73 @@ func (q *Queries) CreateBlock(ctx context.Context, arg CreateBlockParams) error 
 	return err
 }
 
+const addCateg = `-- name: AddCateg :exec
+INSERT INTO Tags (
+    name, descr
+) VALUES ($1,$2)
+`
+
+type AddCategParams struct {
+	Name  string
+	Descr sql.NullString
+}
+
+func (q *Queries) AddCateg(ctx context.Context, arg AddCategParams) error {
+	_, err := q.db.ExecContext(ctx, addCateg, arg.Name, arg.Descr)
+	return err
+}
+
+const addCommentRules = `-- name: AddCommentRules :exec
+INSERT INTO comment_types(
+    name, nested, has_likes, editable, max_nest
+) VALUES ($1,$2,$3,$4,$5) RETURNING id
+`
+
+type AddCommentRulesParams struct {
+	Name     sql.NullString
+	Nested   sql.NullBool
+	HasLikes sql.NullBool
+	Editable sql.NullBool
+	MaxNest  sql.NullInt16
+}
+
+func (q *Queries) AddCommentRules(ctx context.Context, arg AddCommentRulesParams) error {
+	_, err := q.db.ExecContext(ctx, addCommentRules,
+		arg.Name,
+		arg.Nested,
+		arg.HasLikes,
+		arg.Editable,
+		arg.MaxNest,
+	)
+	return err
+}
+
+const addTag = `-- name: AddTag :exec
+INSERT INTO Tags (
+    name, descr
+) VALUES ($1,$2)
+`
+
+type AddTagParams struct {
+	Name  string
+	Descr sql.NullString
+}
+
+func (q *Queries) AddTag(ctx context.Context, arg AddTagParams) error {
+	_, err := q.db.ExecContext(ctx, addTag, arg.Name, arg.Descr)
+	return err
+}
+
 const deleteBlock = `-- name: DeleteBlock :exec
+
 DELETE FROM blocks
     WHERE id = $1
     RETURNING id
 `
 
+// ----------------
+// 5- Deletions
+// ----------------
 func (q *Queries) DeleteBlock(ctx context.Context, id uuid.UUID) error {
 	_, err := q.db.ExecContext(ctx, deleteBlock, id)
 	return err
@@ -119,6 +129,8 @@ func (q *Queries) DeleteBlockLang(ctx context.Context, arg DeleteBlockLangParams
 }
 
 const getBlock = `-- name: GetBlock :many
+
+
 select id, author, created_at, updated_at from blocks
 `
 
@@ -129,6 +141,28 @@ type GetBlockRow struct {
 	UpdatedAt sql.NullTime
 }
 
+//	 ____                  _
+//	/ __ \__  _____  _____(_)__  _____
+//
+// / / / / / / / _ \/ ___/ / _ \/ ___/
+// / /_/ / /_/ /  __/ /  / /  __(__  )
+// \___\_\__,_/\___/_/  /_/\___/____/
+// ------------------------------------------
+// This File Contains all Queries on the Main Database.
+// Refer to Sqlc for more information https://docs.sqlc.dev/en/stable/
+//
+// The File Includes 5 Section:
+//
+// 1- `Selections`following: Get? / Get?By?
+// 2- `Adding` Inserts following Create?
+// 3- `Joins` insert for ManyToMany, following Add?To?
+// 4- `Updates` following: Update?
+// 5- `Deletions` following: Delete?
+//
+// Please use PascalCase for naming.
+// ----------------
+// 1- Selections
+// ----------------
 func (q *Queries) GetBlock(ctx context.Context) ([]GetBlockRow, error) {
 	rows, err := q.db.QueryContext(ctx, getBlock)
 	if err != nil {
@@ -368,4 +402,57 @@ func (q *Queries) GetBlockText(ctx context.Context, arg GetBlockTextParams) ([]G
 		return nil, err
 	}
 	return items, nil
+}
+
+const joinCategToBlock = `-- name: JoinCategToBlock :exec
+INSERT INTO block_categ(
+    block_id, categ_id
+) VALUES ($1,$2)
+`
+
+type JoinCategToBlockParams struct {
+	BlockID uuid.NullUUID
+	CategID uuid.NullUUID
+}
+
+func (q *Queries) JoinCategToBlock(ctx context.Context, arg JoinCategToBlockParams) error {
+	_, err := q.db.ExecContext(ctx, joinCategToBlock, arg.BlockID, arg.CategID)
+	return err
+}
+
+const joinTagToBlock = `-- name: JoinTagToBlock :exec
+
+INSERT INTO block_tags(
+    block_id, tag_id
+) VALUES ($1,$2)
+`
+
+type JoinTagToBlockParams struct {
+	BlockID uuid.NullUUID
+	TagID   uuid.NullUUID
+}
+
+// ----------------
+// 3- Joins
+// ----------------
+func (q *Queries) JoinTagToBlock(ctx context.Context, arg JoinTagToBlockParams) error {
+	_, err := q.db.ExecContext(ctx, joinTagToBlock, arg.BlockID, arg.TagID)
+	return err
+}
+
+const updateBlockCommentsType = `-- name: UpdateBlockCommentsType :exec
+
+Update blocks SET comments_type = (
+    select id
+    from comment_types
+    where name = $1
+)
+`
+
+// ----------------
+// 5- Updates
+// ----------------
+func (q *Queries) UpdateBlockCommentsType(ctx context.Context, name sql.NullString) error {
+	_, err := q.db.ExecContext(ctx, updateBlockCommentsType, name)
+	return err
 }

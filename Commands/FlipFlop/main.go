@@ -23,7 +23,7 @@ func main() {
 	srv.Start()
 
 	s := grpc.NewServer()
-	pb.RegisterFlipFlopServiceServer(s, &handler.Flip{})
+	pb.RegisterFlipFlopServer(s, &handler.CommandService{})
 
 	srv.GRPCListener(s)
 }
