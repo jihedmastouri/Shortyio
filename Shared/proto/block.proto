@@ -6,33 +6,36 @@ option go_package = "./proto;proto";
 
 message Block {
   string block_id = 1;
-  string type = 2;
-  string lang = 3;
-  int32 version = 4;
-  repeated string tags = 5;
-  repeated string categories = 6;
-  repeated Author authors = 7;
-  optional Content content = 8;
-  BlockRules rules = 9;
-  string updated_at = 10;
-  string created_at = 11;
+  string name = 2;
+  string type = 3;
+  string lang = 4;
+  int32 version = 5;
+  repeated string tags = 6;
+  repeated string categories = 7;
+  repeated Author authors = 8;
+  optional Content content = 9;
+  BlockRules rules = 10;
+  string updated_at = 11;
+  string created_at = 12;
 }
 
 message BlockContent {
   string block_id = 1;
-  string lang = 2;
-  int32 version = 3;
-  optional Content content = 4;
+  string name = 2;
+  string lang = 3;
+  int32 version = 4;
+  optional Content content = 5;
 }
 
 message BlockMeta {
   string block_id = 1;
-  string type = 2;
-  repeated string tags = 3;
-  repeated string categories = 4;
-  repeated Author authors = 5;
-  string updated_at = 6;
-  string created_at = 7;
+  string name = 2;
+  string type = 3;
+  repeated string tags = 4;
+  repeated string categories = 5;
+  repeated Author authors = 6;
+  string updated_at = 7;
+  string created_at = 8;
 }
 
 message Author {
@@ -42,15 +45,22 @@ message Author {
 }
 
 message BlockRules {
-  optional bool has_likes = 3;
-  optional bool has_comments = 4;
-  message CommentRules {
-      optional bool nested = 1;
-      optional bool has_likes = 2;
-      optional bool editable = 3;
-      optional int32 max_nested = 4;
-    }
- optional CommentRules comments = 5;
+
+  oneof test_oneof {
+     string rule_name = 1;
+     Rules rules = 2;
+  }
+
+  message Rules {
+      bool nested = 1;
+      bool has_likes = 2;
+      bool has_comments = 3;
+      bool comments_nested = 4;
+      bool comments_has_likes = 5;
+      bool comments_editable = 6;
+      int32 comments_max_nested = 7;
+  }
+
 }
 
 message Content {

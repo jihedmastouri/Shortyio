@@ -12,26 +12,54 @@ service FlipFlop {
 
   rpc DeleteBlock(DeleteRequest) returns (ActionResponse) {}
   rpc DeleteBlockLang(DeleteLangRequest) returns (ActionResponse) {}
+
+  // Tags CRUD:
+  // rpc CreateTag(CreateTaxonomy) returns (ActionResponse) {}
+  // rpc DeleteTag(DeleteTaxonomy) returns (ActionResponse) {}
+  // rpc JoinBlockTag(JoinTaxonomy) returns (ActionResponse) {}
+
+  // Category CRUD:
+  // rpc CreateCategory(CreateTaxonomy) returns (ActionResponse) {}
+  // rpc DeleteCategory(DeleteTaxonomy) returns (ActionResponse) {}
+  // rpc JoinBlockCategory(JoinTaxonomy) returns (ActionResponse) {}
 }
 
 message CreateRequest {
     BlockMeta meta = 1;
     optional BlockRules rules = 2;
+    string author = 3;
 }
 
 message CreateLangRequest {
     string id = 1;
     string langName = 2;
     optional string previousLang = 3;
+    string author = 4;
 }
 
 message DeleteRequest {
     string id = 1;
+    string author = 2;
 }
 
 message DeleteLangRequest {
     string id = 1;
     string langName = 2;
+    string author = 3;
+}
+
+message CreateTaxonomy {
+    string name = 1;
+    string descr = 2;
+}
+
+message DeleteTaxonomy {
+    string name = 1;
+}
+
+message JoinTaxonomy {
+    string name = 1;
+    string block_id = 1;
 }
 
 message ActionResponse {

@@ -23,13 +23,6 @@ func (c *CommandService) CreateBlock(rq *pb.CreateRequest) (*pb.ActionResponse, 
 	q := db.New(conn)
 
 
-	q.AddBlock(ctx, db.AddBlockParams{
-		HasLikes:     sql.NullBool{},
-		HasComments:  sql.NullBool{},
-		BlockType:    uuid.NullUUID{},
-		CommentsType: rq.Meta.,
-	})
-
 	return &pb.ActionResponse{
 		IsSuceess: false,
 		Id:        "",
