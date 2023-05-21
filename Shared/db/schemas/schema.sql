@@ -11,15 +11,16 @@ SET SCHEMA 'blocks';
 
 CREATE TABLE IF NOT EXISTS block_types
 (
-    id    serial             NOT NULL PRIMARY KEY,
-    name  varchar(20) UNIQUE NOT NULL,
-    descr varchar(200)
+    id    SERIAL PRIMARY KEY,
+    name  VARCHAR(20) UNIQUE NOT NULL,
+    descr VARCHAR(200)
 );
 
 CREATE TABLE IF NOT EXISTS block_rules
 (
-    id                 SERIAL      NOT NULL PRIMARY KEY,
+    id                 SERIAL PRIMARY KEY,
     name               VARCHAR(20) NOT NULL,
+    descr              VARCHAR(200) NOT NULL,
     nested             BOOLEAN  DEFAULT FALSE,
     has_comments       BOOLEAN  DEFAULT FALSE,
     has_likes          BOOLEAN  DEFAULT FALSE,
@@ -30,24 +31,24 @@ CREATE TABLE IF NOT EXISTS block_rules
 
 CREATE TABLE IF NOT EXISTS blocks
 (
-    id                 UUID      DEFAULT gen_random_uuid() PRIMARY KEY,
+    id                 UUID        DEFAULT gen_random_uuid() PRIMARY KEY,
     name               VARCHAR(20) NOT NULL,
-    created_at         TIMESTAMP DEFAULT Now(),
-    author             UUID      NOT NULL,
+    created_at         TIMESTAMP   DEFAULT NOW(),
+    author             UUID        NOT NULL,
 
-    -- Rules:
+    -- General Rules:
     rules_name         VARCHAR(20) DEFAULT 'Custom',
-    nested             BOOLEAN   NOT NULL,
-    has_likes          BOOLEAN   NOT NULL,
+    nested             BOOLEAN     NOT NULL,
+    has_likes          BOOLEAN     NOT NULL,
 
     -- Comments Rules:
-    has_comments       BOOLEAN   NOT NULL,
-    comments_max_nest  SMALLINT  NOT NULL,
-    comments_has_likes BOOLEAN   NOT NULL,
-    comment_editable   BOOLEAN   NOT NULL,
+    has_comments       BOOLEAN     NOT NULL,
+    comments_max_nest  SMALLINT    NOT NULL,
+    comments_has_likes BOOLEAN     NOT NULL,
+    comment_editable   BOOLEAN     NOT NULL,
 
-    type               SERIAL
-        REFERENCES block_types NOT NULL
+    type               INTEGER     NOT NULL
+        REFERENCES block_types (id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS block_langs
@@ -55,14 +56,17 @@ CREATE TABLE IF NOT EXISTS block_langs
     id             SERIAL PRIMARY KEY,
     lang_name      VARCHAR(20) NOT NULL,
     lang_code      VARCHAR(10) NOT NULL,
-    version_number INT  DEFAULT 1,
+    version_number INTEGER   DEFAULT 1,
+
+    -- Timestamps
     created_at     TIMESTAMP DEFAULT NOW(),
     updated_at     TIMESTAMP DEFAULT NOW(),
 
-
-    block_id       UUID
-        REFERENCES blocks NOT NULL
+    block_id       UUID        NOT NULL
+        REFERENCES blocks (id) ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+CREATE INDEX IF NOT EXISTS idx_block_langs_block_id_lang_name ON block_langs (block_id, lang_name);
 
 CREATE TABLE IF NOT EXISTS block_images
 (
@@ -71,8 +75,7 @@ CREATE TABLE IF NOT EXISTS block_images
     alt           VARCHAR(100),
     title         VARCHAR(50)  NOT NULL,
 
-    block_lang_id SERIAL
-        REFERENCES block_langs NOT NULL
+    block_lang_id INTEGER      NOT NULL REFERENCES block_langs (id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS block_texts
@@ -82,8 +85,8 @@ CREATE TABLE IF NOT EXISTS block_texts
     name          VARCHAR(50) NOT NULL,
     hint          VARCHAR(200),
 
-    block_lang_id SERIAL
-        REFERENCES block_langs
+    block_lang_id INTEGER     NOT NULL
+        REFERENCES block_langs (id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS block_rich_texts
@@ -93,40 +96,42 @@ CREATE TABLE IF NOT EXISTS block_rich_texts
     name          VARCHAR(50) NOT NULL,
     hint          VARCHAR(200),
 
-    block_lang_id SERIAL
-        REFERENCES block_langs
+    block_lang_id INTEGER     NOT NULL
+        REFERENCES block_langs (id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS block_nested
 (
-    parent UUID REFERENCES blocks,
-    child  UUID REFERENCES blocks
+    parent UUID REFERENCES blocks (id) ON DELETE CASCADE ON UPDATE CASCADE,
+    child  UUID REFERENCES blocks (id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS tags
 (
-    id    SERIAL      NOT NULL PRIMARY KEY,
+    id    SERIAL PRIMARY KEY,
     name  VARCHAR(20) NOT NULL,
     descr VARCHAR(200)
 );
 
 CREATE TABLE IF NOT EXISTS block_tags
 (
-    block_id UUID REFERENCES blocks,
-    tag_id   SERIAL REFERENCES tags
+    block_id UUID REFERENCES blocks (id) ON DELETE CASCADE ON UPDATE CASCADE,
+    tag_id   INTEGER REFERENCES tags (id) ON DELETE CASCADE,
+    CONSTRAINT block_tags_pkey PRIMARY KEY (block_id, tag_id)
 );
 
 CREATE TABLE IF NOT EXISTS categories
 (
-    id    SERIAL      NOT NULL PRIMARY KEY,
+    id    SERIAL PRIMARY KEY,
     name  VARCHAR(20) NOT NULL,
     descr VARCHAR(200)
 );
 
-CREATE TABLE IF NOT EXISTS block_categ
+CREATE TABLE IF NOT EXISTS block_categs
 (
-    block_id UUID REFERENCES blocks,
-    categ_id SERIAL REFERENCES categories
+    block_id UUID REFERENCES blocks (id) ON DELETE CASCADE ON UPDATE CASCADE,
+    categ_id INTEGER REFERENCES categories (id) ON DELETE CASCADE,
+    CONSTRAINT block_categs_pkey PRIMARY KEY (block_id, categ_id)
 );
 
 ---------------------------
@@ -155,13 +160,13 @@ CREATE OR REPLACE FUNCTION update_block_updated_at()
     RETURNS TRIGGER AS
 $$
 BEGIN
-    NEW.updated_at = NOW();
+    NEW.updated_at := NOW();
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER trigger_update_block_updated_at
-    AFTER UPDATE
+    BEFORE UPDATE
     ON block_langs
     FOR EACH ROW
 EXECUTE FUNCTION update_block_updated_at();

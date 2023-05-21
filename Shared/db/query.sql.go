@@ -12,37 +12,83 @@ import (
 	"github.com/google/uuid"
 )
 
-const addBlock = `-- name: AddBlock :exec
+const addBlock = `-- name: AddBlock :one
 
-INSERT INTO blocks (
-    has_likes, has_comments, block_type, comments_type
-) VALUES ($1,$2,$3,$4)
+INSERT INTO blocks (author, name, nested, has_likes, has_comments, comments_max_nest,
+                           comments_has_likes, comment_editable, rules_name, type)
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id
 `
 
 type AddBlockParams struct {
-	HasLikes     sql.NullBool
-	HasComments  sql.NullBool
-	BlockType    uuid.NullUUID
-	CommentsType uuid.NullUUID
+	Author           uuid.UUID
+	Name             string
+	Nested           bool
+	HasLikes         bool
+	HasComments      bool
+	CommentsMaxNest  int16
+	CommentsHasLikes bool
+	CommentEditable  bool
+	RulesName        sql.NullString
+	Type             int32
 }
 
 // ----------------
 // 2- Adding
 // ----------------
-func (q *Queries) AddBlock(ctx context.Context, arg AddBlockParams) error {
-	_, err := q.db.ExecContext(ctx, addBlock,
+func (q *Queries) AddBlock(ctx context.Context, arg AddBlockParams) (uuid.UUID, error) {
+	row := q.db.QueryRowContext(ctx, addBlock,
+		arg.Author,
+		arg.Name,
+		arg.Nested,
 		arg.HasLikes,
 		arg.HasComments,
-		arg.BlockType,
-		arg.CommentsType,
+		arg.CommentsMaxNest,
+		arg.CommentsHasLikes,
+		arg.CommentEditable,
+		arg.RulesName,
+		arg.Type,
 	)
-	return err
+	var id uuid.UUID
+	err := row.Scan(&id)
+	return id, err
 }
 
-const addCateg = `-- name: AddCateg :exec
-INSERT INTO Tags (
+const addBlockRules = `-- name: AddBlockRules :one
+INSERT INTO block_rules (
+    name, nested, has_likes, has_comments, comments_max_nest,
+    comments_has_likes, comment_editable)
+VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING name
+`
+
+type AddBlockRulesParams struct {
+	Name             string
+	Nested           sql.NullBool
+	HasLikes         sql.NullBool
+	HasComments      sql.NullBool
+	CommentsMaxNest  sql.NullInt16
+	CommentsHasLikes sql.NullBool
+	CommentEditable  sql.NullBool
+}
+
+func (q *Queries) AddBlockRules(ctx context.Context, arg AddBlockRulesParams) (string, error) {
+	row := q.db.QueryRowContext(ctx, addBlockRules,
+		arg.Name,
+		arg.Nested,
+		arg.HasLikes,
+		arg.HasComments,
+		arg.CommentsMaxNest,
+		arg.CommentsHasLikes,
+		arg.CommentEditable,
+	)
+	var name string
+	err := row.Scan(&name)
+	return name, err
+}
+
+const addCateg = `-- name: AddCateg :one
+INSERT INTO categories (
     name, descr
-) VALUES ($1,$2)
+) VALUES ($1,$2) RETURNING name
 `
 
 type AddCategParams struct {
@@ -50,40 +96,17 @@ type AddCategParams struct {
 	Descr sql.NullString
 }
 
-func (q *Queries) AddCateg(ctx context.Context, arg AddCategParams) error {
-	_, err := q.db.ExecContext(ctx, addCateg, arg.Name, arg.Descr)
-	return err
+func (q *Queries) AddCateg(ctx context.Context, arg AddCategParams) (string, error) {
+	row := q.db.QueryRowContext(ctx, addCateg, arg.Name, arg.Descr)
+	var name string
+	err := row.Scan(&name)
+	return name, err
 }
 
-const addCommentRules = `-- name: AddCommentRules :exec
-INSERT INTO comment_types(
-    name, nested, has_likes, editable, max_nest
-) VALUES ($1,$2,$3,$4,$5) RETURNING id
-`
-
-type AddCommentRulesParams struct {
-	Name     sql.NullString
-	Nested   sql.NullBool
-	HasLikes sql.NullBool
-	Editable sql.NullBool
-	MaxNest  sql.NullInt16
-}
-
-func (q *Queries) AddCommentRules(ctx context.Context, arg AddCommentRulesParams) error {
-	_, err := q.db.ExecContext(ctx, addCommentRules,
-		arg.Name,
-		arg.Nested,
-		arg.HasLikes,
-		arg.Editable,
-		arg.MaxNest,
-	)
-	return err
-}
-
-const addTag = `-- name: AddTag :exec
-INSERT INTO Tags (
+const addTag = `-- name: AddTag :one
+INSERT INTO tags (
     name, descr
-) VALUES ($1,$2)
+) VALUES ($1,$2) RETURNING name
 `
 
 type AddTagParams struct {
@@ -91,31 +114,88 @@ type AddTagParams struct {
 	Descr sql.NullString
 }
 
-func (q *Queries) AddTag(ctx context.Context, arg AddTagParams) error {
-	_, err := q.db.ExecContext(ctx, addTag, arg.Name, arg.Descr)
+func (q *Queries) AddTag(ctx context.Context, arg AddTagParams) (string, error) {
+	row := q.db.QueryRowContext(ctx, addTag, arg.Name, arg.Descr)
+	var name string
+	err := row.Scan(&name)
+	return name, err
+}
+
+const deleteAllBlockCategs = `-- name: DeleteAllBlockCategs :exec
+DELETE FROM block_categs
+WHERE block_id = $1
+`
+
+func (q *Queries) DeleteAllBlockCategs(ctx context.Context, blockID uuid.UUID) error {
+	_, err := q.db.ExecContext(ctx, deleteAllBlockCategs, blockID)
+	return err
+}
+
+const deleteAllBlockTags = `-- name: DeleteAllBlockTags :exec
+DELETE FROM block_tags
+WHERE block_id = $1
+`
+
+func (q *Queries) DeleteAllBlockTags(ctx context.Context, blockID uuid.UUID) error {
+	_, err := q.db.ExecContext(ctx, deleteAllBlockTags, blockID)
 	return err
 }
 
 const deleteBlock = `-- name: DeleteBlock :exec
 
-DELETE FROM blocks
-    WHERE id = $1
-    RETURNING id
+DELETE FROM blocks WHERE id = $1
 `
 
 // ----------------
-// 5- Deletions
+// 6- Deletions
 // ----------------
 func (q *Queries) DeleteBlock(ctx context.Context, id uuid.UUID) error {
 	_, err := q.db.ExecContext(ctx, deleteBlock, id)
 	return err
 }
 
+const deleteBlockCateg = `-- name: DeleteBlockCateg :exec
+DELETE FROM block_categs
+WHERE block_id = $1 AND
+    categ_id = (
+        SELECT id
+        FROM categories
+        WHERE name = $2
+    )
+`
+
+type DeleteBlockCategParams struct {
+	BlockID uuid.UUID
+	Name    string
+}
+
+func (q *Queries) DeleteBlockCateg(ctx context.Context, arg DeleteBlockCategParams) error {
+	_, err := q.db.ExecContext(ctx, deleteBlockCateg, arg.BlockID, arg.Name)
+	return err
+}
+
+const deleteBlockImages = `-- name: DeleteBlockImages :exec
+DELETE FROM block_images
+WHERE block_lang_id = (
+        SELECT id
+        FROM  block_langs
+        WHERE block_id = $1 AND lang_name = $2
+    )
+`
+
+type DeleteBlockImagesParams struct {
+	BlockID  uuid.UUID
+	LangName string
+}
+
+func (q *Queries) DeleteBlockImages(ctx context.Context, arg DeleteBlockImagesParams) error {
+	_, err := q.db.ExecContext(ctx, deleteBlockImages, arg.BlockID, arg.LangName)
+	return err
+}
+
 const deleteBlockLang = `-- name: DeleteBlockLang :exec
 DELETE FROM block_langs
-    WHERE block_id = $1
-    AND lang_name = $2
-    RETURNING id
+WHERE block_id = $1 AND lang_name = $2
 `
 
 type DeleteBlockLangParams struct {
@@ -128,17 +208,205 @@ func (q *Queries) DeleteBlockLang(ctx context.Context, arg DeleteBlockLangParams
 	return err
 }
 
+const deleteBlockRichText = `-- name: DeleteBlockRichText :exec
+DELETE FROM block_rich_texts
+WHERE block_lang_id = (
+        SELECT id
+        FROM  block_langs
+        WHERE block_id = $1 AND lang_name = $2
+    )
+`
+
+type DeleteBlockRichTextParams struct {
+	BlockID  uuid.UUID
+	LangName string
+}
+
+func (q *Queries) DeleteBlockRichText(ctx context.Context, arg DeleteBlockRichTextParams) error {
+	_, err := q.db.ExecContext(ctx, deleteBlockRichText, arg.BlockID, arg.LangName)
+	return err
+}
+
+const deleteBlockTag = `-- name: DeleteBlockTag :exec
+DELETE FROM block_tags
+WHERE block_id = $1 AND
+    tag_id = (
+        SELECT id
+        FROM tags
+        WHERE name = $2
+    )
+`
+
+type DeleteBlockTagParams struct {
+	BlockID uuid.UUID
+	Name    string
+}
+
+func (q *Queries) DeleteBlockTag(ctx context.Context, arg DeleteBlockTagParams) error {
+	_, err := q.db.ExecContext(ctx, deleteBlockTag, arg.BlockID, arg.Name)
+	return err
+}
+
+const deleteBlockText = `-- name: DeleteBlockText :exec
+DELETE FROM block_texts
+WHERE block_lang_id = (
+        SELECT id
+        FROM  block_langs
+        WHERE block_id = $1 AND lang_name = $2
+    )
+`
+
+type DeleteBlockTextParams struct {
+	BlockID  uuid.UUID
+	LangName string
+}
+
+func (q *Queries) DeleteBlockText(ctx context.Context, arg DeleteBlockTextParams) error {
+	_, err := q.db.ExecContext(ctx, deleteBlockText, arg.BlockID, arg.LangName)
+	return err
+}
+
+const deleteCategByID = `-- name: DeleteCategByID :exec
+DELETE FROM categories
+WHERE id = $1
+`
+
+func (q *Queries) DeleteCategByID(ctx context.Context, id int32) error {
+	_, err := q.db.ExecContext(ctx, deleteCategByID, id)
+	return err
+}
+
+const deleteTagByID = `-- name: DeleteTagByID :exec
+DELETE FROM tags
+WHERE id = $1
+`
+
+func (q *Queries) DeleteTagByID(ctx context.Context, id int32) error {
+	_, err := q.db.ExecContext(ctx, deleteTagByID, id)
+	return err
+}
+
+const getAllBlockRules = `-- name: GetAllBlockRules :many
+SELECT name, descr
+FROM block_rules
+LIMIT 100
+`
+
+type GetAllBlockRulesRow struct {
+	Name  string
+	Descr string
+}
+
+func (q *Queries) GetAllBlockRules(ctx context.Context) ([]GetAllBlockRulesRow, error) {
+	rows, err := q.db.QueryContext(ctx, getAllBlockRules)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetAllBlockRulesRow
+	for rows.Next() {
+		var i GetAllBlockRulesRow
+		if err := rows.Scan(&i.Name, &i.Descr); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getAllCategories = `-- name: GetAllCategories :many
+SELECT name, descr
+FROM categories
+LIMIT 100
+`
+
+type GetAllCategoriesRow struct {
+	Name  string
+	Descr sql.NullString
+}
+
+func (q *Queries) GetAllCategories(ctx context.Context) ([]GetAllCategoriesRow, error) {
+	rows, err := q.db.QueryContext(ctx, getAllCategories)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetAllCategoriesRow
+	for rows.Next() {
+		var i GetAllCategoriesRow
+		if err := rows.Scan(&i.Name, &i.Descr); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getAllTags = `-- name: GetAllTags :many
+SELECT name, descr
+FROM tags
+LIMIT 100
+`
+
+type GetAllTagsRow struct {
+	Name  string
+	Descr sql.NullString
+}
+
+func (q *Queries) GetAllTags(ctx context.Context) ([]GetAllTagsRow, error) {
+	rows, err := q.db.QueryContext(ctx, getAllTags)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetAllTagsRow
+	for rows.Next() {
+		var i GetAllTagsRow
+		if err := rows.Scan(&i.Name, &i.Descr); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getBlock = `-- name: GetBlock :many
 
 
-select id, author, created_at, updated_at from blocks
+SELECT id, author, created_at, name
+FROM blocks
+LIMIT $1
+OFFSET $2
 `
+
+type GetBlockParams struct {
+	Limit  int32
+	Offset int32
+}
 
 type GetBlockRow struct {
 	ID        uuid.UUID
 	Author    uuid.UUID
 	CreatedAt sql.NullTime
-	UpdatedAt sql.NullTime
+	Name      string
 }
 
 //	 ____                  _
@@ -151,20 +419,21 @@ type GetBlockRow struct {
 // This File Contains all Queries on the Main Database.
 // Refer to Sqlc for more information https://docs.sqlc.dev/en/stable/
 //
-// The File Includes 5 Section:
+// The File Includes 6 Section:
 //
-// 1- `Selections`following: Get? / Get?By?
+// 1- `Selections` following: Get? / Get?By?
 // 2- `Adding` Inserts following Create?
 // 3- `Joins` insert for ManyToMany, following Add?To?
 // 4- `Updates` following: Update?
 // 5- `Deletions` following: Delete?
+// 6- `Counts` following: Count?
 //
 // Please use PascalCase for naming.
 // ----------------
 // 1- Selections
 // ----------------
-func (q *Queries) GetBlock(ctx context.Context) ([]GetBlockRow, error) {
-	rows, err := q.db.QueryContext(ctx, getBlock)
+func (q *Queries) GetBlock(ctx context.Context, arg GetBlockParams) ([]GetBlockRow, error) {
+	rows, err := q.db.QueryContext(ctx, getBlock, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}
@@ -176,7 +445,7 @@ func (q *Queries) GetBlock(ctx context.Context) ([]GetBlockRow, error) {
 			&i.ID,
 			&i.Author,
 			&i.CreatedAt,
-			&i.UpdatedAt,
+			&i.Name,
 		); err != nil {
 			return nil, err
 		}
@@ -192,45 +461,52 @@ func (q *Queries) GetBlock(ctx context.Context) ([]GetBlockRow, error) {
 }
 
 const getBlockByID = `-- name: GetBlockByID :one
-select b.version_number
-from blocks b
-where b.id = $1
+SELECT id, author, created_at, name
+FROM blocks b
+WHERE b.id = $1
 `
 
-func (q *Queries) GetBlockByID(ctx context.Context, id uuid.UUID) (interface{}, error) {
+type GetBlockByIDRow struct {
+	ID        uuid.UUID
+	Author    uuid.UUID
+	CreatedAt sql.NullTime
+	Name      string
+}
+
+func (q *Queries) GetBlockByID(ctx context.Context, id uuid.UUID) (GetBlockByIDRow, error) {
 	row := q.db.QueryRowContext(ctx, getBlockByID, id)
-	var version_number interface{}
-	err := row.Scan(&version_number)
-	return version_number, err
+	var i GetBlockByIDRow
+	err := row.Scan(
+		&i.ID,
+		&i.Author,
+		&i.CreatedAt,
+		&i.Name,
+	)
+	return i, err
 }
 
 const getBlockCategories = `-- name: GetBlockCategories :many
-SELECT name, descr
-  FROM categories c
-  INNER JOIN block_categ bc
-  ON c.id = bc.categ_id
-  INNER JOIN blocks
-  ON bc.block_id = block.id
+SELECT c.name
+FROM categories c
+INNER JOIN block_categs bc
+ON c.id = bc.categ_id
+WHERE bc.block_id = $1
+LIMIT 100
 `
 
-type GetBlockCategoriesRow struct {
-	Name  string
-	Descr sql.NullString
-}
-
-func (q *Queries) GetBlockCategories(ctx context.Context) ([]GetBlockCategoriesRow, error) {
-	rows, err := q.db.QueryContext(ctx, getBlockCategories)
+func (q *Queries) GetBlockCategories(ctx context.Context, blockID uuid.UUID) ([]string, error) {
+	rows, err := q.db.QueryContext(ctx, getBlockCategories, blockID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GetBlockCategoriesRow
+	var items []string
 	for rows.Next() {
-		var i GetBlockCategoriesRow
-		if err := rows.Scan(&i.Name, &i.Descr); err != nil {
+		var name string
+		if err := rows.Scan(&name); err != nil {
 			return nil, err
 		}
-		items = append(items, i)
+		items = append(items, name)
 	}
 	if err := rows.Close(); err != nil {
 		return nil, err
@@ -325,33 +601,58 @@ func (q *Queries) GetBlockRichText(ctx context.Context, arg GetBlockRichTextPara
 	return items, nil
 }
 
-const getBlockTags = `-- name: GetBlockTags :many
-SELECT name, descr
-  FROM categories c
-  INNER JOIN block_tags bt
-  ON c.id = bt.tag_id
-  INNER JOIN blocks
-  ON bt.block_id = block.id
+const getBlockRulesByName = `-- name: GetBlockRulesByName :one
+SELECT nested, has_comments, has_likes,
+    comments_max_nest, comments_has_likes, comment_editable
+FROM block_rules
+WHERE name = $1
 `
 
-type GetBlockTagsRow struct {
-	Name  string
-	Descr sql.NullString
+type GetBlockRulesByNameRow struct {
+	Nested           sql.NullBool
+	HasComments      sql.NullBool
+	HasLikes         sql.NullBool
+	CommentsMaxNest  sql.NullInt16
+	CommentsHasLikes sql.NullBool
+	CommentEditable  sql.NullBool
 }
 
-func (q *Queries) GetBlockTags(ctx context.Context) ([]GetBlockTagsRow, error) {
-	rows, err := q.db.QueryContext(ctx, getBlockTags)
+func (q *Queries) GetBlockRulesByName(ctx context.Context, name string) (GetBlockRulesByNameRow, error) {
+	row := q.db.QueryRowContext(ctx, getBlockRulesByName, name)
+	var i GetBlockRulesByNameRow
+	err := row.Scan(
+		&i.Nested,
+		&i.HasComments,
+		&i.HasLikes,
+		&i.CommentsMaxNest,
+		&i.CommentsHasLikes,
+		&i.CommentEditable,
+	)
+	return i, err
+}
+
+const getBlockTags = `-- name: GetBlockTags :many
+SELECT t.name
+FROM tags t
+INNER JOIN block_tags bt
+ON t.id = bt.tag_id
+WHERE bt.block_id = $1
+LIMIT 100
+`
+
+func (q *Queries) GetBlockTags(ctx context.Context, blockID uuid.UUID) ([]string, error) {
+	rows, err := q.db.QueryContext(ctx, getBlockTags, blockID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GetBlockTagsRow
+	var items []string
 	for rows.Next() {
-		var i GetBlockTagsRow
-		if err := rows.Scan(&i.Name, &i.Descr); err != nil {
+		var name string
+		if err := rows.Scan(&name); err != nil {
 			return nil, err
 		}
-		items = append(items, i)
+		items = append(items, name)
 	}
 	if err := rows.Close(); err != nil {
 		return nil, err
@@ -404,19 +705,48 @@ func (q *Queries) GetBlockText(ctx context.Context, arg GetBlockTextParams) ([]G
 	return items, nil
 }
 
+const getTypeByName = `-- name: GetTypeByName :one
+SELECT id
+FROM block_types bt
+WHERE bt.name = $1
+`
+
+func (q *Queries) GetTypeByName(ctx context.Context, name string) (int32, error) {
+	row := q.db.QueryRowContext(ctx, getTypeByName, name)
+	var id int32
+	err := row.Scan(&id)
+	return id, err
+}
+
 const joinCategToBlock = `-- name: JoinCategToBlock :exec
-INSERT INTO block_categ(
+INSERT INTO block_categs(
     block_id, categ_id
 ) VALUES ($1,$2)
 `
 
 type JoinCategToBlockParams struct {
-	BlockID uuid.NullUUID
-	CategID uuid.NullUUID
+	BlockID uuid.UUID
+	CategID int32
 }
 
 func (q *Queries) JoinCategToBlock(ctx context.Context, arg JoinCategToBlockParams) error {
 	_, err := q.db.ExecContext(ctx, joinCategToBlock, arg.BlockID, arg.CategID)
+	return err
+}
+
+const joinChildToBlock = `-- name: JoinChildToBlock :exec
+INSERT INTO block_nested (
+    child, parent
+) VALUES ($1,$2)
+`
+
+type JoinChildToBlockParams struct {
+	Child  uuid.NullUUID
+	Parent uuid.NullUUID
+}
+
+func (q *Queries) JoinChildToBlock(ctx context.Context, arg JoinChildToBlockParams) error {
+	_, err := q.db.ExecContext(ctx, joinChildToBlock, arg.Child, arg.Parent)
 	return err
 }
 
@@ -428,8 +758,8 @@ INSERT INTO block_tags(
 `
 
 type JoinTagToBlockParams struct {
-	BlockID uuid.NullUUID
-	TagID   uuid.NullUUID
+	BlockID uuid.UUID
+	TagID   int32
 }
 
 // ----------------
@@ -440,19 +770,43 @@ func (q *Queries) JoinTagToBlock(ctx context.Context, arg JoinTagToBlockParams) 
 	return err
 }
 
-const updateBlockCommentsType = `-- name: UpdateBlockCommentsType :exec
+const updateBlockRules = `-- name: UpdateBlockRules :exec
 
-Update blocks SET comments_type = (
-    select id
-    from comment_types
-    where name = $1
-)
+Update blocks
+    SET rules_name = $2,
+        nested = $3,
+        has_likes = $4,
+        has_comments = $5,
+        comments_max_nest = $6,
+        comments_has_likes = $7,
+        comment_editable = $8
+WHERE name = $1
 `
+
+type UpdateBlockRulesParams struct {
+	Name             string
+	RulesName        sql.NullString
+	Nested           bool
+	HasLikes         bool
+	HasComments      bool
+	CommentsMaxNest  int16
+	CommentsHasLikes bool
+	CommentEditable  bool
+}
 
 // ----------------
 // 5- Updates
 // ----------------
-func (q *Queries) UpdateBlockCommentsType(ctx context.Context, name sql.NullString) error {
-	_, err := q.db.ExecContext(ctx, updateBlockCommentsType, name)
+func (q *Queries) UpdateBlockRules(ctx context.Context, arg UpdateBlockRulesParams) error {
+	_, err := q.db.ExecContext(ctx, updateBlockRules,
+		arg.Name,
+		arg.RulesName,
+		arg.Nested,
+		arg.HasLikes,
+		arg.HasComments,
+		arg.CommentsMaxNest,
+		arg.CommentsHasLikes,
+		arg.CommentEditable,
+	)
 	return err
 }

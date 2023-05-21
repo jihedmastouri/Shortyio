@@ -11,35 +11,41 @@ import (
 )
 
 type Block struct {
-	ID            uuid.UUID
-	HasComments   sql.NullBool
-	HasLikes      sql.NullBool
-	VersionNumber interface{}
-	CreatedAt     sql.NullTime
-	UpdatedAt     sql.NullTime
-	Author        uuid.UUID
-	BlockType     uuid.NullUUID
-	CommentsType  uuid.NullUUID
+	ID               uuid.UUID
+	Name             string
+	CreatedAt        sql.NullTime
+	Author           uuid.UUID
+	RulesName        sql.NullString
+	Nested           bool
+	HasLikes         bool
+	HasComments      bool
+	CommentsMaxNest  int16
+	CommentsHasLikes bool
+	CommentEditable  bool
+	Type             int32
 }
 
 type BlockCateg struct {
-	BlockID uuid.NullUUID
-	CategID uuid.NullUUID
+	BlockID uuid.UUID
+	CategID int32
 }
 
 type BlockImage struct {
 	ID          int32
-	BlockLangID sql.NullInt32
 	File        string
 	Alt         sql.NullString
 	Title       string
+	BlockLangID int32
 }
 
 type BlockLang struct {
-	ID       int32
-	BlockID  uuid.UUID
-	LangName string
-	LangCode string
+	ID            int32
+	LangName      string
+	LangCode      string
+	VersionNumber sql.NullInt32
+	CreatedAt     sql.NullTime
+	UpdatedAt     sql.NullTime
+	BlockID       uuid.UUID
 }
 
 type BlockNested struct {
@@ -49,45 +55,47 @@ type BlockNested struct {
 
 type BlockRichText struct {
 	ID          int32
-	BlockLangID sql.NullInt32
 	Content     string
 	Name        string
 	Hint        sql.NullString
+	BlockLangID int32
+}
+
+type BlockRule struct {
+	ID               int32
+	Name             string
+	Descr            string
+	Nested           sql.NullBool
+	HasComments      sql.NullBool
+	HasLikes         sql.NullBool
+	CommentsMaxNest  sql.NullInt16
+	CommentsHasLikes sql.NullBool
+	CommentEditable  sql.NullBool
 }
 
 type BlockTag struct {
-	BlockID uuid.NullUUID
-	TagID   uuid.NullUUID
+	BlockID uuid.UUID
+	TagID   int32
 }
 
 type BlockText struct {
 	ID          int32
-	BlockLangID sql.NullInt32
 	Content     string
 	Name        string
 	Hint        sql.NullString
+	BlockLangID int32
 }
 
 type BlockType struct {
-	ID          uuid.UUID
-	HasComments sql.NullBool
-	HasLikes    sql.NullBool
-	Name        sql.NullString
+	ID    int32
+	Name  string
+	Descr sql.NullString
 }
 
 type Category struct {
 	ID    int32
 	Name  string
 	Descr sql.NullString
-}
-
-type CommentType struct {
-	ID       uuid.UUID
-	Name     sql.NullString
-	Nested   sql.NullBool
-	MaxNest  sql.NullInt16
-	HasLikes sql.NullBool
-	Editable sql.NullBool
 }
 
 type Tag struct {
