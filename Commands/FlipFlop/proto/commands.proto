@@ -7,23 +7,24 @@ option go_package = "./proto;proto";
 import "Shared/proto/block.proto";
 
 service FlipFlop {
+  // Block
   rpc CreateBlock(CreateRequest) returns (ActionResponse) {}
   rpc UpdateBlock(CreateRequest) returns (ActionResponse) {}
-  rpc CreateBlockLang(CreateLangRequest) returns (ActionResponse) {}
-
   rpc DeleteBlock(DeleteRequest) returns (ActionResponse) {}
+
+  rpc CreateBlockLang(CreateLangRequest) returns (ActionResponse) {}
   rpc DeleteBlockLang(DeleteLangRequest) returns (ActionResponse) {}
 
-  rpc CreateBlockRules(BlockRules) returns (ActionResponse) {}
-  rpc UpdateBlockRules(BlockRules) returns (ActionResponse) {}
-  rpc DeleteBlockRules(BlockRules) returns (ActionResponse) {}
+  // Rules
+  rpc CreateBlockRule(BlockRules) returns (ActionResponse) {}
+  rpc UpdateBlockRule(BlockRules) returns (ActionResponse) {}
+  rpc DeleteBlockRule(BlockRules) returns (ActionResponse) {}
 
-  // Tags CRUD:
+  // Taxonomy:
   // rpc CreateTag(CreateTaxonomy) returns (ActionResponse) {}
   // rpc DeleteTag(DeleteTaxonomy) returns (ActionResponse) {}
   // rpc JoinBlockTag(JoinTaxonomy) returns (ActionResponse) {}
 
-  // Category CRUD:
   // rpc CreateCategory(CreateTaxonomy) returns (ActionResponse) {}
   // rpc DeleteCategory(DeleteTaxonomy) returns (ActionResponse) {}
   // rpc JoinBlockCategory(JoinTaxonomy) returns (ActionResponse) {}

@@ -546,25 +546,41 @@ var file_Commands_FlipFlop_proto_commands_proto_rawDesc = []byte{
 	0x73, 0x53, 0x75, 0x63, 0x65, 0x65, 0x73, 0x73, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x02,
 	0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x18, 0x0a, 0x07, 0x6d, 0x65, 0x73, 0x73,
 	0x61, 0x67, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61,
-	0x67, 0x65, 0x32, 0x92, 0x02, 0x0a, 0x08, 0x46, 0x6c, 0x69, 0x70, 0x46, 0x6c, 0x6f, 0x70, 0x12,
+	0x67, 0x65, 0x32, 0x8d, 0x04, 0x0a, 0x08, 0x46, 0x6c, 0x69, 0x70, 0x46, 0x6c, 0x6f, 0x70, 0x12,
 	0x3c, 0x0a, 0x0b, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x12, 0x14,
 	0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x52, 0x65, 0x71,
 	0x75, 0x65, 0x73, 0x74, 0x1a, 0x15, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x41, 0x63, 0x74,
-	0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x44, 0x0a,
-	0x0f, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x4c, 0x61, 0x6e, 0x67,
-	0x12, 0x18, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x4c,
-	0x61, 0x6e, 0x67, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x15, 0x2e, 0x70, 0x72, 0x6f,
+	0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x3c, 0x0a,
+	0x0b, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x12, 0x14, 0x2e, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65,
+	0x73, 0x74, 0x1a, 0x15, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x41, 0x63, 0x74, 0x69, 0x6f,
+	0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x3c, 0x0a, 0x0b, 0x44,
+	0x65, 0x6c, 0x65, 0x74, 0x65, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x12, 0x14, 0x2e, 0x70, 0x72, 0x6f,
+	0x74, 0x6f, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
+	0x1a, 0x15, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x41, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52,
+	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x0f, 0x43, 0x72, 0x65,
+	0x61, 0x74, 0x65, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x4c, 0x61, 0x6e, 0x67, 0x12, 0x18, 0x2e, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x4c, 0x61, 0x6e, 0x67, 0x52,
+	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x15, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x41,
+	0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12,
+	0x44, 0x0a, 0x0f, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x4c, 0x61,
+	0x6e, 0x67, 0x12, 0x18, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74,
+	0x65, 0x4c, 0x61, 0x6e, 0x67, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x15, 0x2e, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x41, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f,
+	0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x3d, 0x0a, 0x0f, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x42,
+	0x6c, 0x6f, 0x63, 0x6b, 0x52, 0x75, 0x6c, 0x65, 0x12, 0x11, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x2e, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x52, 0x75, 0x6c, 0x65, 0x73, 0x1a, 0x15, 0x2e, 0x70, 0x72,
+	0x6f, 0x74, 0x6f, 0x2e, 0x41, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
+	0x73, 0x65, 0x22, 0x00, 0x12, 0x3d, 0x0a, 0x0f, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x42, 0x6c,
+	0x6f, 0x63, 0x6b, 0x52, 0x75, 0x6c, 0x65, 0x12, 0x11, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e,
+	0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x52, 0x75, 0x6c, 0x65, 0x73, 0x1a, 0x15, 0x2e, 0x70, 0x72, 0x6f,
 	0x74, 0x6f, 0x2e, 0x41, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
-	0x65, 0x22, 0x00, 0x12, 0x3c, 0x0a, 0x0b, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x42, 0x6c, 0x6f,
-	0x63, 0x6b, 0x12, 0x14, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74,
-	0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x15, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
-	0x2e, 0x41, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22,
-	0x00, 0x12, 0x44, 0x0a, 0x0f, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x42, 0x6c, 0x6f, 0x63, 0x6b,
-	0x4c, 0x61, 0x6e, 0x67, 0x12, 0x18, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x44, 0x65, 0x6c,
-	0x65, 0x74, 0x65, 0x4c, 0x61, 0x6e, 0x67, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x15,
-	0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x41, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73,
-	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x42, 0x0f, 0x5a, 0x0d, 0x2e, 0x2f, 0x70, 0x72, 0x6f,
-	0x74, 0x6f, 0x3b, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x65, 0x22, 0x00, 0x12, 0x3d, 0x0a, 0x0f, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x42, 0x6c, 0x6f,
+	0x63, 0x6b, 0x52, 0x75, 0x6c, 0x65, 0x12, 0x11, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x42,
+	0x6c, 0x6f, 0x63, 0x6b, 0x52, 0x75, 0x6c, 0x65, 0x73, 0x1a, 0x15, 0x2e, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x2e, 0x41, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
+	0x22, 0x00, 0x42, 0x0f, 0x5a, 0x0d, 0x2e, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x3b, 0x70, 0x72,
+	0x6f, 0x74, 0x6f, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -593,21 +609,29 @@ var file_Commands_FlipFlop_proto_commands_proto_goTypes = []interface{}{
 	(*BlockRules)(nil),        // 9: proto.BlockRules
 }
 var file_Commands_FlipFlop_proto_commands_proto_depIdxs = []int32{
-	8, // 0: proto.CreateRequest.meta:type_name -> proto.BlockMeta
-	9, // 1: proto.CreateRequest.rules:type_name -> proto.BlockRules
-	0, // 2: proto.FlipFlop.CreateBlock:input_type -> proto.CreateRequest
-	1, // 3: proto.FlipFlop.CreateBlockLang:input_type -> proto.CreateLangRequest
-	2, // 4: proto.FlipFlop.DeleteBlock:input_type -> proto.DeleteRequest
-	3, // 5: proto.FlipFlop.DeleteBlockLang:input_type -> proto.DeleteLangRequest
-	7, // 6: proto.FlipFlop.CreateBlock:output_type -> proto.ActionResponse
-	7, // 7: proto.FlipFlop.CreateBlockLang:output_type -> proto.ActionResponse
-	7, // 8: proto.FlipFlop.DeleteBlock:output_type -> proto.ActionResponse
-	7, // 9: proto.FlipFlop.DeleteBlockLang:output_type -> proto.ActionResponse
-	6, // [6:10] is the sub-list for method output_type
-	2, // [2:6] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	8,  // 0: proto.CreateRequest.meta:type_name -> proto.BlockMeta
+	9,  // 1: proto.CreateRequest.rules:type_name -> proto.BlockRules
+	0,  // 2: proto.FlipFlop.CreateBlock:input_type -> proto.CreateRequest
+	0,  // 3: proto.FlipFlop.UpdateBlock:input_type -> proto.CreateRequest
+	2,  // 4: proto.FlipFlop.DeleteBlock:input_type -> proto.DeleteRequest
+	1,  // 5: proto.FlipFlop.CreateBlockLang:input_type -> proto.CreateLangRequest
+	3,  // 6: proto.FlipFlop.DeleteBlockLang:input_type -> proto.DeleteLangRequest
+	9,  // 7: proto.FlipFlop.CreateBlockRule:input_type -> proto.BlockRules
+	9,  // 8: proto.FlipFlop.UpdateBlockRule:input_type -> proto.BlockRules
+	9,  // 9: proto.FlipFlop.DeleteBlockRule:input_type -> proto.BlockRules
+	7,  // 10: proto.FlipFlop.CreateBlock:output_type -> proto.ActionResponse
+	7,  // 11: proto.FlipFlop.UpdateBlock:output_type -> proto.ActionResponse
+	7,  // 12: proto.FlipFlop.DeleteBlock:output_type -> proto.ActionResponse
+	7,  // 13: proto.FlipFlop.CreateBlockLang:output_type -> proto.ActionResponse
+	7,  // 14: proto.FlipFlop.DeleteBlockLang:output_type -> proto.ActionResponse
+	7,  // 15: proto.FlipFlop.CreateBlockRule:output_type -> proto.ActionResponse
+	7,  // 16: proto.FlipFlop.UpdateBlockRule:output_type -> proto.ActionResponse
+	7,  // 17: proto.FlipFlop.DeleteBlockRule:output_type -> proto.ActionResponse
+	10, // [10:18] is the sub-list for method output_type
+	2,  // [2:10] is the sub-list for method input_type
+	2,  // [2:2] is the sub-list for extension type_name
+	2,  // [2:2] is the sub-list for extension extendee
+	0,  // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_Commands_FlipFlop_proto_commands_proto_init() }
@@ -748,10 +772,16 @@ const _ = grpc.SupportPackageIsVersion6
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type FlipFlopClient interface {
+	// Block
 	CreateBlock(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*ActionResponse, error)
-	CreateBlockLang(ctx context.Context, in *CreateLangRequest, opts ...grpc.CallOption) (*ActionResponse, error)
+	UpdateBlock(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*ActionResponse, error)
 	DeleteBlock(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*ActionResponse, error)
+	CreateBlockLang(ctx context.Context, in *CreateLangRequest, opts ...grpc.CallOption) (*ActionResponse, error)
 	DeleteBlockLang(ctx context.Context, in *DeleteLangRequest, opts ...grpc.CallOption) (*ActionResponse, error)
+	// Rules
+	CreateBlockRule(ctx context.Context, in *BlockRules, opts ...grpc.CallOption) (*ActionResponse, error)
+	UpdateBlockRule(ctx context.Context, in *BlockRules, opts ...grpc.CallOption) (*ActionResponse, error)
+	DeleteBlockRule(ctx context.Context, in *BlockRules, opts ...grpc.CallOption) (*ActionResponse, error)
 }
 
 type flipFlopClient struct {
@@ -771,9 +801,9 @@ func (c *flipFlopClient) CreateBlock(ctx context.Context, in *CreateRequest, opt
 	return out, nil
 }
 
-func (c *flipFlopClient) CreateBlockLang(ctx context.Context, in *CreateLangRequest, opts ...grpc.CallOption) (*ActionResponse, error) {
+func (c *flipFlopClient) UpdateBlock(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*ActionResponse, error) {
 	out := new(ActionResponse)
-	err := c.cc.Invoke(ctx, "/proto.FlipFlop/CreateBlockLang", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/proto.FlipFlop/UpdateBlock", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -789,6 +819,15 @@ func (c *flipFlopClient) DeleteBlock(ctx context.Context, in *DeleteRequest, opt
 	return out, nil
 }
 
+func (c *flipFlopClient) CreateBlockLang(ctx context.Context, in *CreateLangRequest, opts ...grpc.CallOption) (*ActionResponse, error) {
+	out := new(ActionResponse)
+	err := c.cc.Invoke(ctx, "/proto.FlipFlop/CreateBlockLang", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *flipFlopClient) DeleteBlockLang(ctx context.Context, in *DeleteLangRequest, opts ...grpc.CallOption) (*ActionResponse, error) {
 	out := new(ActionResponse)
 	err := c.cc.Invoke(ctx, "/proto.FlipFlop/DeleteBlockLang", in, out, opts...)
@@ -798,12 +837,45 @@ func (c *flipFlopClient) DeleteBlockLang(ctx context.Context, in *DeleteLangRequ
 	return out, nil
 }
 
+func (c *flipFlopClient) CreateBlockRule(ctx context.Context, in *BlockRules, opts ...grpc.CallOption) (*ActionResponse, error) {
+	out := new(ActionResponse)
+	err := c.cc.Invoke(ctx, "/proto.FlipFlop/CreateBlockRule", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *flipFlopClient) UpdateBlockRule(ctx context.Context, in *BlockRules, opts ...grpc.CallOption) (*ActionResponse, error) {
+	out := new(ActionResponse)
+	err := c.cc.Invoke(ctx, "/proto.FlipFlop/UpdateBlockRule", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *flipFlopClient) DeleteBlockRule(ctx context.Context, in *BlockRules, opts ...grpc.CallOption) (*ActionResponse, error) {
+	out := new(ActionResponse)
+	err := c.cc.Invoke(ctx, "/proto.FlipFlop/DeleteBlockRule", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // FlipFlopServer is the server API for FlipFlop service.
 type FlipFlopServer interface {
+	// Block
 	CreateBlock(context.Context, *CreateRequest) (*ActionResponse, error)
-	CreateBlockLang(context.Context, *CreateLangRequest) (*ActionResponse, error)
+	UpdateBlock(context.Context, *CreateRequest) (*ActionResponse, error)
 	DeleteBlock(context.Context, *DeleteRequest) (*ActionResponse, error)
+	CreateBlockLang(context.Context, *CreateLangRequest) (*ActionResponse, error)
 	DeleteBlockLang(context.Context, *DeleteLangRequest) (*ActionResponse, error)
+	// Rules
+	CreateBlockRule(context.Context, *BlockRules) (*ActionResponse, error)
+	UpdateBlockRule(context.Context, *BlockRules) (*ActionResponse, error)
+	DeleteBlockRule(context.Context, *BlockRules) (*ActionResponse, error)
 }
 
 // UnimplementedFlipFlopServer can be embedded to have forward compatible implementations.
@@ -813,14 +885,26 @@ type UnimplementedFlipFlopServer struct {
 func (*UnimplementedFlipFlopServer) CreateBlock(context.Context, *CreateRequest) (*ActionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateBlock not implemented")
 }
-func (*UnimplementedFlipFlopServer) CreateBlockLang(context.Context, *CreateLangRequest) (*ActionResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateBlockLang not implemented")
+func (*UnimplementedFlipFlopServer) UpdateBlock(context.Context, *CreateRequest) (*ActionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateBlock not implemented")
 }
 func (*UnimplementedFlipFlopServer) DeleteBlock(context.Context, *DeleteRequest) (*ActionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteBlock not implemented")
 }
+func (*UnimplementedFlipFlopServer) CreateBlockLang(context.Context, *CreateLangRequest) (*ActionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateBlockLang not implemented")
+}
 func (*UnimplementedFlipFlopServer) DeleteBlockLang(context.Context, *DeleteLangRequest) (*ActionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteBlockLang not implemented")
+}
+func (*UnimplementedFlipFlopServer) CreateBlockRule(context.Context, *BlockRules) (*ActionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateBlockRule not implemented")
+}
+func (*UnimplementedFlipFlopServer) UpdateBlockRule(context.Context, *BlockRules) (*ActionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateBlockRule not implemented")
+}
+func (*UnimplementedFlipFlopServer) DeleteBlockRule(context.Context, *BlockRules) (*ActionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteBlockRule not implemented")
 }
 
 func RegisterFlipFlopServer(s *grpc.Server, srv FlipFlopServer) {
@@ -845,20 +929,20 @@ func _FlipFlop_CreateBlock_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
-func _FlipFlop_CreateBlockLang_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateLangRequest)
+func _FlipFlop_UpdateBlock_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(FlipFlopServer).CreateBlockLang(ctx, in)
+		return srv.(FlipFlopServer).UpdateBlock(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/proto.FlipFlop/CreateBlockLang",
+		FullMethod: "/proto.FlipFlop/UpdateBlock",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FlipFlopServer).CreateBlockLang(ctx, req.(*CreateLangRequest))
+		return srv.(FlipFlopServer).UpdateBlock(ctx, req.(*CreateRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -881,6 +965,24 @@ func _FlipFlop_DeleteBlock_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _FlipFlop_CreateBlockLang_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateLangRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FlipFlopServer).CreateBlockLang(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.FlipFlop/CreateBlockLang",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FlipFlopServer).CreateBlockLang(ctx, req.(*CreateLangRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _FlipFlop_DeleteBlockLang_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteLangRequest)
 	if err := dec(in); err != nil {
@@ -899,6 +1001,60 @@ func _FlipFlop_DeleteBlockLang_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _FlipFlop_CreateBlockRule_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BlockRules)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FlipFlopServer).CreateBlockRule(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.FlipFlop/CreateBlockRule",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FlipFlopServer).CreateBlockRule(ctx, req.(*BlockRules))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _FlipFlop_UpdateBlockRule_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BlockRules)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FlipFlopServer).UpdateBlockRule(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.FlipFlop/UpdateBlockRule",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FlipFlopServer).UpdateBlockRule(ctx, req.(*BlockRules))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _FlipFlop_DeleteBlockRule_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BlockRules)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FlipFlopServer).DeleteBlockRule(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.FlipFlop/DeleteBlockRule",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FlipFlopServer).DeleteBlockRule(ctx, req.(*BlockRules))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _FlipFlop_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "proto.FlipFlop",
 	HandlerType: (*FlipFlopServer)(nil),
@@ -908,16 +1064,32 @@ var _FlipFlop_serviceDesc = grpc.ServiceDesc{
 			Handler:    _FlipFlop_CreateBlock_Handler,
 		},
 		{
-			MethodName: "CreateBlockLang",
-			Handler:    _FlipFlop_CreateBlockLang_Handler,
+			MethodName: "UpdateBlock",
+			Handler:    _FlipFlop_UpdateBlock_Handler,
 		},
 		{
 			MethodName: "DeleteBlock",
 			Handler:    _FlipFlop_DeleteBlock_Handler,
 		},
 		{
+			MethodName: "CreateBlockLang",
+			Handler:    _FlipFlop_CreateBlockLang_Handler,
+		},
+		{
 			MethodName: "DeleteBlockLang",
 			Handler:    _FlipFlop_DeleteBlockLang_Handler,
+		},
+		{
+			MethodName: "CreateBlockRule",
+			Handler:    _FlipFlop_CreateBlockRule_Handler,
+		},
+		{
+			MethodName: "UpdateBlockRule",
+			Handler:    _FlipFlop_UpdateBlockRule_Handler,
+		},
+		{
+			MethodName: "DeleteBlockRule",
+			Handler:    _FlipFlop_DeleteBlockRule_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
