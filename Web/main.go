@@ -27,7 +27,7 @@ func main() {
 
 	// Get Block Metadata and content for a language
 	block.GET("/full/:lang/:id", func(c echo.Context) error {
-		connQuery, err := srv.Dial("Queries", nil)
+		connQuery, err := srv.Dial(service.Queries, nil)
 		if err != nil {
 			c.Logger().Debug(err)
 		}
@@ -40,12 +40,29 @@ func main() {
 
 	// Get All Versions
 	block.GET("/versions/:lang/:id", func(c echo.Context) error {
-		return handler.GetVersions(c, nil)
+		connQuery, err := srv.Dial(service.Queries, nil)
+		if err != nil {
+			c.Logger().Debug(err)
+		}
+
+		defer connQuery.Close()
+
+		clientQuery := q.NewQueriesClient(connQuery)
+		return handler.GetVersions(c, clientQuery)
 	})
 
 	// Get All Versions
 	block.GET("/languages/:id", func(c echo.Context) error {
-		return handler.GetLanguages(c, nil)
+
+		connQuery, err := srv.Dial(service.Queries, nil)
+		if err != nil {
+			c.Logger().Debug(err)
+		}
+
+		defer connQuery.Close()
+
+		clientQuery := q.NewQueriesClient(connQuery)
+		return handler.GetLanguages(c, clientQuery)
 	})
 
 	//

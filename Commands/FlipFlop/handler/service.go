@@ -17,7 +17,7 @@ func (c *CommandService) CreateBlock(rq *pb.CreateRequest) (*pb.ActionResponse, 
 
 	conn, err := sql.Open("postgres", "user=pqgotest dbname=pqgotest sslmode=verify-full")
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	q := db.New(conn)

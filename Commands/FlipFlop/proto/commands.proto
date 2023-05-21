@@ -59,7 +59,7 @@ message DeleteTaxonomy {
 
 message JoinTaxonomy {
     string name = 1;
-    string block_id = 1;
+    string block_id = 2;
 }
 
 message ActionResponse {
