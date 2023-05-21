@@ -81,8 +81,9 @@ func (c *CommandService) UpdateBlock(rq *pb.CreateRequest) (*pb.ActionResponse, 
 
 	rules, name_rule := prepareRules(q, rq.GetRules())
 
-	params := db.UpdateBlockRulesParams{
-		Name:             rq.Meta.GetName(),
+	params := db.UpdateBlockParams{
+		Id:				  rq.GetMeta().BlockId,
+		Name:             rq.GetMeta().Name,
 		RulesName:        sql.NullString{String: name_rule, Valid: true},
 		Nested:           rules.GetNested(),
 		HasLikes:         rules.GetHasLikes(),
@@ -92,7 +93,7 @@ func (c *CommandService) UpdateBlock(rq *pb.CreateRequest) (*pb.ActionResponse, 
 		CommentEditable:  rules.GetCommentsEditable(),
 	}
 
-	err := q.UpdateBlockRules(ctx, params)
+	err := q.UpdateBlock(ctx, params)
 	if err != nil {
 		return &pb.ActionResponse{
 			IsSuceess: false,
@@ -108,14 +109,15 @@ func (c *CommandService) UpdateBlock(rq *pb.CreateRequest) (*pb.ActionResponse, 
 	}, nil
 }
 
-func (c *CommandService) CreateBlockLang(*pb.CreateLangRequest) (*pb.ActionResponse, error) {
+func (c *CommandService) DeleteBlock(*pb.DeleteRequest) (*pb.ActionResponse, error) {
 	return &pb.ActionResponse{
 		IsSuceess: false,
 		Id:        "",
 		Message:   "",
 	}, nil
 }
-func (c *CommandService) DeleteBlock(*pb.DeleteRequest) (*pb.ActionResponse, error) {
+
+func (c *CommandService) CreateBlockLang(*pb.CreateLangRequest) (*pb.ActionResponse, error) {
 	return &pb.ActionResponse{
 		IsSuceess: false,
 		Id:        "",
