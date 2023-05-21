@@ -8,10 +8,15 @@ import "Shared/proto/block.proto";
 
 service FlipFlop {
   rpc CreateBlock(CreateRequest) returns (ActionResponse) {}
+  rpc UpdateBlock(CreateRequest) returns (ActionResponse) {}
   rpc CreateBlockLang(CreateLangRequest) returns (ActionResponse) {}
 
   rpc DeleteBlock(DeleteRequest) returns (ActionResponse) {}
   rpc DeleteBlockLang(DeleteLangRequest) returns (ActionResponse) {}
+
+  rpc CreateBlockRules(BlockRules) returns (ActionResponse) {}
+  rpc UpdateBlockRules(BlockRules) returns (ActionResponse) {}
+  rpc DeleteBlockRules(BlockRules) returns (ActionResponse) {}
 
   // Tags CRUD:
   // rpc CreateTag(CreateTaxonomy) returns (ActionResponse) {}

@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS block_types
 CREATE TABLE IF NOT EXISTS block_rules
 (
     id                 SERIAL PRIMARY KEY,
-    name               VARCHAR(20) NOT NULL,
+    name               VARCHAR(20) UNIQUE NOT NULL,
     descr              VARCHAR(200) NOT NULL,
     nested             BOOLEAN  DEFAULT FALSE,
     has_comments       BOOLEAN  DEFAULT FALSE,

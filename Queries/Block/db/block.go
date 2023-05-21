@@ -46,6 +46,7 @@ func GetLanguages(bq *pb.LanguageRequest) (*pb.LanguageList, error) {
 		bson.M{"$group": bson.M{"_id": "$lang"}},
 		bson.M{"$project": bson.M{"_id": 0, "lang": "$_id"}},
 	}
+
 	cursor, err := collection.Aggregate(context.Background(), pipeline)
 	if err != nil {
 		log.Println(err)
