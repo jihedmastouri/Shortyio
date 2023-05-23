@@ -9,6 +9,8 @@ CREATE SCHEMA IF NOT EXISTS blocks;
 
 SET SCHEMA 'blocks';
 
+
+
 CREATE TABLE IF NOT EXISTS block_types
 (
     id    SERIAL PRIMARY KEY,
@@ -20,7 +22,7 @@ CREATE TABLE IF NOT EXISTS block_rules
 (
     id                 SERIAL PRIMARY KEY,
     name               VARCHAR(20) UNIQUE NOT NULL,
-    descr              VARCHAR(200) NOT NULL,
+    descr              VARCHAR(200)       NOT NULL,
     nested             BOOLEAN  DEFAULT FALSE,
     has_comments       BOOLEAN  DEFAULT FALSE,
     has_likes          BOOLEAN  DEFAULT FALSE,
@@ -63,7 +65,9 @@ CREATE TABLE IF NOT EXISTS block_langs
     updated_at     TIMESTAMP DEFAULT NOW(),
 
     block_id       UUID        NOT NULL
-        REFERENCES blocks (id) ON DELETE CASCADE ON UPDATE CASCADE
+        REFERENCES blocks (id) ON DELETE CASCADE ON UPDATE CASCADE,
+
+    CONSTRAINT unique_pair_constraint UNIQUE (id, lang_code)
 );
 
 CREATE INDEX IF NOT EXISTS idx_block_langs_block_id_lang_name ON block_langs (block_id, lang_name);
@@ -154,7 +158,6 @@ CREATE TRIGGER trigger_increment_version_block_lang
     FOR EACH ROW
 EXECUTE FUNCTION increment_version_block_lang();
 
-
 -- Update 'updated_at' timestamp on every change
 CREATE OR REPLACE FUNCTION update_block_updated_at()
     RETURNS TRIGGER AS
@@ -178,7 +181,8 @@ EXECUTE FUNCTION update_block_updated_at();
 INSERT INTO block_types (name, descr)
 VALUES ('Post', 'Main block used for building blogs');
 
-INSERT INTO block_rules (name, nested, has_comments, has_likes, comments_max_nest, comments_has_likes, comment_editable)
-VALUES ('default', false, false, false, 0, false, false),
-       ('Interactive', false, true, true, 3, true, true);
+INSERT INTO block_rules (name, descr, nested, has_comments, has_likes, comments_max_nest, comments_has_likes,
+                         comment_editable)
+VALUES ('default', 'Nothing allowed by default', false, false, false, 0, false, false),
+       ('Interactive', 'User interaction is allowed', false, true, true, 3, true, true);
 

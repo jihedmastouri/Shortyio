@@ -68,6 +68,10 @@ INSERT INTO blocks (author, name, nested, has_likes, has_comments, comments_max_
         comments_has_likes, comment_editable, rules_name, type)
 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id;
 
+-- name: AddLang :one
+INSERT INTO block_langs (lang_name, lang_code, block_id)
+VALUES ($1, $2, $3) RETURNING id;
+
 ------------------
 -- 3- Joins
 ------------------
@@ -102,14 +106,14 @@ DELETE FROM blocks WHERE id = $1;
 
 -- name: DeleteBlockLang :exec
 DELETE FROM block_langs
-WHERE block_id = $1 AND lang_name = $2;
+WHERE block_id = $1 AND lang_code = $2;
 
 -- name: DeleteBlockText :exec
 DELETE FROM block_texts
 WHERE block_lang_id = (
         SELECT id
         FROM  block_langs
-        WHERE block_id = $1 AND lang_name = $2
+        WHERE block_id = $1 AND lang_code = $2
     );
 
 -- name: DeleteBlockRichText :exec
@@ -117,7 +121,7 @@ DELETE FROM block_rich_texts
 WHERE block_lang_id = (
         SELECT id
         FROM  block_langs
-        WHERE block_id = $1 AND lang_name = $2
+        WHERE block_id = $1 AND lang_code = $2
     );
 
 -- name: DeleteBlockImages :exec
@@ -125,6 +129,6 @@ DELETE FROM block_images
 WHERE block_lang_id = (
         SELECT id
         FROM  block_langs
-        WHERE block_id = $1 AND lang_name = $2
+        WHERE block_id = $1 AND lang_code = $2
     );
 

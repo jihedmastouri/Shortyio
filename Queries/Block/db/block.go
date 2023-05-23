@@ -43,8 +43,8 @@ func GetBlock(bq *pb.BlockRequest) (*pb.Block, error) {
 func GetLanguages(bq *pb.LanguageRequest) (*pb.LanguageList, error) {
 	pipeline := bson.A{
 		bson.M{"$match": bson.M{"block_id": bq.GetId()}},
-		bson.M{"$group": bson.M{"_id": "$lang"}},
-		bson.M{"$project": bson.M{"_id": 0, "lang": "$_id"}},
+		bson.M{"$group": bson.M{"_id": "$lang_code"}},
+		bson.M{"$project": bson.M{"_id": 0, "lang_code": "$_id"}},
 	}
 
 	cursor, err := collection.Aggregate(context.Background(), pipeline)
@@ -72,7 +72,7 @@ func GetLanguages(bq *pb.LanguageRequest) (*pb.LanguageList, error) {
 
 func GetVersions(bq *pb.VersionsRequest) (*pb.VersionResponse, error) {
 	pipeline := bson.A{
-		bson.M{"$match": bson.M{"block_id": bq.GetId(), "lang": bq.GetLang()}},
+		bson.M{"$match": bson.M{"block_id": bq.GetId(), "lang_code": bq.GetLang()}},
 		bson.M{"$group": bson.M{"_id": "$version", "changeLog": bson.M{"$first": "$changeLog"}}},
 		bson.M{"$project": bson.M{"_id": 0, "version": "$_id", "changeLog": 1}},
 	}
@@ -99,7 +99,7 @@ func buildQuery(bq *pb.BlockRequest) (bson.M, *options.FindOneOptions) {
 	if bq.GetVersion() != 0 {
 		return bson.M{
 			"block_id": bq.GetId(),
-			"lang":     bq.GetLang(),
+			"lang_code":     bq.GetLang(),
 			"version":  bq.GetVersion(),
 		}, nil
 	}
@@ -107,6 +107,6 @@ func buildQuery(bq *pb.BlockRequest) (bson.M, *options.FindOneOptions) {
 	opts := options.FindOne().SetSort(bson.D{{Key: "version", Value: -1}})
 	return bson.M{
 		"block_id": bq.GetId(),
-		"lang":     bq.GetLang(),
+		"lang_code":     bq.GetLang(),
 	}, opts
 }

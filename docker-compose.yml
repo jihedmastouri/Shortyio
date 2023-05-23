@@ -1,7 +1,6 @@
 version: '3'
 
 services:
-
   consulserver:
     command: "agent -server -ui -bootstrap-expect=1 -client=0.0.0.0"
     container_name: consul
@@ -26,6 +25,31 @@ services:
       - "2020:8080"
     restart: always
 
+  flipflop:
+    build:
+      args:
+        - DIR=Commands/FlipFlop/
+      context: .
+      dockerfile: ./Commands/FlipFlop/dockerfile
+    depends_on:
+      - consul
+    environment:
+      - CONSUL_HTTP_ADDR=consul:8500
+    expose:
+      - "50051"
+      - "8500"
+    networks:
+      - consul-network
+    restart: always
+
+  db:
+    environment:
+    image: postgres:13-alpine
+    ports:
+     - "5432:5432"
+    volumes:
+      - ./Shared/db/schemas/schema.sql:/docker-entrypoint-initdb.d/init.sql
+
   query:
     build:
       args:
@@ -43,23 +67,6 @@ services:
       - consul-network
     restart: always
 
-  # flipflop:
-  #   build:
-  #     args:
-  #       - DIR=Commands/FlipFlop/
-  #     context: .
-  #     dockerfile: ./Commands/FlipFlop/dockerfile
-  #   depends_on:
-  #     - consul
-  #   environment:
-  #     - CONSUL_HTTP_ADDR=consul:8500
-  #   expose:
-  #     - "50051"
-  #     - "8500"
-  #   networks:
-  #     - consul-network
-  #   restart: always
-
   web:
     build:
       args:
@@ -71,8 +78,6 @@ services:
       - keycloak
     environment:
       - CONSUL_HTTP_ADDR=consulserver:8500
-      - target=consul://consulserver:8500/Queries
-        # "consul://127.0.0.1:8500/whoami?wait=14s&tag=manual"
     expose:
       - "50051"
       - "8500"
@@ -81,17 +86,6 @@ services:
     ports:
       - "42069:8080"
     restart: always
-
-  # db:
-  #   image: postgres:13-alpine
-  #   environment:
-  #     POSTGRES_USER: postgres
-  #     POSTGRES_PASSWORD: root
-  #     POSTGRES_DB: shortyio
-  #   volumes:
-  #     - ./Shared/db/schemas/schema.sql:/docker-entrypoint-initdb.d/init.sql
-  #   ports:
-  #     - "5432:5432"
 
 networks:
   consul-network:

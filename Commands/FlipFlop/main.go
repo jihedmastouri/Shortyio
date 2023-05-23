@@ -1,9 +1,6 @@
 package main
 
 import (
-	"log"
-	"net"
-
 	"github.com/shorty-io/go-shorty/flipFlop/handler"
 	pb "github.com/shorty-io/go-shorty/flipFlop/proto"
 	"github.com/shorty-io/go-shorty/Shared/service"

@@ -15,14 +15,15 @@ type CommandService struct {
 }
 
 func (c *CommandService) CreateBlock(rq *pb.CreateRequest) (*pb.ActionResponse, error) {
-	ctx := context.Background()
-
-	conn, err := sql.Open("postgres", "user=pqgotest dbname=pqgotest sslmode=verify-full")
-	if err != nil {
-		log.Print("Database Connection Failed", err)
-		return nil, err
+	var conn *sql.DB
+	if err := newConn(conn); err != nil {
+		return &pb.ActionResponse{
+			IsSuceess: false,
+			Id:        "",
+			Message:   "Failed to connect to database",
+		}, nil
 	}
-
+	defer conn.Close()
 	q := db.New(conn)
 
 	author, err := uuid.Parse(rq.GetAuthor())
@@ -31,7 +32,7 @@ func (c *CommandService) CreateBlock(rq *pb.CreateRequest) (*pb.ActionResponse, 
 		return nil, err
 	}
 
-	rules, name_rule := prepareRules(q, rq.GetRules())
+	rules, name_rule := getBlockRules(q, rq.GetRules())
 
 	params := db.AddBlockParams{
 		Author:           author,
@@ -45,6 +46,8 @@ func (c *CommandService) CreateBlock(rq *pb.CreateRequest) (*pb.ActionResponse, 
 		RulesName:        sql.NullString{String: name_rule, Valid: true},
 		Type:             0,
 	}
+
+	ctx := context.Background()
 
 	id, err := q.AddBlock(ctx, params)
 	if err != nil {
@@ -62,27 +65,27 @@ func (c *CommandService) CreateBlock(rq *pb.CreateRequest) (*pb.ActionResponse, 
 	}, nil
 }
 
-
 func (c *CommandService) UpdateBlock(rq *pb.CreateRequest) (*pb.ActionResponse, error) {
-	ctx := context.Background()
-
-	conn, err := sql.Open("postgres", "user=pqgotest dbname=pqgotest sslmode=verify-full")
-	if err != nil {
-		log.Print("Database Connection Failed", err)
-		return nil, err
+	var conn *sql.DB
+	if err := newConn(conn); err != nil {
+		return &pb.ActionResponse{
+			IsSuceess: false,
+			Message:   "Failed to connect to database",
+		}, nil
 	}
-
+	defer conn.Close()
 	q := db.New(conn)
 
+	id, err := uuid.Parse(rq.GetMeta().BlockId)
 	if err != nil {
-		log.Print("Failed to parse author UUID:", err)
+		log.Print("Failed to parse Block UUID:", err)
 		return nil, err
 	}
 
-	rules, name_rule := prepareRules(q, rq.GetRules())
+	rules, name_rule := getBlockRules(q, rq.GetRules())
 
 	params := db.UpdateBlockParams{
-		Id:				  rq.GetMeta().BlockId,
+		ID:               id,
 		Name:             rq.GetMeta().Name,
 		RulesName:        sql.NullString{String: name_rule, Valid: true},
 		Nested:           rules.GetNested(),
@@ -93,8 +96,9 @@ func (c *CommandService) UpdateBlock(rq *pb.CreateRequest) (*pb.ActionResponse, 
 		CommentEditable:  rules.GetCommentsEditable(),
 	}
 
-	err := q.UpdateBlock(ctx, params)
-	if err != nil {
+	ctx := context.Background()
+	if err = q.UpdateBlock(ctx, params); err != nil {
+		log.Print("Failed to delete block:", err)
 		return &pb.ActionResponse{
 			IsSuceess: false,
 			Id:        "",
@@ -105,53 +109,119 @@ func (c *CommandService) UpdateBlock(rq *pb.CreateRequest) (*pb.ActionResponse, 
 	return &pb.ActionResponse{
 		IsSuceess: true,
 		Id:        id.String(),
-		Message:   "",
+		Message:   "Updated successfully",
 	}, nil
 }
 
-func (c *CommandService) DeleteBlock(*pb.DeleteRequest) (*pb.ActionResponse, error) {
+func (c *CommandService) DeleteBlock(rq *pb.DeleteRequest) (*pb.ActionResponse, error) {
+	var conn *sql.DB
+	if err := newConn(conn); err != nil {
+		return &pb.ActionResponse{
+			IsSuceess: false,
+			Message:   "Failed to connect to database",
+		}, nil
+	}
+	defer conn.Close()
+	q := db.New(conn)
+
+	ctx := context.Background()
+	id, err := uuid.Parse(rq.GetId())
+	if err != nil {
+		log.Print("Failed to parse Block UUID:", err)
+		return nil, err
+	}
+
+	if err = q.DeleteBlock(ctx, id); err != nil {
+		log.Print("Failed to delete block:", err)
+		return &pb.ActionResponse{
+			IsSuceess: false,
+			Id:        id.String(),
+			Message:   "Failed to delete block",
+		}, nil
+	}
+
 	return &pb.ActionResponse{
-		IsSuceess: false,
-		Id:        "",
-		Message:   "",
+		IsSuceess: true,
+		Id:        id.String(),
+		Message:   "Deleted successfully",
 	}, nil
 }
 
-func (c *CommandService) CreateBlockLang(*pb.CreateLangRequest) (*pb.ActionResponse, error) {
-	return &pb.ActionResponse{
-		IsSuceess: false,
-		Id:        "",
-		Message:   "",
-	}, nil
-}
+func (c *CommandService) CreateBlockLang(rq *pb.CreateLangRequest) (*pb.ActionResponse, error) {
+	var conn *sql.DB
+	if err := newConn(conn); err != nil {
+		return &pb.ActionResponse{
+			IsSuceess: false,
+			Message:   "Failed to connect to database",
+		}, nil
+	}
+	defer conn.Close()
+	q := db.New(conn)
 
-func (c *CommandService) DeleteBlockLang(*pb.DeleteLangRequest) (*pb.ActionResponse, error) {
-	return &pb.ActionResponse{
-		IsSuceess: false,
-		Id:        "",
-		Message:   "",
-	}, nil
-}
-
-func prepareRules(q *db.Queries, br *pb.BlockRules) (pb.BlockRules_Rules, string) {
-
-	if br.GetRules() != nil {
-		return *br.GetRules(), "custom"
+	blockid, err := uuid.Parse(rq.BlockId)
+	if err != nil {
+		log.Print("Failed to parse Block UUID:", err)
+		return nil, err
 	}
 
 	ctx := context.Background()
-	rules, err := q.GetBlockRulesByName(ctx, br.GetRuleName())
-	if err != nil {
-		panic(err)
+	params := db.AddLangParams{
+		LangName: rq.Id,
+		LangCode: rq.LangName,
+		BlockID:  blockid,
 	}
 
-	return pb.BlockRules_Rules{
-		Nested:            rules.Nested.Bool,
-		HasLikes:          rules.HasLikes.Bool,
-		HasComments:       rules.HasComments.Bool,
-		CommentsNested:    rules.Nested.Bool,
-		CommentsHasLikes:  rules.CommentsHasLikes.Bool,
-		CommentsEditable:  rules.CommentEditable.Bool,
-		CommentsMaxNested: int32(rules.CommentsMaxNest.Int16),
-	}, br.GetRuleName()
+	id, err := q.AddLang(ctx, params)
+	if err != nil {
+		return &pb.ActionResponse{
+			IsSuceess: false,
+			Id:        "",
+			Message:   err.Error(),
+		}, nil
+	}
+
+	return &pb.ActionResponse{
+		IsSuceess: true,
+		Id:        string(id),
+		Message:   "Deleted successfully",
+	}, nil
+}
+
+func (c *CommandService) DeleteBlockLang(rq *pb.DeleteLangRequest) (*pb.ActionResponse, error) {
+	var conn *sql.DB
+	if err := newConn(conn); err != nil {
+		return &pb.ActionResponse{
+			IsSuceess: false,
+			Message:   "Failed to connect to database",
+		}, nil
+	}
+	defer conn.Close()
+	q := db.New(conn)
+
+	id, err := uuid.Parse(rq.GetId())
+	if err != nil {
+		log.Print("Failed to parse Block UUID:", err)
+		return nil, err
+	}
+
+	ctx := context.Background()
+	params := db.DeleteBlockLangParams{
+		BlockID:  id,
+		LangCode: rq.GetLangName(),
+	}
+
+	if err = q.DeleteBlockLang(ctx, params); err != nil {
+		log.Print("Failed to delete block lang:", err)
+		return &pb.ActionResponse{
+			IsSuceess: false,
+			Id:        id.String(),
+			Message:   "Failed to delete block",
+		}, nil
+	}
+
+	return &pb.ActionResponse{
+		IsSuceess: true,
+		Id:        id.String(),
+		Message:   "Deleted successfully",
+	}, nil
 }

@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
+
 	// "os"
 
 	"go.mongodb.org/mongo-driver/mongo"
@@ -13,16 +15,15 @@ import (
 var collection *mongo.Collection
 
 func init() {
+	host := os.Getenv("MONGO_HOST")
+	username := os.Getenv("MONGO_USER")
+	psswd := os.Getenv("MONGO_PASSWORD")
 
-	pwd := "DWldoNa8losWte27"
-	username := "reader"
-
-	// username := os.Getenv("MongoUSR")
-	// pwd := os.Getenv("MongoPWD")
 	connString := fmt.Sprintf(
-        "mongodb+srv://%s:%s@cluster0.ptlgsef.mongodb.net/?w=majority",
+        "mongodb+srv://%s:%s@%s",
+		host,
         username,
-        pwd,
+        psswd,
     )
 	log.Print(connString)
 

@@ -38,9 +38,11 @@ message CreateRequest {
 
 message CreateLangRequest {
     string id = 1;
-    string langName = 2;
-    optional string previousLang = 3;
-    string author = 4;
+    string lang_name = 2;
+    string lang_code = 3;
+    string block_id = 4;
+    string author = 5;
+    optional string previousLang = 6;
 }
 
 message DeleteRequest {
@@ -50,7 +52,7 @@ message DeleteRequest {
 
 message DeleteLangRequest {
     string id = 1;
-    string langName = 2;
+    string lang_code = 2;
     string author = 3;
 }
 

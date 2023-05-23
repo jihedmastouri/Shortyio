@@ -53,6 +53,24 @@ func (q *Queries) AddBlock(ctx context.Context, arg AddBlockParams) (uuid.UUID, 
 	return id, err
 }
 
+const addLang = `-- name: AddLang :one
+INSERT INTO block_langs (lang_name, lang_code, block_id)
+VALUES ($1, $2, $3) RETURNING id
+`
+
+type AddLangParams struct {
+	LangName string
+	LangCode string
+	BlockID  uuid.UUID
+}
+
+func (q *Queries) AddLang(ctx context.Context, arg AddLangParams) (int32, error) {
+	row := q.db.QueryRowContext(ctx, addLang, arg.LangName, arg.LangCode, arg.BlockID)
+	var id int32
+	err := row.Scan(&id)
+	return id, err
+}
+
 const deleteBlock = `-- name: DeleteBlock :exec
 
 DELETE FROM blocks WHERE id = $1
@@ -71,32 +89,32 @@ DELETE FROM block_images
 WHERE block_lang_id = (
         SELECT id
         FROM  block_langs
-        WHERE block_id = $1 AND lang_name = $2
+        WHERE block_id = $1 AND lang_code = $2
     )
 `
 
 type DeleteBlockImagesParams struct {
 	BlockID  uuid.UUID
-	LangName string
+	LangCode string
 }
 
 func (q *Queries) DeleteBlockImages(ctx context.Context, arg DeleteBlockImagesParams) error {
-	_, err := q.db.ExecContext(ctx, deleteBlockImages, arg.BlockID, arg.LangName)
+	_, err := q.db.ExecContext(ctx, deleteBlockImages, arg.BlockID, arg.LangCode)
 	return err
 }
 
 const deleteBlockLang = `-- name: DeleteBlockLang :exec
 DELETE FROM block_langs
-WHERE block_id = $1 AND lang_name = $2
+WHERE block_id = $1 AND lang_code = $2
 `
 
 type DeleteBlockLangParams struct {
 	BlockID  uuid.UUID
-	LangName string
+	LangCode string
 }
 
 func (q *Queries) DeleteBlockLang(ctx context.Context, arg DeleteBlockLangParams) error {
-	_, err := q.db.ExecContext(ctx, deleteBlockLang, arg.BlockID, arg.LangName)
+	_, err := q.db.ExecContext(ctx, deleteBlockLang, arg.BlockID, arg.LangCode)
 	return err
 }
 
@@ -105,17 +123,17 @@ DELETE FROM block_rich_texts
 WHERE block_lang_id = (
         SELECT id
         FROM  block_langs
-        WHERE block_id = $1 AND lang_name = $2
+        WHERE block_id = $1 AND lang_code = $2
     )
 `
 
 type DeleteBlockRichTextParams struct {
 	BlockID  uuid.UUID
-	LangName string
+	LangCode string
 }
 
 func (q *Queries) DeleteBlockRichText(ctx context.Context, arg DeleteBlockRichTextParams) error {
-	_, err := q.db.ExecContext(ctx, deleteBlockRichText, arg.BlockID, arg.LangName)
+	_, err := q.db.ExecContext(ctx, deleteBlockRichText, arg.BlockID, arg.LangCode)
 	return err
 }
 
@@ -124,17 +142,17 @@ DELETE FROM block_texts
 WHERE block_lang_id = (
         SELECT id
         FROM  block_langs
-        WHERE block_id = $1 AND lang_name = $2
+        WHERE block_id = $1 AND lang_code = $2
     )
 `
 
 type DeleteBlockTextParams struct {
 	BlockID  uuid.UUID
-	LangName string
+	LangCode string
 }
 
 func (q *Queries) DeleteBlockText(ctx context.Context, arg DeleteBlockTextParams) error {
-	_, err := q.db.ExecContext(ctx, deleteBlockText, arg.BlockID, arg.LangName)
+	_, err := q.db.ExecContext(ctx, deleteBlockText, arg.BlockID, arg.LangCode)
 	return err
 }
 
