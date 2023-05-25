@@ -12,6 +12,28 @@ SELECT
                     'author', b.author,
                     'block_type', bt.name,
                     'comments_type', ct.name,
+                    'tags', (
+                        SELECT json_agg(
+                            json_build_object(
+                                'id', t.id,
+                                'name', t.name,
+                                'descr', t.descr
+                            )
+                        )
+                        FROM tags t
+                        JOIN block_tags bt ON t.id = bt.tag_id
+                    ),
+                    'categories', (
+                        SELECT json_agg(
+                            json_build_object(
+                                'id', c.id,
+                                'name', c.name,
+                                'descr', c.descr
+                            )
+                        )
+                        FROM categories c
+                        JOIN block_categ bc ON c.id = bc.categ_id
+                    ),
                     'langs', (
                         SELECT json_agg(
                             json_build_object(
@@ -58,33 +80,13 @@ SELECT
                         )
                         FROM block_langs bl
                         WHERE bl.block_id = b.id
+                        AND bl.lang_code = $2
                     )
                 )
             )
             FROM blocks b
             LEFT JOIN block_types bt ON b.block_type = bt.id
             LEFT JOIN comment_types ct ON b.comments_type = ct.id
+            Where b.id = $1
         ),
-        'tags', (
-            SELECT json_agg(
-                json_build_object(
-                    'id', t.id,
-                    'name', t.name,
-                    'descr', t.descr
-                )
-            )
-            FROM tags t
-            JOIN block_tags bt ON t.id = bt.tag_id
-        ),
-        'categories', (
-            SELECT json_agg(
-                json_build_object(
-                    'id', c.id,
-                    'name', c.name,
-                    'descr', c.descr
-                )
-            )
-            FROM categories c
-            JOIN block_categ bc ON c.id = bc.categ_id
-        )
     ) AS aggregated_json;

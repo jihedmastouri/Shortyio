@@ -14,55 +14,77 @@ services:
       - "8500:8500"
       - "8600:8600/udp"
 
-  keycloak:
-    command: "start-dev"
-    container_name: keycloak
-    environment:
-      - KEYCLOAK_ADMIN=admin
-      - KEYCLOAK_ADMIN_PASSWORD=admin
-    image: quay.io/keycloak/keycloak:latest
-    ports:
-      - "2020:8080"
-    restart: always
+  # keycloak:
+  #   command: "start-dev"
+  #   container_name: keycloak
+  #   environment:
+  #     - KEYCLOAK_ADMIN=admin
+  #     - KEYCLOAK_ADMIN_PASSWORD=admin
+  #   image: quay.io/keycloak/keycloak:latest
+  #   ports:
+  #     - "2020:8080"
+  #   restart: always
 
-  flipflop:
-    build:
-      args:
-        - DIR=Commands/FlipFlop/
-      context: .
-      dockerfile: ./Commands/FlipFlop/dockerfile
-    depends_on:
-      - consul
-    environment:
-      - CONSUL_HTTP_ADDR=consul:8500
+  # flipflop:
+  #   build:
+  #     args:
+  #       - DIR=Commands/FlipFlop/
+  #     context: .
+  #     dockerfile: ./Commands/FlipFlop/dockerfile
+  #   depends_on:
+  #     - consul
+  #   environment:
+  #     - CONSUL_HTTP_ADDR=consul:8500
+  #   expose:
+  #     - "50051"
+  #     - "8500"
+  #   networks:
+  #     - consul-network
+  #   restart: always
+
+  # db:
+  #   environment:
+  #   image: postgres:13-alpine
+  #   ports:
+  #    - "5432:5432"
+  #   volumes:
+  #     - ./Shared/db/schemas/schema.sql:/docker-entrypoint-initdb.d/init.sql
+
+  # query:
+  #   build:
+  #     args:
+  #       - DIR=Queries/Block
+  #     context: .
+  #     dockerfile: ./Queries/Block/Dockerfile
+  #   depends_on:
+  #     - consulserver
+  #   environment:
+  #     - CONSUL_HTTP_ADDR=consulserver:8500
+  #   expose:
+  #     - "50051"
+  #     - "8500"
+  #   networks:
+  #     - consul-network
+  #   restart: always
+
+  nats:
+    image: nats
     expose:
-      - "50051"
-      - "8500"
-    networks:
-      - consul-network
-    restart: always
+      - "4222"
 
-  db:
-    environment:
-    image: postgres:13-alpine
-    ports:
-     - "5432:5432"
-    volumes:
-      - ./Shared/db/schemas/schema.sql:/docker-entrypoint-initdb.d/init.sql
 
-  query:
+  aggregator:
     build:
       args:
-        - DIR=Queries/Block
+        - DIR=Aggregator
       context: .
-      dockerfile: ./Queries/Block/Dockerfile
+      dockerfile: ./Aggregator/Dockerfile
     depends_on:
       - consulserver
     environment:
       - CONSUL_HTTP_ADDR=consulserver:8500
     expose:
       - "50051"
-      - "8500"
     networks:
       - consul-network
     restart: always

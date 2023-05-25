@@ -16,13 +16,15 @@ type CommandService struct {
 
 func (c *CommandService) CreateBlock(rq *pb.CreateRequest) (*pb.ActionResponse, error) {
 	var conn *sql.DB
-	if err := newConn(conn); err != nil {
+	conn, err := newConn()
+	if err != nil {
 		return &pb.ActionResponse{
 			IsSuceess: false,
 			Id:        "",
 			Message:   "Failed to connect to database",
 		}, nil
 	}
+
 	defer conn.Close()
 	q := db.New(conn)
 
@@ -67,14 +69,18 @@ func (c *CommandService) CreateBlock(rq *pb.CreateRequest) (*pb.ActionResponse, 
 
 func (c *CommandService) UpdateBlock(rq *pb.CreateRequest) (*pb.ActionResponse, error) {
 	var conn *sql.DB
-	if err := newConn(conn); err != nil {
+	conn, err := newConn()
+	if err != nil {
 		return &pb.ActionResponse{
 			IsSuceess: false,
+			Id:        "",
 			Message:   "Failed to connect to database",
 		}, nil
 	}
+
 	defer conn.Close()
 	q := db.New(conn)
+
 
 	id, err := uuid.Parse(rq.GetMeta().BlockId)
 	if err != nil {
@@ -115,14 +121,18 @@ func (c *CommandService) UpdateBlock(rq *pb.CreateRequest) (*pb.ActionResponse, 
 
 func (c *CommandService) DeleteBlock(rq *pb.DeleteRequest) (*pb.ActionResponse, error) {
 	var conn *sql.DB
-	if err := newConn(conn); err != nil {
+	conn, err := newConn()
+	if err != nil {
 		return &pb.ActionResponse{
 			IsSuceess: false,
+			Id:        "",
 			Message:   "Failed to connect to database",
 		}, nil
 	}
+
 	defer conn.Close()
 	q := db.New(conn)
+
 
 	ctx := context.Background()
 	id, err := uuid.Parse(rq.GetId())
@@ -149,14 +159,18 @@ func (c *CommandService) DeleteBlock(rq *pb.DeleteRequest) (*pb.ActionResponse, 
 
 func (c *CommandService) CreateBlockLang(rq *pb.CreateLangRequest) (*pb.ActionResponse, error) {
 	var conn *sql.DB
-	if err := newConn(conn); err != nil {
+	conn, err := newConn()
+	if err != nil {
 		return &pb.ActionResponse{
 			IsSuceess: false,
+			Id:        "",
 			Message:   "Failed to connect to database",
 		}, nil
 	}
+
 	defer conn.Close()
 	q := db.New(conn)
+
 
 	blockid, err := uuid.Parse(rq.BlockId)
 	if err != nil {
@@ -189,14 +203,18 @@ func (c *CommandService) CreateBlockLang(rq *pb.CreateLangRequest) (*pb.ActionRe
 
 func (c *CommandService) DeleteBlockLang(rq *pb.DeleteLangRequest) (*pb.ActionResponse, error) {
 	var conn *sql.DB
-	if err := newConn(conn); err != nil {
+	conn, err := newConn()
+	if err != nil {
 		return &pb.ActionResponse{
 			IsSuceess: false,
+			Id:        "",
 			Message:   "Failed to connect to database",
 		}, nil
 	}
+
 	defer conn.Close()
 	q := db.New(conn)
+
 
 	id, err := uuid.Parse(rq.GetId())
 	if err != nil {

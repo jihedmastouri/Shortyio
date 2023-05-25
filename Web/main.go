@@ -13,6 +13,12 @@ func main() {
 
 	e := echo.New()
 
+	nc, err := nats.Connect("nats://localhost:4222")
+    if err != nil {
+        log.Fatal(err)
+    }
+    defer nc.Close()
+
 	// Block/full/Lang/id
 	// Block/meta/lang/id
 	// Block/content/lang/id
@@ -20,6 +26,7 @@ func main() {
 	// Block/languages/id
 
 	e.GET("/", func(c echo.Context) error {
+		// "BlockUpdated", "BlockUpdatedQ"
 		return c.String(200, "Hello world!")
 	})
 
