@@ -10,6 +10,14 @@ import (
 )
 
 func GetBlockMeta(bq *pb.BlockRequest) (*pb.BlockMeta, error) {
+	client, err := connectMongo()
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	defer client.Disconnect(context.Background())
+	collection := getCollection(client)
+
 	query, option := buildQuery(bq)
 	cusror := collection.FindOne(context.Background(), query, option)
 	meta := &pb.BlockMeta{}
@@ -20,6 +28,14 @@ func GetBlockMeta(bq *pb.BlockRequest) (*pb.BlockMeta, error) {
 }
 
 func GetBlockContent(bq *pb.BlockRequest) (*pb.BlockContent, error) {
+	client, err := connectMongo()
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	defer client.Disconnect(context.Background())
+	collection := getCollection(client)
+
 	query, option := buildQuery(bq)
 	cusror := collection.FindOne(context.Background(), query, option)
 	content := &pb.BlockContent{}
@@ -30,6 +46,14 @@ func GetBlockContent(bq *pb.BlockRequest) (*pb.BlockContent, error) {
 }
 
 func GetBlock(bq *pb.BlockRequest) (*pb.Block, error) {
+	client, err := connectMongo()
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	defer client.Disconnect(context.Background())
+	collection := getCollection(client)
+
 	query, option := buildQuery(bq)
 	cusror := collection.FindOne(context.Background(), query, option)
 	block := &pb.Block{}
@@ -41,6 +65,14 @@ func GetBlock(bq *pb.BlockRequest) (*pb.Block, error) {
 }
 
 func GetLanguages(bq *pb.LanguageRequest) (*pb.LanguageList, error) {
+	client, err := connectMongo()
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	defer client.Disconnect(context.Background())
+	collection := getCollection(client)
+
 	pipeline := bson.A{
 		bson.M{"$match": bson.M{"block_id": bq.GetId()}},
 		bson.M{"$group": bson.M{"_id": "$lang_code"}},
@@ -71,6 +103,15 @@ func GetLanguages(bq *pb.LanguageRequest) (*pb.LanguageList, error) {
 }
 
 func GetVersions(bq *pb.VersionsRequest) (*pb.VersionResponse, error) {
+	client, err := connectMongo()
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	defer client.Disconnect(context.Background())
+	collection := getCollection(client)
+
+
 	pipeline := bson.A{
 		bson.M{"$match": bson.M{"block_id": bq.GetId(), "lang_code": bq.GetLang()}},
 		bson.M{"$group": bson.M{"_id": "$version", "changeLog": bson.M{"$first": "$changeLog"}}},
@@ -95,18 +136,17 @@ func GetVersions(bq *pb.VersionsRequest) (*pb.VersionResponse, error) {
 }
 
 func buildQuery(bq *pb.BlockRequest) (bson.M, *options.FindOneOptions) {
-
 	if bq.GetVersion() != 0 {
 		return bson.M{
-			"block_id": bq.GetId(),
-			"lang_code":     bq.GetLang(),
-			"version":  bq.GetVersion(),
+			"block_id":  bq.GetId(),
+			"lang_code": bq.GetLang(),
+			"version":   bq.GetVersion(),
 		}, nil
 	}
 
 	opts := options.FindOne().SetSort(bson.D{{Key: "version", Value: -1}})
 	return bson.M{
-		"block_id": bq.GetId(),
-		"lang_code":     bq.GetLang(),
+		"block_id":  bq.GetId(),
+		"lang_code": bq.GetLang(),
 	}, opts
 }

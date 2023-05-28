@@ -12,19 +12,17 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var collection *mongo.Collection
-
-func init() {
+func connectMongo() (*mongo.Client, error) {
 	host := os.Getenv("MONGO_HOST")
 	username := os.Getenv("MONGO_USER")
 	psswd := os.Getenv("MONGO_PASSWORD")
 
 	connString := fmt.Sprintf(
-        "mongodb+srv://%s:%s@%s",
+		"mongodb+srv://%s:%s@%s",
 		host,
-        username,
-        psswd,
-    )
+		username,
+		psswd,
+	)
 	log.Print(connString)
 
 	clientOptions := options.Client().ApplyURI(connString)
@@ -32,13 +30,19 @@ func init() {
 
 	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
-        log.Fatal(err)
-    }
+		log.Fatal(err)
+		return nil, err
+	}
 
 	err = client.Ping(ctx, nil)
 	if err != nil {
 		log.Fatal(err)
+		return nil, err
 	}
 
-	collection = client.Database("shortyio").Collection("blocks")
+	return client, nil
+}
+
+func getCollection(client *mongo.Client) *mongo.Collection {
+	return client.Database("shortyio").Collection("blocks")
 }
