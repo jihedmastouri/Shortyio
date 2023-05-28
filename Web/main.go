@@ -1,7 +1,11 @@
 package main
 
 import (
+	"log"
+	"os"
+
 	"github.com/labstack/echo/v4"
+	"github.com/nats-io/nats.go"
 	"github.com/shorty-io/go-shorty/Shared/service"
 	q "github.com/shorty-io/go-shorty/queries/proto"
 	"github.com/shorty-io/go-shorty/web/handler"
@@ -13,7 +17,12 @@ func main() {
 
 	e := echo.New()
 
-	nc, err := nats.Connect("nats://localhost:4222")
+	natsUrl := os.Getenv("NATS")
+	if natsUrl == "" {
+		natsUrl = nats.DefaultURL
+	}
+
+	nc, err := nats.Connect(natsUrl)
     if err != nil {
         log.Fatal(err)
     }
@@ -27,6 +36,7 @@ func main() {
 
 	e.GET("/", func(c echo.Context) error {
 		// "BlockUpdated", "BlockUpdatedQ"
+		nc.Publish("BlockUpdated", []byte("Hello World"))
 		return c.String(200, "Hello world!")
 	})
 

@@ -68,21 +68,23 @@ services:
   #   restart: always
 
   nats:
-    image: nats
     expose:
       - "4222"
-
+    image: nats
+    networks:
+      - consul-network
 
   aggregator:
     build:
       args:
         - DIR=Aggregator
       context: .
-      dockerfile: ./Aggregator/Dockerfile
+      dockerfile: ./Web/Dockerfile
     depends_on:
       - consulserver
     environment:
       - CONSUL_HTTP_ADDR=consulserver:8500
+      - NATS=nats
     expose:
       - "50051"
     networks:
@@ -97,9 +99,10 @@ services:
       dockerfile: ./Web/Dockerfile
     depends_on:
       - consulserver
-      - keycloak
+      # - keycloak
     environment:
       - CONSUL_HTTP_ADDR=consulserver:8500
+      - NATS=nats
     expose:
       - "50051"
       - "8500"
