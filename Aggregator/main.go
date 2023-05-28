@@ -1,30 +1,37 @@
 package main
 
 import (
-	"fmt"
 	"log"
+	"os"
 
 	"github.com/nats-io/nats.go"
+
+	"github.com/shorty-io/go-shorty/aggregator/handler"
 )
 
 func main() {
-	nc, err := nats.Connect(nats.DefaultURL)
+
+	natsUrl := os.Getenv("NATS")
+	if natsUrl == "" {
+		natsUrl = nats.DefaultURL
+	}
+
+	nc, err := nats.Connect(natsUrl)
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer nc.Close()
+	defer nc.Drain()
 
-	// Subscribe
-	_ , err = nc.QueueSubscribe("BlockUpdated", "BlockUpdatedQ", func(m *nats.Msg) {
-		fmt.Printf("Received a message: %s\n", string(m.Data))
-	})
-
+	_, err = nc.QueueSubscribe("BlockUpdated", "BlockUpdatedQ", handler.BlockUpdated)
 	if err != nil {
-        log.Fatal(err)
-    }
+		log.Fatal(err)
+	}
 
-    if err := nc.LastError(); err != nil {
-        log.Fatal(err)
-    }
+	nc.Flush()
+	if err := nc.LastError(); err != nil {
+		log.Fatal(err)
+	}
+	log.Println("Waiting for messages...")
 
+	select {}
 }
