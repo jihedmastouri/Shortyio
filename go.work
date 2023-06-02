@@ -5,4 +5,5 @@ use (
     ./Queries/Block/
     ./Shared/
     ./Aggregator/
+    ./Commands/FlipFlop/
 )

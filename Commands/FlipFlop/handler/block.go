@@ -15,7 +15,6 @@ type CommandService struct {
 }
 
 func (c *CommandService) CreateBlock(rq *pb.CreateRequest) (*pb.ActionResponse, error) {
-	var conn *sql.DB
 	conn, err := newConn()
 	if err != nil {
 		return &pb.ActionResponse{
@@ -36,7 +35,7 @@ func (c *CommandService) CreateBlock(rq *pb.CreateRequest) (*pb.ActionResponse, 
 
 	rules, name_rule := getBlockRules(q, rq.GetRules())
 
-	params := db.AddBlockParams{
+	params := db.CreateBlockParams{
 		Author:           author,
 		Name:             rq.Meta.GetName(),
 		Nested:           rules.GetNested(),
@@ -51,7 +50,7 @@ func (c *CommandService) CreateBlock(rq *pb.CreateRequest) (*pb.ActionResponse, 
 
 	ctx := context.Background()
 
-	id, err := q.AddBlock(ctx, params)
+	id, err := q.CreateBlock(ctx, params)
 	if err != nil {
 		return &pb.ActionResponse{
 			IsSuceess: false,
@@ -68,7 +67,6 @@ func (c *CommandService) CreateBlock(rq *pb.CreateRequest) (*pb.ActionResponse, 
 }
 
 func (c *CommandService) UpdateBlock(rq *pb.CreateRequest) (*pb.ActionResponse, error) {
-	var conn *sql.DB
 	conn, err := newConn()
 	if err != nil {
 		return &pb.ActionResponse{
@@ -120,7 +118,6 @@ func (c *CommandService) UpdateBlock(rq *pb.CreateRequest) (*pb.ActionResponse, 
 }
 
 func (c *CommandService) DeleteBlock(rq *pb.DeleteRequest) (*pb.ActionResponse, error) {
-	var conn *sql.DB
 	conn, err := newConn()
 	if err != nil {
 		return &pb.ActionResponse{
@@ -158,7 +155,6 @@ func (c *CommandService) DeleteBlock(rq *pb.DeleteRequest) (*pb.ActionResponse, 
 }
 
 func (c *CommandService) CreateBlockLang(rq *pb.CreateLangRequest) (*pb.ActionResponse, error) {
-	var conn *sql.DB
 	conn, err := newConn()
 	if err != nil {
 		return &pb.ActionResponse{
@@ -179,13 +175,13 @@ func (c *CommandService) CreateBlockLang(rq *pb.CreateLangRequest) (*pb.ActionRe
 	}
 
 	ctx := context.Background()
-	params := db.AddLangParams{
+	params := db.CreateLangParams{
 		LangName: rq.Id,
 		LangCode: rq.LangName,
 		BlockID:  blockid,
 	}
 
-	id, err := q.AddLang(ctx, params)
+	id, err := q.CreateLang(ctx, params)
 	if err != nil {
 		return &pb.ActionResponse{
 			IsSuceess: false,
@@ -202,7 +198,6 @@ func (c *CommandService) CreateBlockLang(rq *pb.CreateLangRequest) (*pb.ActionRe
 }
 
 func (c *CommandService) DeleteBlockLang(rq *pb.DeleteLangRequest) (*pb.ActionResponse, error) {
-	var conn *sql.DB
 	conn, err := newConn()
 	if err != nil {
 		return &pb.ActionResponse{

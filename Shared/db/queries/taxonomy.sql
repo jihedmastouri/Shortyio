@@ -1,27 +1,3 @@
---   ____                  _
---  / __ \__  _____  _____(_)__  _____
--- / / / / / / / _ \/ ___/ / _ \/ ___/
---/ /_/ / /_/ /  __/ /  / /  __(__  )
---\___\_\__,_/\___/_/  /_/\___/____/
---------------------------------------------
--- This File Contains all Queries on the Main Database.
--- Refer to Sqlc for more information https://docs.sqlc.dev/en/stable/
---
--- The File Includes 6 Section:
---
--- 1- `Selections` following: Get? / Get?By?
--- 2- `Adding` Inserts following Create?
--- 3- `Joins` insert for ManyToMany, following Add?To?
--- 4- `Updates` following: Update?
--- 5- `Deletions` following: Delete?
--- 6- `Counts` following: Count?
---
--- Please use PascalCase for naming.
-
-------------------
--- 1- Selections
-------------------
-
 -- name: GetBlockCategories :many
 SELECT c.name
 FROM categories c
@@ -48,45 +24,51 @@ SELECT name, descr
 FROM tags
 LIMIT 100;
 
-------------------
--- 2- Adding
-------------------
-
--- name: AddTag :one
+-- name: CreateTag :one
 INSERT INTO tags (
     name, descr
 ) VALUES ($1,$2) RETURNING name;
 
--- name: AddCateg :one
+-- name: CreateCateg :one
 INSERT INTO categories (
     name, descr
 ) VALUES ($1,$2) RETURNING name;
 
-------------------
--- 3- Joins
-------------------
-
--- name: JoinTagToBlock :exec
+-- name: AddTagToBlock :exec
 INSERT INTO block_tags(
     block_id, tag_id
 ) VALUES ($1,$2);
 
--- name: JoinCategToBlock :exec
+-- name: AddCategToBlock :exec
 INSERT INTO block_categs(
     block_id, categ_id
 ) VALUES ($1,$2);
 
-------------------
--- 3- Joins
-------------------
+-- name: UpdateTag :one
+Update tags
+    SET name = $1,
+        descr = $2
+WHERE name = $1
+RETURNING id;
 
-------------------
--- 5- Updates
-------------------
+-- name: UpdateCategory :one
+Update categories
+    SET name = $1,
+        descr = $2
+WHERE name = $1
+RETURNING id;
 
-------------------
--- 6- Deletions
-------------------
+-- name: UpdateTagById :exec
+Update tags
+    SET name = $2,
+        descr = $3
+WHERE id = $1;
+
+-- name: UpdateCategoryById :exec
+Update categories
+    SET name = $2,
+        descr = $3
+WHERE id = $1;
 
 -- name: DeleteBlockCateg :exec
 DELETE FROM block_categs
@@ -121,3 +103,13 @@ WHERE id = $1;
 -- name: DeleteTagByID :exec
 DELETE FROM tags
 WHERE id = $1;
+
+-- name: DeleteCateg :one
+DELETE FROM categories
+WHERE name = $1
+RETURNING id;
+
+-- name: DeleteTag :one
+DELETE FROM tags
+WHERE name = $1
+RETURNING id;

@@ -10,8 +10,8 @@ import (
 )
 
 func (c *CommandService) CreateBlockRule(rq *pb.BlockRules) (*pb.ActionResponse, error) {
-	var conn *sql.DB
-	if err := newConn(conn); err != nil {
+	conn, err := newConn()
+	if err != nil {
 		return &pb.ActionResponse{
 			IsSuceess: false,
 			Message:   "Failed to connect to database",
@@ -29,7 +29,7 @@ func (c *CommandService) CreateBlockRule(rq *pb.BlockRules) (*pb.ActionResponse,
 	}
 
 	ctx := context.Background()
-	params := db.AddBlockRuleParams{
+	params := db.CreateBlockRuleParams{
 		Name: "",
 		Nested: sql.NullBool{
 			Bool:  rq.GetRules().GetNested(),
@@ -57,7 +57,7 @@ func (c *CommandService) CreateBlockRule(rq *pb.BlockRules) (*pb.ActionResponse,
 		},
 	}
 
-	id, err := q.AddBlockRule(ctx, params)
+	id, err := q.CreateBlockRule(ctx, params)
 	if err != nil {
 		log.Print("Failed to parse author UUID:", err)
 		return nil, err

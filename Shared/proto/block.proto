@@ -52,13 +52,14 @@ message BlockRules {
   }
 
   message Rules {
-      bool nested = 1;
-      bool has_likes = 2;
-      bool has_comments = 3;
-      bool comments_nested = 4;
-      bool comments_has_likes = 5;
-      bool comments_editable = 6;
-      int32 comments_max_nested = 7;
+      string rule_name = 1;
+      bool nested = 2;
+      bool has_likes = 3;
+      bool has_comments = 4;
+      bool comments_nested = 5;
+      bool comments_has_likes = 6;
+      bool comments_editable = 7;
+      int32 comments_max_nested = 8;
   }
 
 }

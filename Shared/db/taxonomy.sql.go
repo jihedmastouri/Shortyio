@@ -12,41 +12,69 @@ import (
 	"github.com/google/uuid"
 )
 
-const addCateg = `-- name: AddCateg :one
+const addCategToBlock = `-- name: AddCategToBlock :exec
+INSERT INTO block_categs(
+    block_id, categ_id
+) VALUES ($1,$2)
+`
+
+type AddCategToBlockParams struct {
+	BlockID uuid.UUID
+	CategID int32
+}
+
+func (q *Queries) AddCategToBlock(ctx context.Context, arg AddCategToBlockParams) error {
+	_, err := q.db.ExecContext(ctx, addCategToBlock, arg.BlockID, arg.CategID)
+	return err
+}
+
+const addTagToBlock = `-- name: AddTagToBlock :exec
+INSERT INTO block_tags(
+    block_id, tag_id
+) VALUES ($1,$2)
+`
+
+type AddTagToBlockParams struct {
+	BlockID uuid.UUID
+	TagID   int32
+}
+
+func (q *Queries) AddTagToBlock(ctx context.Context, arg AddTagToBlockParams) error {
+	_, err := q.db.ExecContext(ctx, addTagToBlock, arg.BlockID, arg.TagID)
+	return err
+}
+
+const createCateg = `-- name: CreateCateg :one
 INSERT INTO categories (
     name, descr
 ) VALUES ($1,$2) RETURNING name
 `
 
-type AddCategParams struct {
+type CreateCategParams struct {
 	Name  string
 	Descr sql.NullString
 }
 
-func (q *Queries) AddCateg(ctx context.Context, arg AddCategParams) (string, error) {
-	row := q.db.QueryRowContext(ctx, addCateg, arg.Name, arg.Descr)
+func (q *Queries) CreateCateg(ctx context.Context, arg CreateCategParams) (string, error) {
+	row := q.db.QueryRowContext(ctx, createCateg, arg.Name, arg.Descr)
 	var name string
 	err := row.Scan(&name)
 	return name, err
 }
 
-const addTag = `-- name: AddTag :one
-
+const createTag = `-- name: CreateTag :one
 INSERT INTO tags (
     name, descr
 ) VALUES ($1,$2) RETURNING name
 `
 
-type AddTagParams struct {
+type CreateTagParams struct {
 	Name  string
 	Descr sql.NullString
 }
 
-// ----------------
-// 2- Adding
-// ----------------
-func (q *Queries) AddTag(ctx context.Context, arg AddTagParams) (string, error) {
-	row := q.db.QueryRowContext(ctx, addTag, arg.Name, arg.Descr)
+func (q *Queries) CreateTag(ctx context.Context, arg CreateTagParams) (string, error) {
+	row := q.db.QueryRowContext(ctx, createTag, arg.Name, arg.Descr)
 	var name string
 	err := row.Scan(&name)
 	return name, err
@@ -73,9 +101,6 @@ func (q *Queries) DeleteAllBlockTags(ctx context.Context, blockID uuid.UUID) err
 }
 
 const deleteBlockCateg = `-- name: DeleteBlockCateg :exec
-
-
-
 DELETE FROM block_categs
 WHERE block_id = $1 AND
     categ_id = (
@@ -90,15 +115,6 @@ type DeleteBlockCategParams struct {
 	Name    string
 }
 
-// ----------------
-// 3- Joins
-// ----------------
-// ----------------
-// 5- Updates
-// ----------------
-// ----------------
-// 6- Deletions
-// ----------------
 func (q *Queries) DeleteBlockCateg(ctx context.Context, arg DeleteBlockCategParams) error {
 	_, err := q.db.ExecContext(ctx, deleteBlockCateg, arg.BlockID, arg.Name)
 	return err
@@ -124,6 +140,19 @@ func (q *Queries) DeleteBlockTag(ctx context.Context, arg DeleteBlockTagParams) 
 	return err
 }
 
+const deleteCateg = `-- name: DeleteCateg :one
+DELETE FROM categories
+WHERE name = $1
+RETURNING id
+`
+
+func (q *Queries) DeleteCateg(ctx context.Context, name string) (int32, error) {
+	row := q.db.QueryRowContext(ctx, deleteCateg, name)
+	var id int32
+	err := row.Scan(&id)
+	return id, err
+}
+
 const deleteCategByID = `-- name: DeleteCategByID :exec
 DELETE FROM categories
 WHERE id = $1
@@ -132,6 +161,19 @@ WHERE id = $1
 func (q *Queries) DeleteCategByID(ctx context.Context, id int32) error {
 	_, err := q.db.ExecContext(ctx, deleteCategByID, id)
 	return err
+}
+
+const deleteTag = `-- name: DeleteTag :one
+DELETE FROM tags
+WHERE name = $1
+RETURNING id
+`
+
+func (q *Queries) DeleteTag(ctx context.Context, name string) (int32, error) {
+	row := q.db.QueryRowContext(ctx, deleteTag, name)
+	var id int32
+	err := row.Scan(&id)
+	return id, err
 }
 
 const deleteTagByID = `-- name: DeleteTagByID :exec
@@ -213,8 +255,6 @@ func (q *Queries) GetAllTags(ctx context.Context) ([]GetAllTagsRow, error) {
 }
 
 const getBlockCategories = `-- name: GetBlockCategories :many
-
-
 SELECT c.name
 FROM categories c
 INNER JOIN block_categs bc
@@ -223,29 +263,6 @@ WHERE bc.block_id = $1
 LIMIT 100
 `
 
-//	 ____                  _
-//	/ __ \__  _____  _____(_)__  _____
-//
-// / / / / / / / _ \/ ___/ / _ \/ ___/
-// / /_/ / /_/ /  __/ /  / /  __(__  )
-// \___\_\__,_/\___/_/  /_/\___/____/
-// ------------------------------------------
-// This File Contains all Queries on the Main Database.
-// Refer to Sqlc for more information https://docs.sqlc.dev/en/stable/
-//
-// The File Includes 6 Section:
-//
-// 1- `Selections` following: Get? / Get?By?
-// 2- `Adding` Inserts following Create?
-// 3- `Joins` insert for ManyToMany, following Add?To?
-// 4- `Updates` following: Update?
-// 5- `Deletions` following: Delete?
-// 6- `Counts` following: Count?
-//
-// Please use PascalCase for naming.
-// ----------------
-// 1- Selections
-// ----------------
 func (q *Queries) GetBlockCategories(ctx context.Context, blockID uuid.UUID) ([]string, error) {
 	rows, err := q.db.QueryContext(ctx, getBlockCategories, blockID)
 	if err != nil {
@@ -301,38 +318,78 @@ func (q *Queries) GetBlockTags(ctx context.Context, blockID uuid.UUID) ([]string
 	return items, nil
 }
 
-const joinCategToBlock = `-- name: JoinCategToBlock :exec
-INSERT INTO block_categs(
-    block_id, categ_id
-) VALUES ($1,$2)
+const updateCategory = `-- name: UpdateCategory :one
+Update categories
+    SET name = $1,
+        descr = $2
+WHERE name = $1
+RETURNING id
 `
 
-type JoinCategToBlockParams struct {
-	BlockID uuid.UUID
-	CategID int32
+type UpdateCategoryParams struct {
+	Name  string
+	Descr sql.NullString
 }
 
-func (q *Queries) JoinCategToBlock(ctx context.Context, arg JoinCategToBlockParams) error {
-	_, err := q.db.ExecContext(ctx, joinCategToBlock, arg.BlockID, arg.CategID)
+func (q *Queries) UpdateCategory(ctx context.Context, arg UpdateCategoryParams) (int32, error) {
+	row := q.db.QueryRowContext(ctx, updateCategory, arg.Name, arg.Descr)
+	var id int32
+	err := row.Scan(&id)
+	return id, err
+}
+
+const updateCategoryById = `-- name: UpdateCategoryById :exec
+Update categories
+    SET name = $2,
+        descr = $3
+WHERE id = $1
+`
+
+type UpdateCategoryByIdParams struct {
+	ID    int32
+	Name  string
+	Descr sql.NullString
+}
+
+func (q *Queries) UpdateCategoryById(ctx context.Context, arg UpdateCategoryByIdParams) error {
+	_, err := q.db.ExecContext(ctx, updateCategoryById, arg.ID, arg.Name, arg.Descr)
 	return err
 }
 
-const joinTagToBlock = `-- name: JoinTagToBlock :exec
-
-INSERT INTO block_tags(
-    block_id, tag_id
-) VALUES ($1,$2)
+const updateTag = `-- name: UpdateTag :one
+Update tags
+    SET name = $1,
+        descr = $2
+WHERE name = $1
+RETURNING id
 `
 
-type JoinTagToBlockParams struct {
-	BlockID uuid.UUID
-	TagID   int32
+type UpdateTagParams struct {
+	Name  string
+	Descr sql.NullString
 }
 
-// ----------------
-// 3- Joins
-// ----------------
-func (q *Queries) JoinTagToBlock(ctx context.Context, arg JoinTagToBlockParams) error {
-	_, err := q.db.ExecContext(ctx, joinTagToBlock, arg.BlockID, arg.TagID)
+func (q *Queries) UpdateTag(ctx context.Context, arg UpdateTagParams) (int32, error) {
+	row := q.db.QueryRowContext(ctx, updateTag, arg.Name, arg.Descr)
+	var id int32
+	err := row.Scan(&id)
+	return id, err
+}
+
+const updateTagById = `-- name: UpdateTagById :exec
+Update tags
+    SET name = $2,
+        descr = $3
+WHERE id = $1
+`
+
+type UpdateTagByIdParams struct {
+	ID    int32
+	Name  string
+	Descr sql.NullString
+}
+
+func (q *Queries) UpdateTagById(ctx context.Context, arg UpdateTagByIdParams) error {
+	_, err := q.db.ExecContext(ctx, updateTagById, arg.ID, arg.Name, arg.Descr)
 	return err
 }

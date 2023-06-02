@@ -12,14 +12,14 @@ import (
 	"github.com/google/uuid"
 )
 
-const addBlock = `-- name: AddBlock :one
+const createBlock = `-- name: CreateBlock :one
 
 INSERT INTO blocks (author, name, nested, has_likes, has_comments, comments_max_nest,
         comments_has_likes, comment_editable, rules_name, type)
 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id
 `
 
-type AddBlockParams struct {
+type CreateBlockParams struct {
 	Author           uuid.UUID
 	Name             string
 	Nested           bool
@@ -35,8 +35,8 @@ type AddBlockParams struct {
 // ----------------
 // 2- Adding
 // ----------------
-func (q *Queries) AddBlock(ctx context.Context, arg AddBlockParams) (uuid.UUID, error) {
-	row := q.db.QueryRowContext(ctx, addBlock,
+func (q *Queries) CreateBlock(ctx context.Context, arg CreateBlockParams) (uuid.UUID, error) {
+	row := q.db.QueryRowContext(ctx, createBlock,
 		arg.Author,
 		arg.Name,
 		arg.Nested,
@@ -53,19 +53,19 @@ func (q *Queries) AddBlock(ctx context.Context, arg AddBlockParams) (uuid.UUID, 
 	return id, err
 }
 
-const addLang = `-- name: AddLang :one
+const createLang = `-- name: CreateLang :one
 INSERT INTO block_langs (lang_name, lang_code, block_id)
 VALUES ($1, $2, $3) RETURNING id
 `
 
-type AddLangParams struct {
+type CreateLangParams struct {
 	LangName string
 	LangCode string
 	BlockID  uuid.UUID
 }
 
-func (q *Queries) AddLang(ctx context.Context, arg AddLangParams) (int32, error) {
-	row := q.db.QueryRowContext(ctx, addLang, arg.LangName, arg.LangCode, arg.BlockID)
+func (q *Queries) CreateLang(ctx context.Context, arg CreateLangParams) (int32, error) {
+	row := q.db.QueryRowContext(ctx, createLang, arg.LangName, arg.LangCode, arg.BlockID)
 	var id int32
 	err := row.Scan(&id)
 	return id, err

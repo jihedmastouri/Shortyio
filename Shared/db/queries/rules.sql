@@ -37,7 +37,7 @@ LIMIT 100;
 -- 2- Adding
 ------------------
 
--- name: AddBlockRule :one
+-- name: CreateBlockRule :one
 INSERT INTO block_rules (name, nested, has_likes, has_comments, comments_max_nest,
         comments_has_likes, comment_editable)
 VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING name;

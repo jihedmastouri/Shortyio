@@ -21,13 +21,11 @@ service FlipFlop {
   rpc DeleteBlockRule(BlockRules) returns (ActionResponse) {}
 
   // Taxonomy:
-  // rpc CreateTag(CreateTaxonomy) returns (ActionResponse) {}
-  // rpc DeleteTag(DeleteTaxonomy) returns (ActionResponse) {}
-  // rpc JoinBlockTag(JoinTaxonomy) returns (ActionResponse) {}
+  rpc CreateTag(CreateTaxonomy) returns (ActionResponse) {}
+  rpc DeleteTag(DeleteTaxonomy) returns (ActionResponse) {}
 
-  // rpc CreateCategory(CreateTaxonomy) returns (ActionResponse) {}
-  // rpc DeleteCategory(DeleteTaxonomy) returns (ActionResponse) {}
-  // rpc JoinBlockCategory(JoinTaxonomy) returns (ActionResponse) {}
+  rpc CreateCategory(CreateTaxonomy) returns (ActionResponse) {}
+  rpc DeleteCategory(DeleteTaxonomy) returns (ActionResponse) {}
 }
 
 message CreateRequest {
@@ -63,11 +61,6 @@ message CreateTaxonomy {
 
 message DeleteTaxonomy {
     string name = 1;
-}
-
-message JoinTaxonomy {
-    string name = 1;
-    string block_id = 2;
 }
 
 message ActionResponse {

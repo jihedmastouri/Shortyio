@@ -63,12 +63,12 @@ where bl.lang_code = $1 and  bl.block_id = $2;
 -- 2- Adding
 ------------------
 
--- name: AddBlock :one
+-- name: CreateBlock :one
 INSERT INTO blocks (author, name, nested, has_likes, has_comments, comments_max_nest,
         comments_has_likes, comment_editable, rules_name, type)
 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id;
 
--- name: AddLang :one
+-- name: CreateLang :one
 INSERT INTO block_langs (lang_name, lang_code, block_id)
 VALUES ($1, $2, $3) RETURNING id;
 

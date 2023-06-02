@@ -10,14 +10,14 @@ import (
 	"database/sql"
 )
 
-const addBlockRule = `-- name: AddBlockRule :one
+const createBlockRule = `-- name: CreateBlockRule :one
 
 INSERT INTO block_rules (name, nested, has_likes, has_comments, comments_max_nest,
         comments_has_likes, comment_editable)
 VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING name
 `
 
-type AddBlockRuleParams struct {
+type CreateBlockRuleParams struct {
 	Name             string
 	Nested           sql.NullBool
 	HasLikes         sql.NullBool
@@ -30,8 +30,8 @@ type AddBlockRuleParams struct {
 // ----------------
 // 2- Adding
 // ----------------
-func (q *Queries) AddBlockRule(ctx context.Context, arg AddBlockRuleParams) (string, error) {
-	row := q.db.QueryRowContext(ctx, addBlockRule,
+func (q *Queries) CreateBlockRule(ctx context.Context, arg CreateBlockRuleParams) (string, error) {
+	row := q.db.QueryRowContext(ctx, createBlockRule,
 		arg.Name,
 		arg.Nested,
 		arg.HasLikes,
