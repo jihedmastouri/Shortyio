@@ -35,7 +35,7 @@ func (c *CommandService) CreateBlock(ctx context.Context, rq *pb.CreateRequest) 
 
 	rules, name_rule := getBlockRules(q, rq.GetRules())
 
-	blockType, err := q.GetTypeByName(rq.BlockType)
+	blockType, err := q.GetTypeByName(ctx, rq.BlockType)
 	if err != nil {
 		return &pb.ActionResponse{
 			IsSuceess: false,
@@ -86,7 +86,7 @@ func (c *CommandService) UpdateBlock(ctx context.Context, rq *pb.CreateRequest) 
 	defer conn.Close()
 	q := db.New(conn)
 
-	id, err := uuid.Parse(rq.GetMeta().BlockId)
+	id, err := uuid.Parse(rq.GetId())
 	if err != nil {
 		log.Print("Failed to parse Block UUID:", err)
 		return nil, err
@@ -96,7 +96,7 @@ func (c *CommandService) UpdateBlock(ctx context.Context, rq *pb.CreateRequest) 
 
 	params := db.UpdateBlockParams{
 		ID:               id,
-		Name:             rq.GetMeta().Name,
+		Name:             rq.Name,
 		RulesName:        sql.NullString{String: name_rule, Valid: true},
 		Nested:           rules.GetNested(),
 		HasLikes:         rules.GetHasLikes(),

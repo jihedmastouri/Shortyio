@@ -68,6 +68,7 @@ func (c *CommandService) CreateBlockRule(ctx context.Context, rq *pb.BlockRules)
 	}, nil
 }
 
+// TODO: CHANGE THIS TO UPDATE INSTEAD OF DELETE+CREATE
 func (*CommandService) UpdateBlockRule(ctx context.Context, rq *pb.BlockRules) (*pb.ActionResponse, error) {
 	conn, err := newConn()
 	if err != nil {
@@ -153,7 +154,14 @@ func (*CommandService) DeleteBlockRule(ctx context.Context, rq *pb.BlockRules) (
 	defer conn.Close()
 	q := db.New(conn)
 
-	if err = q.DeleteBlockRule(ctx, rq.GetRules().RuleName); err != nil {
+	var ruleName string
+	if rq.GetRules() == nil {
+		ruleName = rq.GetRuleName()
+	} else {
+		ruleName = rq.GetRules().RuleName
+	}
+
+	if err = q.DeleteBlockRule(ctx, ruleName); err != nil {
 		return &pb.ActionResponse{
 			IsSuceess: false,
 			Message:   "Failed to Delete Rule",
@@ -164,5 +172,6 @@ func (*CommandService) DeleteBlockRule(ctx context.Context, rq *pb.BlockRules) (
 		IsSuceess: true,
 		Message:   "Great Success",
 	}, nil
-
 }
+
+

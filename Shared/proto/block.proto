@@ -46,7 +46,7 @@ message Author {
 
 message BlockRules {
 
-  oneof test_oneof {
+  oneof block_rules {
      string rule_name = 1;
      Rules rules = 2;
   }

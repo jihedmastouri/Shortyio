@@ -8,6 +8,7 @@ import (
 	"github.com/nats-io/nats.go"
 	"github.com/shorty-io/go-shorty/Shared/service"
 	q "github.com/shorty-io/go-shorty/queries/proto"
+	f "github.com/shorty-io/go-shorty/flipFlop/proto"
 	"github.com/shorty-io/go-shorty/web/handler"
 )
 
@@ -38,16 +39,11 @@ func main() {
 
 		// "BlockUpdated", "BlockUpdatedQ"
 		// nc.Publish("BlockUpdated", []byte("Hello World"))
-
-		foo , err := srv.GetKV("foo")
-		if err != nil {
-			c.Logger().Debug(err)
-		}
-
-		return c.String(200, foo)
+		return c.String(200, "Hello, World!")
 	})
 
 	block := e.Group("/block")
+	Commands := block.Group("/Commands")
 
 	// Get Block Metadata and content for a language
 	block.GET("/full/:lang/:id", func(c echo.Context) error {
@@ -87,6 +83,19 @@ func main() {
 
 		clientQuery := q.NewQueriesClient(connQuery)
 		return handler.GetLanguages(c, clientQuery)
+	})
+
+	// Create a new Block
+	Commands.POST("/new", func(c echo.Context) error {
+		connCommand, err := srv.Dial(service.FlipFlop, nil)
+		if err != nil {
+			c.Logger().Debug(err)
+		}
+
+		defer connCommand.Close()
+
+		clientCommand := f.NewFlipFlopClient(connCommand)
+		return handler.CreateBlock(c, clientCommand)
 	})
 
 	//

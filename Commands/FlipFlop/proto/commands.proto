@@ -29,10 +29,11 @@ service FlipFlop {
 }
 
 message CreateRequest {
-    string name = 1;
-    string block_type = 2;
-    optional BlockRules rules = 3;
-    string author = 4;
+    optional string id = 1;
+    string name = 2;
+    string block_type = 3;
+    optional BlockRules rules = 4;
+    string author = 5;
 }
 
 message CreateLangRequest {
