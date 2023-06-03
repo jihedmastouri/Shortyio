@@ -16,9 +16,10 @@ const (
 	Queries DefaultServices = "Queries"
 	Search DefaultServices = "Search"
 	Web DefaultServices = "Web"
+	FlipFlop DefaultServices = "FlipFlop"
 )
 
-func (s *service) GRPCListener(server *grpc.Server) {
+func (s *Service) GRPCListener(server *grpc.Server) {
 	lis, err := net.Listen("tcp", ":50051")
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
@@ -31,7 +32,7 @@ func (s *service) GRPCListener(server *grpc.Server) {
 	}
 }
 
-func (s *service) Dial(serviceName DefaultServices, tag *[]string) (*grpc.ClientConn, error) {
+func (s *Service) Dial(serviceName DefaultServices, tag *[]string) (*grpc.ClientConn, error) {
 	consul := s.consulAddr
 	t := fmt.Sprintf("consul://%s/%s", consul, serviceName)
 

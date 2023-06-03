@@ -3,7 +3,6 @@ package service
 import (
 	"fmt"
 	"log"
-	"net"
 	"os"
 	"time"
 
@@ -15,8 +14,9 @@ const (
 	ttl = time.Second * 8 // Time To Live
 )
 
-type service struct {
+type Service struct {
 	agent      *api.Agent
+	api        *api.Client
 	name       string
 	id         string
 	consulAddr string
@@ -46,8 +46,8 @@ type InitConfig struct {
 
 // Initialize a new Service
 // You must set Consul  Address as Environment variable `CONSUL_HTTP_ADDR`
-func New(name string) *service {
-	id := fmt.Sprintf("%s-%s", name, uuid.NewString())
+func New(name DefaultServices) *Service {
+	id := fmt.Sprintf("%s-%s", string(name), uuid.NewString())
 
 	consul := os.Getenv("CONSUL_HTTP_ADDR")
 	if consul == "" {
@@ -62,21 +62,22 @@ func New(name string) *service {
 
 	agent := client.Agent()
 
-	return &service{
+	return &Service{
 		agent:      agent,
+		api:        client,
 		id:         id,
-		name:       name,
+		name:       string(name),
 		consulAddr: consul,
 	}
 }
 
 // For Future Compatibility
-func (s *service) Init(c InitConfig) {}
+func (s *Service) Init(c InitConfig) {}
 
 // Start The Service:
 // - Register The service with Consul
 // - Listen on a tcp connection for Health updates
-func (s *service) Start() {
+func (s *Service) Start() {
 	ownAddress, err := os.Hostname()
 
 	if err != nil {
@@ -102,23 +103,10 @@ func (s *service) Start() {
 	}
 
 	go s.keepAlive()
-	// go s.acceptLoop()
-
-}
-
-func (s *service) acceptLoop() {
-	ln, err := net.Listen("tcp", ":8500")
-	if err != nil {
-		log.Fatal("Listening | Registeration:", err)
-	}
-
-	if _, err = ln.Accept(); err != nil {
-		log.Fatal("Accept Loop | Registeration:", err)
-	}
 }
 
 // Update Health status before the Time To Live (TTL) expires
-func (s *service) keepAlive() {
+func (s *Service) keepAlive() {
 	ticker := time.NewTicker(ttl / 2)
 	for {
 		if err := s.agent.UpdateTTL(s.id, "online", api.HealthPassing); err != nil {

@@ -17,3 +17,7 @@
 
 # Dependency directories (remove the comment below to include it)
 vendor/
+
+# dotenv & Consul configuration files
+consul-config/
+.env

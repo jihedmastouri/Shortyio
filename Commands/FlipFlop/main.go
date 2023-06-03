@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	srv := service.New("Queries")
+	srv := handler.Srv
 
 	// Not necessary at the moment
 	c := service.InitConfig{

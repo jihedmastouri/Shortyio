@@ -14,7 +14,7 @@ type CommandService struct {
 	pb.UnimplementedFlipFlopServer
 }
 
-func (c *CommandService) CreateBlock(rq *pb.CreateRequest) (*pb.ActionResponse, error) {
+func (c *CommandService) CreateBlock(ctx context.Context, rq *pb.CreateRequest) (*pb.ActionResponse, error) {
 	conn, err := newConn()
 	if err != nil {
 		return &pb.ActionResponse{
@@ -35,9 +35,18 @@ func (c *CommandService) CreateBlock(rq *pb.CreateRequest) (*pb.ActionResponse, 
 
 	rules, name_rule := getBlockRules(q, rq.GetRules())
 
+	blockType, err := q.GetTypeByName(rq.BlockType)
+	if err != nil {
+		return &pb.ActionResponse{
+			IsSuceess: false,
+			Id:        "",
+			Message:   err.Error(),
+		}, nil
+	}
+
 	params := db.CreateBlockParams{
 		Author:           author,
-		Name:             rq.Meta.GetName(),
+		Name:             rq.Name,
 		Nested:           rules.GetNested(),
 		HasLikes:         rules.GetHasLikes(),
 		HasComments:      rules.GetHasComments(),
@@ -45,10 +54,8 @@ func (c *CommandService) CreateBlock(rq *pb.CreateRequest) (*pb.ActionResponse, 
 		CommentsHasLikes: rules.GetCommentsHasLikes(),
 		CommentEditable:  rules.GetCommentsEditable(),
 		RulesName:        sql.NullString{String: name_rule, Valid: true},
-		Type:             0,
+		Type:             blockType,
 	}
-
-	ctx := context.Background()
 
 	id, err := q.CreateBlock(ctx, params)
 	if err != nil {
@@ -66,7 +73,7 @@ func (c *CommandService) CreateBlock(rq *pb.CreateRequest) (*pb.ActionResponse, 
 	}, nil
 }
 
-func (c *CommandService) UpdateBlock(rq *pb.CreateRequest) (*pb.ActionResponse, error) {
+func (c *CommandService) UpdateBlock(ctx context.Context, rq *pb.CreateRequest) (*pb.ActionResponse, error) {
 	conn, err := newConn()
 	if err != nil {
 		return &pb.ActionResponse{
@@ -78,7 +85,6 @@ func (c *CommandService) UpdateBlock(rq *pb.CreateRequest) (*pb.ActionResponse, 
 
 	defer conn.Close()
 	q := db.New(conn)
-
 
 	id, err := uuid.Parse(rq.GetMeta().BlockId)
 	if err != nil {
@@ -100,7 +106,6 @@ func (c *CommandService) UpdateBlock(rq *pb.CreateRequest) (*pb.ActionResponse, 
 		CommentEditable:  rules.GetCommentsEditable(),
 	}
 
-	ctx := context.Background()
 	if err = q.UpdateBlock(ctx, params); err != nil {
 		log.Print("Failed to delete block:", err)
 		return &pb.ActionResponse{
@@ -117,7 +122,7 @@ func (c *CommandService) UpdateBlock(rq *pb.CreateRequest) (*pb.ActionResponse, 
 	}, nil
 }
 
-func (c *CommandService) DeleteBlock(rq *pb.DeleteRequest) (*pb.ActionResponse, error) {
+func (c *CommandService) DeleteBlock(ctx context.Context, rq *pb.DeleteRequest) (*pb.ActionResponse, error) {
 	conn, err := newConn()
 	if err != nil {
 		return &pb.ActionResponse{
@@ -130,8 +135,6 @@ func (c *CommandService) DeleteBlock(rq *pb.DeleteRequest) (*pb.ActionResponse, 
 	defer conn.Close()
 	q := db.New(conn)
 
-
-	ctx := context.Background()
 	id, err := uuid.Parse(rq.GetId())
 	if err != nil {
 		log.Print("Failed to parse Block UUID:", err)
@@ -154,7 +157,7 @@ func (c *CommandService) DeleteBlock(rq *pb.DeleteRequest) (*pb.ActionResponse, 
 	}, nil
 }
 
-func (c *CommandService) CreateBlockLang(rq *pb.CreateLangRequest) (*pb.ActionResponse, error) {
+func (c *CommandService) CreateBlockLang(ctx context.Context, rq *pb.CreateLangRequest) (*pb.ActionResponse, error) {
 	conn, err := newConn()
 	if err != nil {
 		return &pb.ActionResponse{
@@ -167,14 +170,12 @@ func (c *CommandService) CreateBlockLang(rq *pb.CreateLangRequest) (*pb.ActionRe
 	defer conn.Close()
 	q := db.New(conn)
 
-
 	blockid, err := uuid.Parse(rq.BlockId)
 	if err != nil {
 		log.Print("Failed to parse Block UUID:", err)
 		return nil, err
 	}
 
-	ctx := context.Background()
 	params := db.CreateLangParams{
 		LangName: rq.Id,
 		LangCode: rq.LangName,
@@ -197,7 +198,7 @@ func (c *CommandService) CreateBlockLang(rq *pb.CreateLangRequest) (*pb.ActionRe
 	}, nil
 }
 
-func (c *CommandService) DeleteBlockLang(rq *pb.DeleteLangRequest) (*pb.ActionResponse, error) {
+func (c *CommandService) DeleteBlockLang(ctx context.Context, rq *pb.DeleteLangRequest) (*pb.ActionResponse, error) {
 	conn, err := newConn()
 	if err != nil {
 		return &pb.ActionResponse{
@@ -210,17 +211,15 @@ func (c *CommandService) DeleteBlockLang(rq *pb.DeleteLangRequest) (*pb.ActionRe
 	defer conn.Close()
 	q := db.New(conn)
 
-
 	id, err := uuid.Parse(rq.GetId())
 	if err != nil {
 		log.Print("Failed to parse Block UUID:", err)
 		return nil, err
 	}
 
-	ctx := context.Background()
 	params := db.DeleteBlockLangParams{
 		BlockID:  id,
-		LangCode: rq.GetLangName(),
+		LangCode: rq.LangCode,
 	}
 
 	if err = q.DeleteBlockLang(ctx, params); err != nil {

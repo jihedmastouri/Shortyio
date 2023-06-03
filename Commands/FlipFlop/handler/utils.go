@@ -5,18 +5,30 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-	"os"
+
+	"github.com/shorty-io/go-shorty/Shared/service"
 
 	db "github.com/shorty-io/go-shorty/Shared/db"
 	pb "github.com/shorty-io/go-shorty/flipFlop/proto"
 )
 
+var Srv *service.Service
+
+func init() {
+	Srv = service.New(service.FlipFlop)
+}
+
 func newConn() (*sql.DB, error) {
-	host := os.Getenv("MONGO_HOST")
-	port := os.Getenv("MONGO_PORT")
-	user := os.Getenv("MONGO_USER")
-	password := os.Getenv("MONGO_PASSWORD")
-	dbname := os.Getenv("MONGO_DBNAME")
+	host, err := Srv.GetKV("POSTGRES_HOST")
+	port, err1 := Srv.GetKV("POSTGRES_PORT")
+	user, err2 := Srv.GetKV("POSTGRES_USER")
+	password, err3 := Srv.GetKV("POSTGRES_PASSWORD")
+	dbname, err4 := Srv.GetKV("POSTGRES_DB")
+
+	if err != nil || err1 != nil || err2 != nil || err3 != nil || err4 != nil {
+		log.Print("Database Connection Failed", err)
+		return nil, err
+	}
 
 	conn, err := sql.Open("postgres", fmt.Sprintf(
 		"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",

@@ -65,5 +65,8 @@ WHERE id = $1;
 -- 6- Deletions
 ------------------
 
--- name: DeleteBlockRules :exec
+-- name: DeleteBlockRuleById :exec
 DELETE FROM block_rules WHERE id = $1;
+
+-- name: DeleteBlockRule :exec
+DELETE FROM block_rules WHERE name = $1;

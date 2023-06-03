@@ -45,7 +45,16 @@ func (q *Queries) CreateBlockRule(ctx context.Context, arg CreateBlockRuleParams
 	return name, err
 }
 
-const deleteBlockRules = `-- name: DeleteBlockRules :exec
+const deleteBlockRule = `-- name: DeleteBlockRule :exec
+DELETE FROM block_rules WHERE name = $1
+`
+
+func (q *Queries) DeleteBlockRule(ctx context.Context, name string) error {
+	_, err := q.db.ExecContext(ctx, deleteBlockRule, name)
+	return err
+}
+
+const deleteBlockRuleById = `-- name: DeleteBlockRuleById :exec
 
 DELETE FROM block_rules WHERE id = $1
 `
@@ -53,8 +62,8 @@ DELETE FROM block_rules WHERE id = $1
 // ----------------
 // 6- Deletions
 // ----------------
-func (q *Queries) DeleteBlockRules(ctx context.Context, id int32) error {
-	_, err := q.db.ExecContext(ctx, deleteBlockRules, id)
+func (q *Queries) DeleteBlockRuleById(ctx context.Context, id int32) error {
+	_, err := q.db.ExecContext(ctx, deleteBlockRuleById, id)
 	return err
 }
 

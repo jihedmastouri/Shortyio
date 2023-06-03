@@ -29,9 +29,10 @@ service FlipFlop {
 }
 
 message CreateRequest {
-    BlockMeta meta = 1;
-    optional BlockRules rules = 2;
-    string author = 3;
+    string name = 1;
+    string block_type = 2;
+    optional BlockRules rules = 3;
+    string author = 4;
 }
 
 message CreateLangRequest {
@@ -57,10 +58,12 @@ message DeleteLangRequest {
 message CreateTaxonomy {
     string name = 1;
     string descr = 2;
+    string author = 3;
 }
 
 message DeleteTaxonomy {
     string name = 1;
+    string author = 2;
 }
 
 message ActionResponse {

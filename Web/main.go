@@ -35,9 +35,16 @@ func main() {
 	// Block/languages/id
 
 	e.GET("/", func(c echo.Context) error {
+
 		// "BlockUpdated", "BlockUpdatedQ"
-		nc.Publish("BlockUpdated", []byte("Hello World"))
-		return c.String(200, "Hello world!")
+		// nc.Publish("BlockUpdated", []byte("Hello World"))
+
+		foo , err := srv.GetKV("foo")
+		if err != nil {
+			c.Logger().Debug(err)
+		}
+
+		return c.String(200, foo)
 	})
 
 	block := e.Group("/block")
