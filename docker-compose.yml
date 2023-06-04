@@ -20,7 +20,7 @@ services:
   #   environment:
   #     - KEYCLOAK_ADMIN=admin
   #     - KEYCLOAK_ADMIN_PASSWORD=admin
-  #   image: quay.io/keycloak/keycloak:latest
+  #   image: quay.io/keycloak/keycloak:21.1.1
   #   ports:
   #     - "2020:8080"
   #   restart: always
@@ -52,20 +52,20 @@ services:
     volumes:
       - ./Shared/db/schemas/schema.sql:/docker-entrypoint-initdb.d/init.sql
 
-  # query:
-  #   build:
-  #     args:
-  #       - DIR=Queries/Block
-  #     context: .
-  #     dockerfile: ./Queries/Block/Dockerfile
-  #   depends_on:
-  #     - consulserver
-  #   environment:
-  #     - CONSUL_HTTP_ADDR=localhost:8500
-  #   expose:
-  #     - "50051"
-  #     - "8500"
-  #   restart: always
+  query:
+    build:
+      args:
+        - DIR=Queries/Block
+      context: .
+      dockerfile: ./Dockerfile
+    depends_on:
+      - consulserver
+    environment:
+      - CONSUL_HTTP_ADDR=localhost:8500
+    expose:
+      - "50051"
+      - "8500"
+    restart: always
 
   nats:
     expose:
