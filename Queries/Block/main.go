@@ -5,7 +5,7 @@ import (
 
 	"github.com/shorty-io/go-shorty/Shared/service"
 	"github.com/shorty-io/go-shorty/queries/handler"
-	pb "github.com/shorty-io/go-shorty/queries/proto"
+	pb "github.com/shorty-io/go-shorty/Shared/proto"
 	"google.golang.org/grpc"
 )
 

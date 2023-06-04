@@ -5,13 +5,13 @@ import (
 	"os"
 
 	// f "github.com/shorty-io/go-shorty/flipFlop/proto"
-	q "github.com/shorty-io/go-shorty/queries/proto"
+	pb "github.com/shorty-io/go-shorty/Shared/proto"
 
 	"google.golang.org/grpc"
 )
 
 type Services struct {
-	Queries  q.QueriesClient
+	Queries  pb.QueriesClient
 	// FlipFlop f.FlipFlopServiceClient
 }
 
@@ -24,7 +24,7 @@ func NewMicroS() *Services{
 	if err != nil {
 		log.Fatalf("failed to connect: %v", err)
 	}
-	clientQuery := q.NewQueriesClient(connQuery)
+	clientQuery := pb.NewQueriesClient(connQuery)
 
 	// connFlip, err := grpc.Dial(flipflop, grpc.WithInsecure())
 	// if err != nil {

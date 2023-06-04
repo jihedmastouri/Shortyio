@@ -2,6 +2,14 @@
 init:
 	@docker pull kjconroy/sqlc
 
+.PHONY: proto
+proto:
+	@protoc --proto_path=./proto/ \
+		--go_out=plugins=grpc:. \
+		./proto/block.proto \
+		./proto/queries.proto \
+		./proto/commands.proto
+
 .PHONY: codegen
 codegen:
 	@docker run --rm -v $(shell pwd):/src -w /src kjconroy/sqlc generate

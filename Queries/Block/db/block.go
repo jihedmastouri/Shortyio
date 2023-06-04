@@ -4,7 +4,7 @@ import (
 	"context"
 	"log"
 
-	pb "github.com/shorty-io/go-shorty/queries/proto"
+	pb "github.com/shorty-io/go-shorty/Shared/proto"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )

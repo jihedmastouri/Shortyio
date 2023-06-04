@@ -6,7 +6,10 @@ import (
 	"log"
 
 	db "github.com/shorty-io/go-shorty/Shared/db"
-	pb "github.com/shorty-io/go-shorty/flipFlop/proto"
+	pb "github.com/shorty-io/go-shorty/Shared/proto"
+
+
+	_ "github.com/lib/pq"
 )
 
 func (c *CommandService) CreateBlockRule(ctx context.Context, rq *pb.BlockRules) (*pb.ActionResponse, error) {

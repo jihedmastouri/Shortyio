@@ -7,7 +7,7 @@ import (
 	"strconv"
 
 	"github.com/labstack/echo/v4"
-	pb "github.com/shorty-io/go-shorty/queries/proto"
+	pb "github.com/shorty-io/go-shorty/Shared/proto"
 	"google.golang.org/grpc"
 )
 

@@ -9,7 +9,9 @@ import (
 	"github.com/shorty-io/go-shorty/Shared/service"
 
 	db "github.com/shorty-io/go-shorty/Shared/db"
-	pb "github.com/shorty-io/go-shorty/flipFlop/proto"
+	pb "github.com/shorty-io/go-shorty/Shared/proto"
+
+	_ "github.com/lib/pq"
 )
 
 var Srv *service.Service

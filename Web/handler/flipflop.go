@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
-	pb "github.com/shorty-io/go-shorty/flipFlop/proto"
+	pb "github.com/shorty-io/go-shorty/Shared/proto"
 )
 
 type CreateBlockRq struct {
@@ -26,7 +26,7 @@ type CreateBlockRq struct {
 
 func CreateBlock(c echo.Context, client pb.FlipFlopClient) error {
 	var brq CreateBlockRq
-	if err := c.Bind(brq); err != nil {
+	if err := c.Bind(&brq); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 

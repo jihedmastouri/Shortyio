@@ -4,7 +4,7 @@ import (
 	"context"
 
 	db "github.com/shorty-io/go-shorty/queries/db"
-	pb "github.com/shorty-io/go-shorty/queries/proto"
+	pb "github.com/shorty-io/go-shorty/Shared/proto"
 )
 
 type Queries struct {

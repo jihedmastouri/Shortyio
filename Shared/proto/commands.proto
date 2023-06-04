@@ -4,7 +4,7 @@ package proto;
 
 option go_package = "./proto;proto";
 
-import "Shared/proto/block.proto";
+import "block.proto";
 
 service FlipFlop {
   // Block

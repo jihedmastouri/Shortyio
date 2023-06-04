@@ -7,8 +7,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/nats-io/nats.go"
 	"github.com/shorty-io/go-shorty/Shared/service"
-	q "github.com/shorty-io/go-shorty/queries/proto"
-	f "github.com/shorty-io/go-shorty/flipFlop/proto"
+	pb "github.com/shorty-io/go-shorty/Shared/proto"
 	"github.com/shorty-io/go-shorty/web/handler"
 )
 
@@ -54,7 +53,7 @@ func main() {
 
 		defer connQuery.Close()
 
-		clientQuery := q.NewQueriesClient(connQuery)
+		clientQuery := pb.NewQueriesClient(connQuery)
 		return handler.GetBlock(c, clientQuery)
 	})
 
@@ -67,7 +66,7 @@ func main() {
 
 		defer connQuery.Close()
 
-		clientQuery := q.NewQueriesClient(connQuery)
+		clientQuery := pb.NewQueriesClient(connQuery)
 		return handler.GetVersions(c, clientQuery)
 	})
 
@@ -81,7 +80,7 @@ func main() {
 
 		defer connQuery.Close()
 
-		clientQuery := q.NewQueriesClient(connQuery)
+		clientQuery := pb.NewQueriesClient(connQuery)
 		return handler.GetLanguages(c, clientQuery)
 	})
 
@@ -94,7 +93,7 @@ func main() {
 
 		defer connCommand.Close()
 
-		clientCommand := f.NewFlipFlopClient(connCommand)
+		clientCommand := pb.NewFlipFlopClient(connCommand)
 		return handler.CreateBlock(c, clientCommand)
 	})
 

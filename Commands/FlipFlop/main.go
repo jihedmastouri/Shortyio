@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/shorty-io/go-shorty/flipFlop/handler"
-	pb "github.com/shorty-io/go-shorty/flipFlop/proto"
+	pb "github.com/shorty-io/go-shorty/Shared/proto"
 	"github.com/shorty-io/go-shorty/Shared/service"
 	"google.golang.org/grpc"
 )
