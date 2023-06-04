@@ -5,12 +5,6 @@
 -- /____/\___/_/ /_/\___/_/ /_/ /_/\__,_/
 --------------------------------------------
 
-CREATE SCHEMA IF NOT EXISTS blocks;
-
-SET SCHEMA 'blocks';
-
-
-
 CREATE TABLE IF NOT EXISTS block_types
 (
     id    SERIAL PRIMARY KEY,

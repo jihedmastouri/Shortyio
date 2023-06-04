@@ -35,7 +35,7 @@ services:
       - consulserver
     environment:
       - CONSUL_HTTP_ADDR=consulserver:8500
-      - CONSUL_HTTP_ADDR=nats:8500
+      - NATS=nats:4222
     expose:
       - "50051"
       - "8500"
