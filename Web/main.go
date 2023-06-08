@@ -1,11 +1,8 @@
 package main
 
 import (
-	"log"
-	"os"
 
 	"github.com/labstack/echo/v4"
-	"github.com/nats-io/nats.go"
 	"github.com/shorty-io/go-shorty/Shared/service"
 	pb "github.com/shorty-io/go-shorty/Shared/proto"
 	"github.com/shorty-io/go-shorty/web/handler"
@@ -14,19 +11,10 @@ import (
 func main() {
 	srv := service.New("Web")
 	srv.Start()
+	defer handler.Cleanup()
 
 	e := echo.New()
 
-	natsUrl := os.Getenv("NATS")
-	if natsUrl == "" {
-		natsUrl = nats.DefaultURL
-	}
-
-	nc, err := nats.Connect(natsUrl)
-    if err != nil {
-        log.Fatal(err)
-    }
-    defer nc.Close()
 
 	// Block/full/Lang/id
 	// Block/meta/lang/id
@@ -95,6 +83,11 @@ func main() {
 
 		clientCommand := pb.NewFlipFlopClient(connCommand)
 		return handler.CreateBlock(c, clientCommand)
+	})
+
+	// Update Content
+	Commands.POST("/content", func(c echo.Context) error {
+		return handler.UpdateContent(c)
 	})
 
 	//

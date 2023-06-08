@@ -14,23 +14,49 @@ import (
 	_ "github.com/lib/pq"
 )
 
-var Srv *service.Service
+var srv *service.Service
 
-func init() {
-	Srv = service.New(service.FlipFlop)
+func NewSrv(service *service.Service) {
+	if service == nil {
+		panic("Service is nil")
+	}
+
+	if srv != nil {
+		panic("Service already initialized")
+	}
+	srv = service
 }
 
 func newConn() (*sql.DB, error) {
-	host, err := Srv.GetKV("POSTGRES_HOST")
-	port, err1 := Srv.GetKV("POSTGRES_PORT")
-	user, err2 := Srv.GetKV("POSTGRES_USER")
-	password, err3 := Srv.GetKV("POSTGRES_PASSWORD")
-	dbname, err4 := Srv.GetKV("POSTGRES_DB")
 
-	if err != nil || err1 != nil || err2 != nil || err3 != nil || err4 != nil {
-		log.Print("Database Connection Failed", err)
-		return nil, err
+	params := []string{
+		"POSTGRES_HOST",
+		"POSTGRES_PORT",
+		"POSTGRES_USER",
+		"POSTGRES_PASSWORD",
+		"POSTGRES_DB",
 	}
+	config := make(map[string]string)
+
+	for _, param := range params {
+		value, err := srv.GetKV(param)
+		if err != nil {
+			log.Fatalf(
+				"Failed to retrieve %s from Consul key-value store: %s",
+				param,
+				err,
+			);
+			return nil, err
+		}
+		config[param] = value
+	}
+
+	// Access the parameters from the 'config' map
+	host := config["POSTGRES_HOST"]
+	port := config["POSTGRES_PORT"]
+	user := config["POSTGRES_USER"]
+	password := config["POSTGRES_PASSWORD"]
+	dbname := config["POSTGRES_DB"]
 
 	conn, err := sql.Open("postgres", fmt.Sprintf(
 		"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",

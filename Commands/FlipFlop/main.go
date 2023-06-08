@@ -8,7 +8,8 @@ import (
 )
 
 func main() {
-	srv := handler.Srv
+	srv := service.New(service.FlipFlop)
+	handler.NewSrv(srv)
 
 	// Not necessary at the moment
 	c := service.InitConfig{

@@ -4,18 +4,39 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"os"
 
-	// "os"
-
+	"github.com/shorty-io/go-shorty/Shared/service"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+var config map[string]string
+
+func InitConfig(srv *service.Service) {
+	params := []string{
+		"MONGO_HOST",
+		"MONGO_PASSWORD",
+		"MONGO_USER",
+	}
+
+	for _, param := range params {
+		value, err := srv.GetKV(param)
+		if err != nil {
+			log.Fatalf(
+				"Failed to retrieve %s from Consul key-value store: %s",
+				param,
+				err,
+			)
+		}
+		config[param] = value
+	}
+}
+
 func connectMongo() (*mongo.Client, error) {
-	host := os.Getenv("MONGO_HOST")
-	username := os.Getenv("MONGO_USER")
-	psswd := os.Getenv("MONGO_PASSWORD")
+
+	host := config["MONGO_HOST"]
+	username := config["MONGO_USER"]
+	psswd := config["MONGO_PASSWORD"]
 
 	connString := fmt.Sprintf(
 		"mongodb+srv://%s:%s@%s",

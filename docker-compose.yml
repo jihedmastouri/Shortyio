@@ -61,7 +61,10 @@ services:
     depends_on:
       - consulserver
     environment:
-      - CONSUL_HTTP_ADDR=localhost:8500
+      - CONSUL_HTTP_ADDR=consulserver:8500
+    deploy:
+      mode: replicated
+      replicas: 3
     expose:
       - "50051"
       - "8500"
