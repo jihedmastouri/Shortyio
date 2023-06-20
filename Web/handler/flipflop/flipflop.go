@@ -35,4 +35,16 @@ func New(e *echo.Echo, fn handler.Dialfn) {
 
 	cmd.POST("/block/:id/lang", createLanguage)
 	cmd.DELETE("/block/:id/lang/:code", deleteLanguage)
+
+	cmd.POST("/block-rule", createRule)
+	cmd.DELETE("/block/:id", deleteRule)
+	cmd.PUT("/block/:id", updateRule)
+
+	cmd.POST("/tag", createTag)
+	cmd.DELETE("/tag/:id", deleteTag)
+	cmd.POST("/block/:id/tag/:taxonomy-id", addTagToBlock)
+
+	cmd.POST("/categ", createCateg)
+	cmd.DELETE("/categ/:id", deleteCateg)
+	cmd.POST("/block/:id/categ/:taxonomy-id", addCategToBlock)
 }
