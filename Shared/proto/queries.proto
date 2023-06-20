@@ -61,7 +61,7 @@ message Selectors {
 message Pagination {
     int32 pageSize = 1;
     int32 pageNum = 2;
-    optional int32 total = 3;
+    optional int64 total = 3;
 }
 
 message SearchRequest {
@@ -70,7 +70,7 @@ message SearchRequest {
 }
 
 message BlockList {
-    repeated Block meta = 1;
+    repeated BlockMeta metas = 1;
     Pagination pagination = 2;
 }
 
@@ -81,6 +81,3 @@ message TagList {
 message CategoryList {
     repeated string categories = 1;
 }
-
-
-

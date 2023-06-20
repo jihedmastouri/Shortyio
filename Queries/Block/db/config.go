@@ -32,7 +32,7 @@ func InitConfig(srv *service.Service) {
 	}
 }
 
-func connectMongo() (*mongo.Client, error) {
+func connectMongo(ctx context.Context) (*mongo.Client, error) {
 
 	host := config["MONGO_HOST"]
 	username := config["MONGO_USER"]
@@ -47,7 +47,6 @@ func connectMongo() (*mongo.Client, error) {
 	log.Print(connString)
 
 	clientOptions := options.Client().ApplyURI(connString)
-	ctx := context.Background()
 
 	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {

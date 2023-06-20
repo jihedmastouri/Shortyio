@@ -9,17 +9,17 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func GetBlockMeta(bq *pb.BlockRequest) (*pb.BlockMeta, error) {
-	client, err := connectMongo()
+func GetBlockMeta(ctx context.Context, bq *pb.BlockRequest) (*pb.BlockMeta, error) {
+	client, err := connectMongo(ctx)
 	if err != nil {
 		log.Println(err)
 		return nil, err
 	}
-	defer client.Disconnect(context.Background())
+	defer client.Disconnect(ctx)
 	collection := getCollection(client)
 
 	query, option := buildQuery(bq)
-	cusror := collection.FindOne(context.Background(), query, option)
+	cusror := collection.FindOne(ctx, query, option)
 	meta := &pb.BlockMeta{}
 	if err := cusror.Decode(meta); err != nil {
 		return nil, err
@@ -27,17 +27,17 @@ func GetBlockMeta(bq *pb.BlockRequest) (*pb.BlockMeta, error) {
 	return meta, nil
 }
 
-func GetBlockContent(bq *pb.BlockRequest) (*pb.BlockContent, error) {
-	client, err := connectMongo()
+func GetBlockContent(ctx context.Context, bq *pb.BlockRequest) (*pb.BlockContent, error) {
+	client, err := connectMongo(ctx)
 	if err != nil {
 		log.Println(err)
 		return nil, err
 	}
-	defer client.Disconnect(context.Background())
+	defer client.Disconnect(ctx)
 	collection := getCollection(client)
 
 	query, option := buildQuery(bq)
-	cusror := collection.FindOne(context.Background(), query, option)
+	cusror := collection.FindOne(ctx, query, option)
 	content := &pb.BlockContent{}
 	if err := cusror.Decode(content); err != nil {
 		return nil, err
@@ -45,17 +45,17 @@ func GetBlockContent(bq *pb.BlockRequest) (*pb.BlockContent, error) {
 	return content, nil
 }
 
-func GetBlock(bq *pb.BlockRequest) (*pb.Block, error) {
-	client, err := connectMongo()
+func GetBlock(ctx context.Context, bq *pb.BlockRequest) (*pb.Block, error) {
+	client, err := connectMongo(ctx)
 	if err != nil {
 		log.Println(err)
 		return nil, err
 	}
-	defer client.Disconnect(context.Background())
+	defer client.Disconnect(ctx)
 	collection := getCollection(client)
 
 	query, option := buildQuery(bq)
-	cusror := collection.FindOne(context.Background(), query, option)
+	cusror := collection.FindOne(ctx, query, option)
 	block := &pb.Block{}
 	if err := cusror.Decode(block); err != nil {
 		log.Println(err)
@@ -64,13 +64,13 @@ func GetBlock(bq *pb.BlockRequest) (*pb.Block, error) {
 	return block, nil
 }
 
-func GetLanguages(bq *pb.LanguageRequest) (*pb.LanguageList, error) {
-	client, err := connectMongo()
+func GetLanguages(ctx context.Context, bq *pb.LanguageRequest) (*pb.LanguageList, error) {
+	client, err := connectMongo(ctx)
 	if err != nil {
 		log.Println(err)
 		return nil, err
 	}
-	defer client.Disconnect(context.Background())
+	defer client.Disconnect(ctx)
 	collection := getCollection(client)
 
 	pipeline := bson.A{
@@ -79,7 +79,7 @@ func GetLanguages(bq *pb.LanguageRequest) (*pb.LanguageList, error) {
 		bson.M{"$project": bson.M{"_id": 0, "lang_code": "$_id"}},
 	}
 
-	cursor, err := collection.Aggregate(context.Background(), pipeline)
+	cursor, err := collection.Aggregate(ctx, pipeline)
 	if err != nil {
 		log.Println(err)
 		return nil, err
@@ -88,7 +88,7 @@ func GetLanguages(bq *pb.LanguageRequest) (*pb.LanguageList, error) {
 	var langList []struct {
 		Lang string
 	}
-	if err = cursor.All(context.Background(), &langList); err != nil {
+	if err = cursor.All(ctx, &langList); err != nil {
 		log.Println(err)
 		return nil, err
 	}
@@ -102,15 +102,14 @@ func GetLanguages(bq *pb.LanguageRequest) (*pb.LanguageList, error) {
 	}, nil
 }
 
-func GetVersions(bq *pb.VersionsRequest) (*pb.VersionResponse, error) {
-	client, err := connectMongo()
+func GetVersions(ctx context.Context, bq *pb.VersionsRequest) (*pb.VersionResponse, error) {
+	client, err := connectMongo(ctx)
 	if err != nil {
 		log.Println(err)
 		return nil, err
 	}
-	defer client.Disconnect(context.Background())
+	defer client.Disconnect(ctx)
 	collection := getCollection(client)
-
 
 	pipeline := bson.A{
 		bson.M{"$match": bson.M{"block_id": bq.GetId(), "lang_code": bq.GetLang()}},
@@ -118,14 +117,14 @@ func GetVersions(bq *pb.VersionsRequest) (*pb.VersionResponse, error) {
 		bson.M{"$project": bson.M{"_id": 0, "version": "$_id", "changeLog": 1}},
 	}
 
-	cursor, err := collection.Aggregate(context.Background(), pipeline)
+	cursor, err := collection.Aggregate(ctx, pipeline)
 	if err != nil {
 		log.Println(err)
 		return nil, err
 	}
 
 	var verList []*pb.Ver
-	if err := cursor.All(context.Background(), &verList); err != nil {
+	if err := cursor.All(ctx, &verList); err != nil {
 		log.Println(err)
 		return nil, err
 	}
