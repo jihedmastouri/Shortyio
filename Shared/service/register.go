@@ -8,6 +8,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/hashicorp/consul/api"
+	"github.com/shorty-io/go-shorty/Shared/service/namespace"
 )
 
 const (
@@ -46,7 +47,7 @@ type InitConfig struct {
 
 // Initialize a new Service
 // You must set Consul  Address as Environment variable `CONSUL_HTTP_ADDR`
-func New(name DefaultServices) *Service {
+func New(name namespace.DefaultServices) *Service {
 	id := fmt.Sprintf("%s-%s", string(name), uuid.NewString())
 
 	consul := os.Getenv("CONSUL_HTTP_ADDR")

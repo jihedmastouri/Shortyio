@@ -1,14 +1,15 @@
 package main
 
 import (
-	"github.com/shorty-io/go-shorty/flipFlop/handler"
 	pb "github.com/shorty-io/go-shorty/Shared/proto"
 	"github.com/shorty-io/go-shorty/Shared/service"
+	"github.com/shorty-io/go-shorty/Shared/service/namespace"
+	"github.com/shorty-io/go-shorty/flipFlop/handler"
 	"google.golang.org/grpc"
 )
 
 func main() {
-	srv := service.New(service.FlipFlop)
+	srv := service.New(namespace.FlipFlop)
 	handler.NewSrv(srv)
 
 	// Not necessary at the moment

@@ -1,4 +1,4 @@
-package handler
+package queries
 
 import (
 	"context"
@@ -11,34 +11,9 @@ import (
 	"google.golang.org/grpc"
 )
 
-func GetBlock(c echo.Context, client pb.QueriesClient) error {
+func getBlock(c echo.Context) error {
+	client := c.Get("client").(pb.QueriesClient)
 	return getStuffBlock(client.GetBlock, c)
-}
-
-func GetVersions(c echo.Context, client pb.QueriesClient) error {
-	req := &pb.VersionsRequest{Id: c.Param("id"), Lang: c.Param("lang")}
-
-	log.Println("GetVersion", "Starting")
-	res, err := client.GetVersions(context.Background(), req)
-	if err != nil {
-		log.Println(err)
-		return c.JSON(http.StatusInternalServerError, echo.Map{"err": err.Error()})
-	}
-
-	return c.JSON(http.StatusOK, res)
-}
-
-func GetLanguages(c echo.Context, client pb.QueriesClient) error {
-	req := &pb.LanguageRequest{Id: c.Param("id")}
-
-	log.Println("GetLanguages", "Starting")
-	res, err := client.GetLanguages(context.Background(), req)
-	if err != nil {
-		log.Println(err)
-		return c.JSON(http.StatusInternalServerError, echo.Map{"err": err.Error()})
-	}
-
-	return c.JSON(http.StatusOK, res)
 }
 
 type blockStuff interface {

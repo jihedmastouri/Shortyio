@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"log"
 
+	"github.com/google/uuid"
 	db "github.com/shorty-io/go-shorty/Shared/db"
 	pb "github.com/shorty-io/go-shorty/Shared/proto"
 
@@ -39,7 +40,7 @@ func (s *CommandService) CreateTag(ctx context.Context, in *pb.CreateTaxonomy) (
 		Descr: sql.NullString{},
 	}
 
-	id, err := q.CreateTag(ctx, params);
+	id, err := q.CreateTag(ctx, params)
 	if err != nil && err != sql.ErrNoRows {
 		log.Println(err)
 		return &pb.ActionResponse{
@@ -75,7 +76,7 @@ func (s *CommandService) CreateCategory(ctx context.Context, in *pb.CreateTaxono
 		Descr: sql.NullString{},
 	}
 
-	id, err := q.CreateCateg(ctx, params);
+	id, err := q.CreateCateg(ctx, params)
 	if err != nil && err != sql.ErrNoRows {
 		log.Println(err)
 		return &pb.ActionResponse{
@@ -106,7 +107,7 @@ func (s *CommandService) DeleteTag(ctx context.Context, rq *pb.DeleteTaxonomy) (
 	defer conn.Close()
 	q := db.New(conn)
 
-	id, err := q.DeleteTag(ctx, rq.Name);
+	id, err := q.DeleteTag(ctx, rq.Name)
 	if err != nil && err != sql.ErrNoRows {
 		log.Println(err)
 		return &pb.ActionResponse{
@@ -137,7 +138,7 @@ func (s *CommandService) DeleteCategory(ctx context.Context, rq *pb.DeleteTaxono
 	defer conn.Close()
 	q := db.New(conn)
 
-	id, err := q.DeleteCateg(ctx, rq.Name);
+	id, err := q.DeleteCateg(ctx, rq.Name)
 	if err != nil && err != sql.ErrNoRows {
 		log.Println(err)
 		return &pb.ActionResponse{
@@ -154,3 +155,86 @@ func (s *CommandService) DeleteCategory(ctx context.Context, rq *pb.DeleteTaxono
 	}, nil
 }
 
+func JoinBlockTag(ctx context.Context, rq *pb.JoinTaxonomy) (*pb.ActionResponse, error) {
+	conn, err := newConn()
+	if err != nil {
+		return &pb.ActionResponse{
+			IsSuceess: false,
+			Id:        "",
+			Message:   "Failed to connect to database",
+		}, nil
+	}
+
+	defer conn.Close()
+	q := db.New(conn)
+
+	blockid, err := uuid.Parse(rq.BlockId)
+	if err != nil {
+		log.Print("Failed to parse Block UUID:", err)
+		return nil, err
+	}
+
+	params := db.AddTagToBlockParams{
+		BlockID: blockid,
+		TagID:   rq.TaxonomyId,
+	}
+
+	err = q.AddTagToBlock(ctx, params)
+
+	if err != nil {
+		log.Print("Failed to add tag to block:", err)
+		return &pb.ActionResponse{
+			IsSuceess: false,
+			Id:        "",
+			Message:   err.Error(),
+		}, err
+	}
+
+	return &pb.ActionResponse{
+		IsSuceess: true,
+		Id:        "",
+		Message:   "Tag added to block",
+	}, nil
+}
+
+func JoinBlockCategory(ctx context.Context, rq *pb.JoinTaxonomy) (*pb.ActionResponse, error) {
+	conn, err := newConn()
+	if err != nil {
+		return &pb.ActionResponse{
+			IsSuceess: false,
+			Id:        "",
+			Message:   "Failed to connect to database",
+		}, nil
+	}
+
+	defer conn.Close()
+	q := db.New(conn)
+
+	blockid, err := uuid.Parse(rq.BlockId)
+	if err != nil {
+		log.Print("Failed to parse Block UUID:", err)
+		return nil, err
+	}
+
+	params := db.AddCategToBlockParams{
+		BlockID: blockid,
+		CategID: rq.TaxonomyId,
+	}
+
+	err = q.AddCategToBlock(ctx, params)
+
+	if err != nil {
+		log.Print("Failed to add categ to block:", err)
+		return &pb.ActionResponse{
+			IsSuceess: false,
+			Id:        "",
+			Message:   err.Error(),
+		}, err
+	}
+
+	return &pb.ActionResponse{
+		IsSuceess: true,
+		Id:        "",
+		Message:   "Categ added to block",
+	}, nil
+}

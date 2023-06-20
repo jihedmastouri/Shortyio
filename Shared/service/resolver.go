@@ -5,18 +5,11 @@ import (
 	"log"
 	"net"
 
+	"github.com/shorty-io/go-shorty/Shared/service/namespace"
+
 	_ "github.com/mbobakov/grpc-consul-resolver"
 
 	"google.golang.org/grpc"
-)
-
-type DefaultServices string
-
-const (
-	Queries DefaultServices = "Queries"
-	Search DefaultServices = "Search"
-	Web DefaultServices = "Web"
-	FlipFlop DefaultServices = "FlipFlop"
 )
 
 func (s *Service) GRPCListener(server *grpc.Server) {
@@ -32,7 +25,7 @@ func (s *Service) GRPCListener(server *grpc.Server) {
 	}
 }
 
-func (s *Service) Dial(serviceName DefaultServices, tag *[]string) (*grpc.ClientConn, error) {
+func (s *Service) Dial(serviceName namespace.DefaultServices, tag *[]string) (*grpc.ClientConn, error) {
 	consul := s.consulAddr
 	t := fmt.Sprintf("consul://%s/%s", consul, serviceName)
 

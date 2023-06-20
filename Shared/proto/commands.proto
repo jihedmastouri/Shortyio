@@ -26,6 +26,9 @@ service FlipFlop {
 
   rpc CreateCategory(CreateTaxonomy) returns (ActionResponse) {}
   rpc DeleteCategory(DeleteTaxonomy) returns (ActionResponse) {}
+
+  rpc JoinTag(JoinTaxonomy) returns (ActionResponse) {}
+  rpc JoinCategory(JoinTaxonomy) returns (ActionResponse) {}
 }
 
 message CreateRequest {
@@ -41,34 +44,34 @@ message CreateLangRequest {
     string lang_name = 2;
     string lang_code = 3;
     string block_id = 4;
-    string author = 5;
     optional string previousLang = 6;
 }
 
 message DeleteRequest {
     string id = 1;
-    string author = 2;
 }
 
 message DeleteLangRequest {
     string id = 1;
     string lang_code = 2;
-    string author = 3;
 }
 
 message CreateTaxonomy {
     string name = 1;
     string descr = 2;
-    string author = 3;
 }
 
 message DeleteTaxonomy {
     string name = 1;
-    string author = 2;
 }
 
 message ActionResponse {
     bool isSuceess = 1;
     string id = 2;
     string message = 3;
+}
+
+message JoinTaxonomy {
+    string block_id = 1;
+    int32 taxonomy_id = 2;
 }

@@ -27,7 +27,7 @@ type UpdateBlockRq struct {
 }
 
 func UpdateContent(c echo.Context) error {
-	var brq CreateBlockRq
+	var brq UpdateBlockRq
 	if err := c.Bind(&brq); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}

@@ -5,7 +5,11 @@ import (
 	"os"
 
 	"github.com/nats-io/nats.go"
+	"github.com/shorty-io/go-shorty/Shared/service/namespace"
+	"google.golang.org/grpc"
 )
+
+type Dialfn func(namespace.DefaultServices, *[]string) (*grpc.ClientConn, error)
 
 var nc *nats.Conn
 
