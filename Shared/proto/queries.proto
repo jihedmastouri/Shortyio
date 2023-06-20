@@ -13,9 +13,14 @@ service Queries {
     rpc GetBlockMeta(BlockRequest) returns (BlockMeta) {}
     rpc GetBlockRules(BlockRequest) returns (BlockRules) {}
 
+    rpc search(SearchRequest) returns (BlockList) {}
+
     rpc GetVersions(VersionsRequest) returns (VersionResponse) {}
 
     rpc GetLanguages(LanguageRequest) returns (LanguageList) {}
+
+    rpc GetTags(Selectors) returns (TagList) {}
+    rpc GetCategories(Selectors) returns (CategoryList) {}
 }
 
 message BlockRequest {
@@ -56,6 +61,26 @@ message Selectors {
 message Pagination {
     int32 pageSize = 1;
     int32 pageNum = 2;
-    int32 total = 3;
+    optional int32 total = 3;
 }
+
+message SearchRequest {
+    Selectors selectors = 1;
+    Pagination pagination = 2;
+}
+
+message BlockList {
+    repeated Block meta = 1;
+    Pagination pagination = 2;
+}
+
+message TagList {
+    repeated string tags = 1;
+}
+
+message CategoryList {
+    repeated string categories = 1;
+}
+
+
 
