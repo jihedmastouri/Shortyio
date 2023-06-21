@@ -45,7 +45,7 @@ func newConn() (*sql.DB, error) {
 				"Failed to retrieve %s from Consul key-value store: %s",
 				param,
 				err,
-			);
+			)
 			return nil, err
 		}
 		config[param] = value
@@ -97,4 +97,8 @@ func getBlockRules(q *db.Queries, br *pb.BlockRules) (pb.BlockRules_Rules, strin
 		CommentsEditable:  rules.CommentEditable.Bool,
 		CommentsMaxNested: int32(rules.CommentsMaxNest.Int16),
 	}, br.GetRuleName()
+}
+
+func PublishEvent(event *pb.Event) error {
+	return srv.PublishEvent(event)
 }

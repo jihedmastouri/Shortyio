@@ -16,6 +16,21 @@ func getBlock(c echo.Context) error {
 	return getStuffBlock(client.GetBlock, c)
 }
 
+func getBlockContent(c echo.Context) error {
+	client := c.Get("client").(pb.QueriesClient)
+	return getStuffBlock(client.GetBlockContent, c)
+}
+
+func getBlockMeta(c echo.Context) error {
+	client := c.Get("client").(pb.QueriesClient)
+	return getStuffBlock(client.GetBlockMeta, c)
+}
+
+func getBlockRules(c echo.Context) error {
+	client := c.Get("client").(pb.QueriesClient)
+	return getStuffBlock(client.GetBlockRules, c)
+}
+
 type blockStuff interface {
 	pb.Block | pb.BlockMeta | pb.BlockRules | pb.BlockContent
 }

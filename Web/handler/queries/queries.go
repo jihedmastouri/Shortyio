@@ -28,10 +28,15 @@ func New(e *echo.Echo, fn handler.Dialfn) {
 		}
 	}
 
-	block := e.Group("/api", createClient)
+	block := e.Group("/public/block", createClient)
 
-	// Get Block Metadata and content for a language
 	block.GET("/full/:lang/:id", getBlock)
+	block.GET("/content/:lang/:id", getBlockContent)
+	block.GET("/meta/:lang/:id", getBlockMeta)
+	block.GET("/rules/:lang/:id", getBlockRules)
+
 	block.GET("/versions/:lang/:id", getVersions)
 	block.GET("/languages/:id", getLanguages)
+
+	block.GET("/search/:lang/:query", searchBlock)
 }
