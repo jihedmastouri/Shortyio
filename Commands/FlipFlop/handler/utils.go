@@ -98,7 +98,3 @@ func getBlockRules(q *db.Queries, br *pb.BlockRules) (pb.BlockRules_Rules, strin
 		CommentsMaxNested: int32(rules.CommentsMaxNest.Int16),
 	}, br.GetRuleName()
 }
-
-func PublishEvent(event *pb.Event) error {
-	return srv.PublishEvent(event)
-}

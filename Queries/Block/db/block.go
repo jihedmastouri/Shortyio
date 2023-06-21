@@ -55,6 +55,7 @@ func GetBlock(ctx context.Context, bq *pb.BlockRequest) (*pb.Block, error) {
 	collection := getCollection(client)
 
 	query, option := buildQuery(bq)
+	log.Println(query, option, bq)
 	cusror := collection.FindOne(ctx, query, option)
 	block := &pb.Block{}
 	if err := cusror.Decode(block); err != nil {

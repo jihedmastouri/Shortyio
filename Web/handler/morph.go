@@ -6,57 +6,31 @@ import (
 
 	"github.com/labstack/echo/v4"
 
-	ps "github.com/shorty-io/go-shorty/Shared/nats"
+	mq "github.com/shorty-io/go-shorty/Shared/msgq"
 	pb "github.com/shorty-io/go-shorty/Shared/proto"
 )
 
-type UpdateBlockRq struct {
-	Name      string `json:"name"`
-	BlockType string `json:"blockType"`
-	Author    string `json:"author"`
-	Rules     struct {
-		RuleName          string `json:"ruleName"`
-		Nested            bool   `json:"nested"`
-		HasLikes          bool   `json:"hasLikes"`
-		HasComments       bool   `json:"hasComments"`
-		CommentsNested    bool   `json:"commentsNested"`
-		CommentsHasLikes  bool   `json:"commentsHasLikes"`
-		CommentsEditable  bool   `json:"commentsEditable"`
-		CommentsMaxNested int    `json:"commentsMaxNested"`
-	}
-}
-
 func UpdateContent(c echo.Context) error {
-	var brq UpdateBlockRq
-	if err := c.Bind(&brq); err != nil {
+	var brq *pb.BlockContent
+	if err := c.Bind(brq); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	a := &ps.BlockAdded{
-		BlockMeta: &pb.BlockMeta{
-			BlockId:    "",
-			Name:       "",
-			Type:       "",
-			Tags:       []string{},
-			Categories: []string{},
-			Authors:    []*pb.Author{},
-			UpdatedAt:  "",
-			CreatedAt:  "",
-		},
-		BlockRules: &pb.BlockRules{
-			BlockRules: nil,
-		},
-		Event: ps.Event{},
-	}
+	id := c.Param("id")
 
-	out, err := json.Marshal(a)
+	ev := mq.NewEvent("blockToUpdate", mq.BlockToUpdateData{
+		Id:           id,
+		BlockContent: brq,
+	})
+
+	out, err := json.Marshal(ev)
 	if err != nil {
 		c.Logger().Error(err)
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
 	nc.Publish(
-		"blockToUpdate",
+		string(ev.Name),
 		out,
 	)
 
