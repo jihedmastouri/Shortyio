@@ -10,7 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var config map[string]string
+var config = make(map[string]string)
 
 func InitConfig(srv *service.Service) {
 	params := []string{
@@ -40,9 +40,9 @@ func connectMongo(ctx context.Context) (*mongo.Client, error) {
 
 	connString := fmt.Sprintf(
 		"mongodb+srv://%s:%s@%s",
-		host,
 		username,
 		psswd,
+		host,
 	)
 	log.Print(connString)
 
