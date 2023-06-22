@@ -19,6 +19,8 @@ func Search(ctx context.Context, req *pb.SearchRequest) (*pb.BlockList, error) {
 	defer client.Disconnect(ctx)
 	collection := getCollection(client)
 
+	log.Println("Search Recived")
+
 	query := bson.M{}
 
 	if len(req.Selectors.Tags) > 0 {
@@ -36,14 +38,23 @@ func Search(ctx context.Context, req *pb.SearchRequest) (*pb.BlockList, error) {
 		}
 	}
 
-	skip := req.Pagination.PageNum * req.Pagination.PageSize
+	pageSize := 100
+	if req.Pagination.PageSize != 0 || req.Pagination.PageSize > 100 {
+		pageSize = int(req.Pagination.PageSize)
+	}
+
+	skip := int(req.Pagination.PageNum) * pageSize
 
 	findOptions := options.Find()
 	findOptions.SetSkip(int64(skip))
-	findOptions.SetLimit(int64(req.Pagination.PageSize))
+	findOptions.SetLimit(int64(pageSize))
 
-	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
-	defer cancel()
+	ctx, cancel := context.WithTimeout(ctx, 50*time.Second)
+	defer func() {
+		log.Println("Search canceled")
+		cancel()
+	}()
+
 	cursor, err := collection.Find(ctx, query)
 	if err != nil {
 		log.Println(err)

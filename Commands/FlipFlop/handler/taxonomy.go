@@ -12,15 +12,6 @@ import (
 	_ "github.com/lib/pq"
 )
 
-// implement crud for tags and categories
-// rpc CreateTag(CreateTaxonomy) returns (ActionResponse) {}
-// rpc DeleteTag(DeleteTaxonomy) returns (ActionResponse) {}
-// rpc JoinBlockTag(JoinTaxonomy) returns (ActionResponse) {}
-//
-// rpc CreateCategory(CreateTaxonomy) returns (ActionResponse) {}
-// rpc DeleteCategory(DeleteTaxonomy) returns (ActionResponse) {}
-// rpc JoinBlockCategory(JoinTaxonomy) returns (ActionResponse) {}
-
 // CreateTag creates a new tag
 func (s *CommandService) CreateTag(ctx context.Context, in *pb.CreateTaxonomy) (*pb.ActionResponse, error) {
 	conn, err := newConn()

@@ -21,16 +21,18 @@ func searchBlock(c echo.Context) error {
 
 	typeName := c.QueryParam("type")
 
+	l := c.Logger()
+
 	pageSizeParam := c.QueryParam("pagesize")
 	pageSize, err := strconv.Atoi(pageSizeParam)
 	if err != nil {
-		return err
+		l.Warn(err)
 	}
 
 	pageNumParam := c.QueryParam("pagenum")
 	pageNum, err := strconv.Atoi(pageNumParam)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, echo.Map{"err": "pagenum must be an integer"})
+		l.Warn(err)
 	}
 
 	selectors := &pb.Selectors{
@@ -49,6 +51,7 @@ func searchBlock(c echo.Context) error {
 		Pagination: pagination,
 	})
 	if err != nil {
+		c.Logger().Error(err)
 		return c.JSON(http.StatusInternalServerError, echo.Map{"err": err.Error()})
 	}
 

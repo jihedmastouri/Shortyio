@@ -44,7 +44,6 @@ func connectMongo(ctx context.Context) (*mongo.Client, error) {
 		psswd,
 		host,
 	)
-	log.Print(connString)
 
 	clientOptions := options.Client().ApplyURI(connString)
 

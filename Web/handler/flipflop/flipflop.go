@@ -29,21 +29,26 @@ func New(e *echo.Echo, fn handler.Dialfn) {
 
 	cmd := e.Group("/cmd", CreateClient)
 
+	// Blocks
 	cmd.POST("/block", createBlock)
 	cmd.DELETE("/block/:id", deleteBlock)
 	cmd.PUT("/block/:id", updateBlock)
 
+	// Languages
 	cmd.POST("/block/:id/lang", createLanguage)
 	cmd.DELETE("/block/:id/lang/:code", deleteLanguage)
 
+	// Rules
 	cmd.POST("/block-rule", createRule)
 	cmd.DELETE("/block/:id", deleteRule)
 	cmd.PUT("/block/:id", updateRule)
 
+	// Tags
 	cmd.POST("/tag", createTag)
 	cmd.DELETE("/tag/:id", deleteTag)
 	cmd.POST("/block/:id/tag/:taxonomy-id", addTagToBlock)
 
+	// Categories
 	cmd.POST("/categ", createCateg)
 	cmd.DELETE("/categ/:id", deleteCateg)
 	cmd.POST("/block/:id/categ/:taxonomy-id", addCategToBlock)

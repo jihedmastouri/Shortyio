@@ -48,7 +48,11 @@ message LanguageRequest {
 }
 
 message LanguageList {
-    repeated string langs = 1;
+    repeated Language langs = 1;
+    message Language {
+        string code = 1;
+        string name = 2;
+    }
 }
 
 message Selectors {

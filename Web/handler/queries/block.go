@@ -48,7 +48,6 @@ func getStuffBlock[T blockStuff](fn fnc[T], c echo.Context) error {
 		req.Version = &temp
 	}
 
-	log.Println("GetBlock", "Starting")
 	res, err := fn(context.Background(), req)
 	if err != nil {
 		log.Println(err)
