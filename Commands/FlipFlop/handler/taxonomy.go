@@ -128,7 +128,7 @@ func (s *CommandService) DeleteCategory(ctx context.Context, rq *pb.DeleteTaxono
 	}, nil
 }
 
-func JoinTag(ctx context.Context, rq *pb.JoinTaxonomy) (*pb.ActionResponse, error) {
+func (s *CommandService) JoinTag(ctx context.Context, rq *pb.JoinTaxonomy) (*pb.ActionResponse, error) {
 	conn, err := newConn()
 	if err != nil {
 		return nil, errors.New("FAILED TO CONNECT TO DATABASE")
@@ -162,7 +162,7 @@ func JoinTag(ctx context.Context, rq *pb.JoinTaxonomy) (*pb.ActionResponse, erro
 	}, nil
 }
 
-func JoinCategory(ctx context.Context, rq *pb.JoinTaxonomy) (*pb.ActionResponse, error) {
+func (s *CommandService) JoinCategory(ctx context.Context, rq *pb.JoinTaxonomy) (*pb.ActionResponse, error) {
 	conn, err := newConn()
 	if err != nil {
 		return nil, errors.New("FAILED TO CONNECT TO DATABASE")
