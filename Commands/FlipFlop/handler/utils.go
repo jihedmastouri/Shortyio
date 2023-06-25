@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/nats-io/nats.go"
 	"github.com/shorty-io/go-shorty/Shared/service"
 
 	db "github.com/shorty-io/go-shorty/Shared/db"
@@ -15,14 +16,15 @@ import (
 )
 
 var srv *service.Service
+var nc *nats.Conn
 
 func NewSrv(service *service.Service) {
 	if service == nil {
-		panic("Service is nil")
+		log.Fatal("Service is nil")
 	}
 
 	if srv != nil {
-		panic("Service already initialized")
+		log.Fatal("Service already initialized")
 	}
 	srv = service
 }
@@ -98,3 +100,12 @@ func getBlockRules(q *db.Queries, br *pb.BlockRules) (pb.BlockRules_Rules, strin
 		CommentsMaxNested: int32(rules.CommentsMaxNest.Int16),
 	}, br.GetRuleName()
 }
+
+// func publishEvent(ctx context.Context, event service.) error {
+// 	_, err := srv.Publish(ctx, event)
+// 	if err != nil {
+// 		log.Printf("Failed to publish event: %s", err)
+// 		return err
+// 	}
+// 	return nil
+// }

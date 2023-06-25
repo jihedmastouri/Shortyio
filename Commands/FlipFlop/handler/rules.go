@@ -3,11 +3,11 @@ package handler
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"log"
 
 	db "github.com/shorty-io/go-shorty/Shared/db"
 	pb "github.com/shorty-io/go-shorty/Shared/proto"
-
 
 	_ "github.com/lib/pq"
 )
@@ -15,20 +15,13 @@ import (
 func (c *CommandService) CreateBlockRule(ctx context.Context, rq *pb.BlockRules) (*pb.ActionResponse, error) {
 	conn, err := newConn()
 	if err != nil {
-		return &pb.ActionResponse{
-			IsSuceess: false,
-			Message:   "Failed to connect to database",
-		}, nil
+		return nil, errors.New("FAILED TO CONNECT TO DATABASE")
 	}
 	defer conn.Close()
 	q := db.New(conn)
 
 	if rq.GetRules() == nil {
-		log.Print("No Rules Provided")
-		return &pb.ActionResponse{
-			IsSuceess: false,
-			Message:   "No Rules Provided",
-		}, nil
+		return nil, errors.New("NO RULES PROVIDED")
 	}
 
 	params := db.CreateBlockRuleParams{
@@ -57,11 +50,16 @@ func (c *CommandService) CreateBlockRule(ctx context.Context, rq *pb.BlockRules)
 			Bool:  rq.GetRules().CommentsEditable,
 			Valid: true,
 		},
+		Descr: sql.NullString{
+			String: rq.GetRules().Description,
+			Valid:  true,
+		},
 	}
 
 	id, err := q.CreateBlockRule(ctx, params)
 	if err != nil {
-		return nil, err
+		log.Print(err)
+		return nil, errors.New("FAILED TO CREATE RULE")
 	}
 
 	return &pb.ActionResponse{
@@ -75,20 +73,15 @@ func (c *CommandService) CreateBlockRule(ctx context.Context, rq *pb.BlockRules)
 func (*CommandService) UpdateBlockRule(ctx context.Context, rq *pb.BlockRules) (*pb.ActionResponse, error) {
 	conn, err := newConn()
 	if err != nil {
-		return &pb.ActionResponse{
-			IsSuceess: false,
-			Message:   "Failed to connect to database",
-		}, nil
+		return nil, errors.New("FAILED TO CONNECT TO DATABASE")
 	}
+
 	defer conn.Close()
 	q := db.New(conn)
 
 	tx, err := conn.BeginTx(ctx, nil)
 	if err != nil {
-		return &pb.ActionResponse{
-			IsSuceess: false,
-			Message:   "Failed to connect to database",
-		}, nil
+		return nil, errors.New("FAILED TO START TRANSACTION")
 	}
 	defer tx.Rollback()
 
@@ -100,10 +93,8 @@ func (*CommandService) UpdateBlockRule(ctx context.Context, rq *pb.BlockRules) (
 	}
 
 	if err = q.DeleteBlockRule(ctx, rq.GetRules().RuleName); err != nil {
-		return &pb.ActionResponse{
-			IsSuceess: false,
-			Message:   "Failed to Delete Rule",
-		}, nil
+		log.Print(err)
+		return nil, errors.New("FAILED TO DELETE RULE")
 	}
 
 	params := db.CreateBlockRuleParams{
@@ -132,11 +123,16 @@ func (*CommandService) UpdateBlockRule(ctx context.Context, rq *pb.BlockRules) (
 			Bool:  rq.GetRules().CommentsEditable,
 			Valid: true,
 		},
+		Descr: sql.NullString{
+			String: rq.GetRules().Descr,
+			Valid:  true,
+		},
 	}
 
 	id, err := q.CreateBlockRule(ctx, params)
 	if err != nil {
-		return nil, err
+		log.Print(err)
+		return nil, errors.New("FAILED TO CREATE RULE")
 	}
 
 	return &pb.ActionResponse{
@@ -149,10 +145,7 @@ func (*CommandService) UpdateBlockRule(ctx context.Context, rq *pb.BlockRules) (
 func (*CommandService) DeleteBlockRule(ctx context.Context, rq *pb.BlockRules) (*pb.ActionResponse, error) {
 	conn, err := newConn()
 	if err != nil {
-		return &pb.ActionResponse{
-			IsSuceess: false,
-			Message:   "Failed to connect to database",
-		}, nil
+		return nil, errors.New("FAILED TO CONNECT TO DATABASE")
 	}
 	defer conn.Close()
 	q := db.New(conn)
@@ -163,12 +156,11 @@ func (*CommandService) DeleteBlockRule(ctx context.Context, rq *pb.BlockRules) (
 	} else {
 		ruleName = rq.GetRules().RuleName
 	}
+	log.Print(ruleName)
 
 	if err = q.DeleteBlockRule(ctx, ruleName); err != nil {
-		return &pb.ActionResponse{
-			IsSuceess: false,
-			Message:   "Failed to Delete Rule",
-		}, nil
+		log.Print(err)
+		return nil, errors.New("FAILED TO DELETE RULE")
 	}
 
 	return &pb.ActionResponse{
@@ -176,5 +168,3 @@ func (*CommandService) DeleteBlockRule(ctx context.Context, rq *pb.BlockRules) (
 		Message:   "Great Success",
 	}, nil
 }
-
-

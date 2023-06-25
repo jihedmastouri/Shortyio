@@ -38,9 +38,9 @@ LIMIT 100;
 ------------------
 
 -- name: CreateBlockRule :one
-INSERT INTO block_rules (name, nested, has_likes, has_comments, comments_max_nest,
+INSERT INTO block_rules (name, nested, descr, has_likes, has_comments, comments_max_nest,
         comments_has_likes, comment_editable)
-VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING name;
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING name;
 
 ------------------
 -- 3- Joins

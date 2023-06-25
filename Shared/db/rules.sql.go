@@ -12,14 +12,15 @@ import (
 
 const createBlockRule = `-- name: CreateBlockRule :one
 
-INSERT INTO block_rules (name, nested, has_likes, has_comments, comments_max_nest,
+INSERT INTO block_rules (name, nested, descr, has_likes, has_comments, comments_max_nest,
         comments_has_likes, comment_editable)
-VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING name
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING name
 `
 
 type CreateBlockRuleParams struct {
 	Name             string
 	Nested           sql.NullBool
+	Descr            string
 	HasLikes         sql.NullBool
 	HasComments      sql.NullBool
 	CommentsMaxNest  sql.NullInt16
@@ -34,6 +35,7 @@ func (q *Queries) CreateBlockRule(ctx context.Context, arg CreateBlockRuleParams
 	row := q.db.QueryRowContext(ctx, createBlockRule,
 		arg.Name,
 		arg.Nested,
+		arg.Descr,
 		arg.HasLikes,
 		arg.HasComments,
 		arg.CommentsMaxNest,

@@ -40,8 +40,8 @@ func New(e *echo.Echo, fn handler.Dialfn) {
 
 	// Rules
 	cmd.POST("/block-rule", createRule)
-	cmd.DELETE("/block/:id", deleteRule)
-	cmd.PUT("/block/:id", updateRule)
+	cmd.DELETE("/block-rule/:id", deleteRule)
+	cmd.PUT("/block-rule/:id", updateRule)
 
 	// Tags
 	cmd.POST("/tag", createTag)

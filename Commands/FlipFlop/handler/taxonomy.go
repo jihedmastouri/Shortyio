@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"log"
 
 	"github.com/google/uuid"
@@ -16,29 +17,23 @@ import (
 func (s *CommandService) CreateTag(ctx context.Context, in *pb.CreateTaxonomy) (*pb.ActionResponse, error) {
 	conn, err := newConn()
 	if err != nil {
-		return &pb.ActionResponse{
-			IsSuceess: false,
-			Id:        "",
-			Message:   "Failed to connect to database",
-		}, nil
+		return nil, errors.New("FAILED TO CONNECT TO DATABASE")
 	}
 
 	defer conn.Close()
 	q := db.New(conn)
 
 	params := db.CreateTagParams{
-		Name:  "",
-		Descr: sql.NullString{},
+		Name: in.GetName(),
+		Descr: sql.NullString{
+			String: in.Descr,
+			Valid:  true,
+		},
 	}
 
 	id, err := q.CreateTag(ctx, params)
 	if err != nil && err != sql.ErrNoRows {
-		log.Println(err)
-		return &pb.ActionResponse{
-			IsSuceess: false,
-			Id:        "",
-			Message:   "Failed to create tag",
-		}, nil
+		return nil, errors.New("FAILED TO CREATE TAG")
 	}
 
 	return &pb.ActionResponse{
@@ -52,11 +47,7 @@ func (s *CommandService) CreateTag(ctx context.Context, in *pb.CreateTaxonomy) (
 func (s *CommandService) CreateCategory(ctx context.Context, in *pb.CreateTaxonomy) (*pb.ActionResponse, error) {
 	conn, err := newConn()
 	if err != nil {
-		return &pb.ActionResponse{
-			IsSuceess: false,
-			Id:        "",
-			Message:   "Failed to connect to database",
-		}, nil
+		return nil, errors.New("FAILED TO CONNECT TO DATABASE")
 	}
 
 	defer conn.Close()
@@ -70,11 +61,7 @@ func (s *CommandService) CreateCategory(ctx context.Context, in *pb.CreateTaxono
 	id, err := q.CreateCateg(ctx, params)
 	if err != nil && err != sql.ErrNoRows {
 		log.Println(err)
-		return &pb.ActionResponse{
-			IsSuceess: false,
-			Id:        "",
-			Message:   "Failed to create category",
-		}, nil
+		return nil, errors.New("FAILED TO CREATE CATEGORY")
 	}
 
 	return &pb.ActionResponse{
@@ -88,11 +75,7 @@ func (s *CommandService) CreateCategory(ctx context.Context, in *pb.CreateTaxono
 func (s *CommandService) DeleteTag(ctx context.Context, rq *pb.DeleteTaxonomy) (*pb.ActionResponse, error) {
 	conn, err := newConn()
 	if err != nil {
-		return &pb.ActionResponse{
-			IsSuceess: false,
-			Id:        "",
-			Message:   "Failed to connect to database",
-		}, nil
+		return nil, errors.New("FAILED TO CONNECT TO DATABASE")
 	}
 
 	defer conn.Close()
@@ -101,11 +84,7 @@ func (s *CommandService) DeleteTag(ctx context.Context, rq *pb.DeleteTaxonomy) (
 	id, err := q.DeleteTag(ctx, rq.Name)
 	if err != nil && err != sql.ErrNoRows {
 		log.Println(err)
-		return &pb.ActionResponse{
-			IsSuceess: false,
-			Id:        "",
-			Message:   "Failed to delete tag",
-		}, nil
+		return nil, errors.New("FAILED TO DELETE TAG")
 	}
 
 	return &pb.ActionResponse{
@@ -119,11 +98,7 @@ func (s *CommandService) DeleteTag(ctx context.Context, rq *pb.DeleteTaxonomy) (
 func (s *CommandService) DeleteCategory(ctx context.Context, rq *pb.DeleteTaxonomy) (*pb.ActionResponse, error) {
 	conn, err := newConn()
 	if err != nil {
-		return &pb.ActionResponse{
-			IsSuceess: false,
-			Id:        "",
-			Message:   "Failed to connect to database",
-		}, nil
+		return nil, errors.New("FAILED TO CONNECT TO DATABASE")
 	}
 
 	defer conn.Close()
@@ -132,11 +107,7 @@ func (s *CommandService) DeleteCategory(ctx context.Context, rq *pb.DeleteTaxono
 	id, err := q.DeleteCateg(ctx, rq.Name)
 	if err != nil && err != sql.ErrNoRows {
 		log.Println(err)
-		return &pb.ActionResponse{
-			IsSuceess: false,
-			Id:        "",
-			Message:   "Failed to delete category",
-		}, nil
+		return nil, errors.New("FAILED TO DELETE CATEGORY")
 	}
 
 	return &pb.ActionResponse{
@@ -149,11 +120,7 @@ func (s *CommandService) DeleteCategory(ctx context.Context, rq *pb.DeleteTaxono
 func JoinBlockTag(ctx context.Context, rq *pb.JoinTaxonomy) (*pb.ActionResponse, error) {
 	conn, err := newConn()
 	if err != nil {
-		return &pb.ActionResponse{
-			IsSuceess: false,
-			Id:        "",
-			Message:   "Failed to connect to database",
-		}, nil
+		return nil, errors.New("FAILED TO CONNECT TO DATABASE")
 	}
 
 	defer conn.Close()
@@ -162,7 +129,7 @@ func JoinBlockTag(ctx context.Context, rq *pb.JoinTaxonomy) (*pb.ActionResponse,
 	blockid, err := uuid.Parse(rq.BlockId)
 	if err != nil {
 		log.Print("Failed to parse Block UUID:", err)
-		return nil, err
+		return nil, errors.New("FAILED TO PARSE BLOCK ID")
 	}
 
 	params := db.AddTagToBlockParams{
@@ -174,11 +141,7 @@ func JoinBlockTag(ctx context.Context, rq *pb.JoinTaxonomy) (*pb.ActionResponse,
 
 	if err != nil {
 		log.Print("Failed to add tag to block:", err)
-		return &pb.ActionResponse{
-			IsSuceess: false,
-			Id:        "",
-			Message:   err.Error(),
-		}, err
+		return nil, errors.New("FAILED TO JOIN TAG")
 	}
 
 	return &pb.ActionResponse{
@@ -191,11 +154,7 @@ func JoinBlockTag(ctx context.Context, rq *pb.JoinTaxonomy) (*pb.ActionResponse,
 func JoinBlockCategory(ctx context.Context, rq *pb.JoinTaxonomy) (*pb.ActionResponse, error) {
 	conn, err := newConn()
 	if err != nil {
-		return &pb.ActionResponse{
-			IsSuceess: false,
-			Id:        "",
-			Message:   "Failed to connect to database",
-		}, nil
+		return nil, errors.New("FAILED TO CONNECT TO DATABASE")
 	}
 
 	defer conn.Close()
@@ -204,7 +163,7 @@ func JoinBlockCategory(ctx context.Context, rq *pb.JoinTaxonomy) (*pb.ActionResp
 	blockid, err := uuid.Parse(rq.BlockId)
 	if err != nil {
 		log.Print("Failed to parse Block UUID:", err)
-		return nil, err
+		return nil, errors.New("FAILED TO PARSE BLOCK ID")
 	}
 
 	params := db.AddCategToBlockParams{
@@ -216,11 +175,7 @@ func JoinBlockCategory(ctx context.Context, rq *pb.JoinTaxonomy) (*pb.ActionResp
 
 	if err != nil {
 		log.Print("Failed to add categ to block:", err)
-		return &pb.ActionResponse{
-			IsSuceess: false,
-			Id:        "",
-			Message:   err.Error(),
-		}, err
+		return nil, errors.New("FAILED TO JOIN CATEG")
 	}
 
 	return &pb.ActionResponse{

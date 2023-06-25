@@ -3,7 +3,9 @@ package handler
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"log"
+	"strconv"
 
 	"github.com/google/uuid"
 	db "github.com/shorty-io/go-shorty/Shared/db"
@@ -19,11 +21,7 @@ type CommandService struct {
 func (c *CommandService) CreateBlock(ctx context.Context, rq *pb.CreateRequest) (*pb.ActionResponse, error) {
 	conn, err := newConn()
 	if err != nil {
-		return &pb.ActionResponse{
-			IsSuceess: false,
-			Id:        "",
-			Message:   "Failed to connect to database",
-		}, nil
+		return nil, errors.New("FAILED TO CONNECT TO DATABASE")
 	}
 
 	defer conn.Close()
@@ -32,18 +30,15 @@ func (c *CommandService) CreateBlock(ctx context.Context, rq *pb.CreateRequest) 
 	author, err := uuid.Parse(rq.GetAuthor())
 	if err != nil {
 		log.Print("Failed to parse author UUID:", err)
-		return nil, err
+		return nil, errors.New("FAILED TO PARSE AUTHOR ID")
 	}
 
 	rules, name_rule := getBlockRules(q, rq.GetRules())
 
 	blockType, err := q.GetTypeByName(ctx, rq.BlockType)
 	if err != nil {
-		return &pb.ActionResponse{
-			IsSuceess: false,
-			Id:        "",
-			Message:   err.Error(),
-		}, nil
+		log.Print("Failed to get block type:", err)
+		return nil, errors.New("FAILED TO GET BLOCK TYPE")
 	}
 
 	params := db.CreateBlockParams{
@@ -61,11 +56,8 @@ func (c *CommandService) CreateBlock(ctx context.Context, rq *pb.CreateRequest) 
 
 	id, err := q.CreateBlock(ctx, params)
 	if err != nil {
-		return &pb.ActionResponse{
-			IsSuceess: false,
-			Id:        "",
-			Message:   err.Error(),
-		}, nil
+		log.Print("Failed to create block:", err)
+		return nil, errors.New("FAILED TO CREATE BLOCK")
 	}
 
 	return &pb.ActionResponse{
@@ -78,11 +70,7 @@ func (c *CommandService) CreateBlock(ctx context.Context, rq *pb.CreateRequest) 
 func (c *CommandService) UpdateBlock(ctx context.Context, rq *pb.CreateRequest) (*pb.ActionResponse, error) {
 	conn, err := newConn()
 	if err != nil {
-		return &pb.ActionResponse{
-			IsSuceess: false,
-			Id:        "",
-			Message:   "Failed to connect to database",
-		}, nil
+		return nil, errors.New("FAILED TO CONNECT TO DATABASE")
 	}
 
 	defer conn.Close()
@@ -91,7 +79,7 @@ func (c *CommandService) UpdateBlock(ctx context.Context, rq *pb.CreateRequest) 
 	id, err := uuid.Parse(rq.GetId())
 	if err != nil {
 		log.Print("Failed to parse Block UUID:", err)
-		return nil, err
+		return nil, errors.New("FAILED TO PARSE BLOCK ID")
 	}
 
 	rules, name_rule := getBlockRules(q, rq.GetRules())
@@ -110,11 +98,7 @@ func (c *CommandService) UpdateBlock(ctx context.Context, rq *pb.CreateRequest) 
 
 	if err = q.UpdateBlock(ctx, params); err != nil {
 		log.Print("Failed to delete block:", err)
-		return &pb.ActionResponse{
-			IsSuceess: false,
-			Id:        "",
-			Message:   err.Error(),
-		}, nil
+		return nil, errors.New("FAILED TO UPDATE BLOCK")
 	}
 
 	return &pb.ActionResponse{
@@ -127,11 +111,7 @@ func (c *CommandService) UpdateBlock(ctx context.Context, rq *pb.CreateRequest) 
 func (c *CommandService) DeleteBlock(ctx context.Context, rq *pb.DeleteRequest) (*pb.ActionResponse, error) {
 	conn, err := newConn()
 	if err != nil {
-		return &pb.ActionResponse{
-			IsSuceess: false,
-			Id:        "",
-			Message:   "Failed to connect to database",
-		}, nil
+		return nil, errors.New("FAILED TO CONNECT TO DATABASE")
 	}
 
 	defer conn.Close()
@@ -140,16 +120,12 @@ func (c *CommandService) DeleteBlock(ctx context.Context, rq *pb.DeleteRequest) 
 	id, err := uuid.Parse(rq.GetId())
 	if err != nil {
 		log.Print("Failed to parse Block UUID:", err)
-		return nil, err
+		return nil, errors.New("FAILED TO PARSE BLOCK ID")
 	}
 
 	if err = q.DeleteBlock(ctx, id); err != nil {
 		log.Print("Failed to delete block:", err)
-		return &pb.ActionResponse{
-			IsSuceess: false,
-			Id:        id.String(),
-			Message:   "Failed to delete block",
-		}, nil
+		return nil, errors.New("FAILED TO DELETE BLOCK")
 	}
 
 	return &pb.ActionResponse{
@@ -162,11 +138,7 @@ func (c *CommandService) DeleteBlock(ctx context.Context, rq *pb.DeleteRequest) 
 func (c *CommandService) CreateBlockLang(ctx context.Context, rq *pb.CreateLangRequest) (*pb.ActionResponse, error) {
 	conn, err := newConn()
 	if err != nil {
-		return &pb.ActionResponse{
-			IsSuceess: false,
-			Id:        "",
-			Message:   "Failed to connect to database",
-		}, nil
+		return nil, errors.New("FAILED TO CONNECT TO DATABASE")
 	}
 
 	defer conn.Close()
@@ -175,39 +147,32 @@ func (c *CommandService) CreateBlockLang(ctx context.Context, rq *pb.CreateLangR
 	blockid, err := uuid.Parse(rq.BlockId)
 	if err != nil {
 		log.Print("Failed to parse Block UUID:", err)
-		return nil, err
+		return nil, errors.New("FAILED TO PARSE BLOCK ID")
 	}
 
 	params := db.CreateLangParams{
-		LangName: rq.Id,
+		LangName: rq.LangName,
 		LangCode: rq.LangName,
 		BlockID:  blockid,
 	}
 
 	id, err := q.CreateLang(ctx, params)
 	if err != nil {
-		return &pb.ActionResponse{
-			IsSuceess: false,
-			Id:        "",
-			Message:   err.Error(),
-		}, nil
+		log.Print("Failed to create block:", err)
+		return nil, errors.New("FAILED TO CREATE BLOCK")
 	}
 
 	return &pb.ActionResponse{
 		IsSuceess: true,
-		Id:        string(id),
-		Message:   "Deleted successfully",
+		Id:        strconv.Itoa(int(id)),
+		Message:   "Created successfully",
 	}, nil
 }
 
 func (c *CommandService) DeleteBlockLang(ctx context.Context, rq *pb.DeleteLangRequest) (*pb.ActionResponse, error) {
 	conn, err := newConn()
 	if err != nil {
-		return &pb.ActionResponse{
-			IsSuceess: false,
-			Id:        "",
-			Message:   "Failed to connect to database",
-		}, nil
+		return nil, errors.New("FAILED TO CONNECT TO DATABASE")
 	}
 
 	defer conn.Close()
@@ -216,7 +181,7 @@ func (c *CommandService) DeleteBlockLang(ctx context.Context, rq *pb.DeleteLangR
 	id, err := uuid.Parse(rq.GetId())
 	if err != nil {
 		log.Print("Failed to parse Block UUID:", err)
-		return nil, err
+		return nil, errors.New("FAILED TO PARSE BLOCK ID")
 	}
 
 	params := db.DeleteBlockLangParams{
@@ -226,11 +191,7 @@ func (c *CommandService) DeleteBlockLang(ctx context.Context, rq *pb.DeleteLangR
 
 	if err = q.DeleteBlockLang(ctx, params); err != nil {
 		log.Print("Failed to delete block lang:", err)
-		return &pb.ActionResponse{
-			IsSuceess: false,
-			Id:        id.String(),
-			Message:   "Failed to delete block",
-		}, nil
+		return nil, errors.New("FAILED TO DELETE BLOCK LANG")
 	}
 
 	return &pb.ActionResponse{

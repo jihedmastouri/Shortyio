@@ -24,6 +24,7 @@ type LangRq struct {
 
 type RuleRq struct {
 	RuleName          string `json:"ruleName"`
+	DESCR             string `json:"descripion"`
 	Nested            bool   `json:"nested"`
 	HasLikes          bool   `json:"hasLikes"`
 	HasComments       bool   `json:"hasComments"`
