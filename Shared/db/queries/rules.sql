@@ -52,14 +52,14 @@ VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING name;
 
 -- name: UpdateBlockRules :exec
 Update block_rules
-    SET name = $2,
-        nested = $3,
-        has_likes = $4,
-        has_comments = $5,
-        comments_max_nest = $6,
-        comments_has_likes = $7,
-        comment_editable = $8
-WHERE id = $1;
+    SET nested = $2,
+        has_likes = $3,
+        has_comments = $4,
+        comments_max_nest = $5,
+        comments_has_likes = $6,
+        comment_editable = $7,
+        descr = $8
+WHERE name = $1;
 
 ------------------
 -- 6- Deletions

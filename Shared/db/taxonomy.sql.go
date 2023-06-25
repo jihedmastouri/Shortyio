@@ -15,32 +15,32 @@ import (
 const addCategToBlock = `-- name: AddCategToBlock :exec
 INSERT INTO block_categs(
     block_id, categ_id
-) VALUES ($1,$2)
+) VALUES ($1, (SELECT id FROM categories WHERE name = $2))
 `
 
 type AddCategToBlockParams struct {
 	BlockID uuid.UUID
-	CategID int32
+	Name    string
 }
 
 func (q *Queries) AddCategToBlock(ctx context.Context, arg AddCategToBlockParams) error {
-	_, err := q.db.ExecContext(ctx, addCategToBlock, arg.BlockID, arg.CategID)
+	_, err := q.db.ExecContext(ctx, addCategToBlock, arg.BlockID, arg.Name)
 	return err
 }
 
 const addTagToBlock = `-- name: AddTagToBlock :exec
 INSERT INTO block_tags(
     block_id, tag_id
-) VALUES ($1,$2)
+) VALUES ($1, (SELECT id FROM tags WHERE name = $2))
 `
 
 type AddTagToBlockParams struct {
 	BlockID uuid.UUID
-	TagID   int32
+	Name    string
 }
 
 func (q *Queries) AddTagToBlock(ctx context.Context, arg AddTagToBlockParams) error {
-	_, err := q.db.ExecContext(ctx, addTagToBlock, arg.BlockID, arg.TagID)
+	_, err := q.db.ExecContext(ctx, addTagToBlock, arg.BlockID, arg.Name)
 	return err
 }
 

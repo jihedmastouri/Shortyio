@@ -27,6 +27,7 @@ func createRule(c echo.Context) error {
 				CommentsHasLikes:  rrq.CommentsHasLikes,
 				CommentsEditable:  rrq.CommentsEditable,
 				CommentsMaxNested: int32(rrq.CommentsMaxNested),
+				Descr:             rrq.Descr,
 			},
 		},
 	}
@@ -38,11 +39,11 @@ func createRule(c echo.Context) error {
 	return c.JSON(http.StatusOK, res)
 }
 
-// deleteRule func
 func deleteRule(c echo.Context) error {
 	client := c.Get("client").(pb.FlipFlopClient)
 
 	name := c.Param("name")
+	c.Logger().Debug(name)
 
 	req := &pb.BlockRules{
 		BlockRules: &pb.BlockRules_RuleName{
@@ -61,6 +62,7 @@ func updateRule(c echo.Context) error {
 	client := c.Get("client").(pb.FlipFlopClient)
 
 	name := c.Param("name")
+	c.Logger().Debug(name)
 
 	var rrq RuleRq
 	if err := c.Bind(&rrq); err != nil {
@@ -78,11 +80,12 @@ func updateRule(c echo.Context) error {
 				CommentsHasLikes:  rrq.CommentsHasLikes,
 				CommentsEditable:  rrq.CommentsEditable,
 				CommentsMaxNested: int32(rrq.CommentsMaxNested),
+				Descr:             rrq.Descr,
 			},
 		},
 	}
 
-	res, err := client.CreateBlockRule(context.Background(), req)
+	res, err := client.UpdateBlockRule(context.Background(), req)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}

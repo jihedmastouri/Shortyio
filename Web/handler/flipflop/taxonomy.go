@@ -3,7 +3,6 @@ package flipflop
 import (
 	"context"
 	"net/http"
-	"strconv"
 
 	"github.com/labstack/echo/v4"
 	pb "github.com/shorty-io/go-shorty/Shared/proto"
@@ -52,16 +51,11 @@ func addTagToBlock(c echo.Context) error {
 	client := c.Get("client").(pb.FlipFlopClient)
 
 	blockID := c.Param("id")
-	tempTaxId := c.Param("taxonomy-id")
-
-	taxonomyId, err := strconv.Atoi(tempTaxId)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
-	}
+	taxName := c.Param("name")
 
 	req := &pb.JoinTaxonomy{
-		BlockId:    blockID,
-		TaxonomyId: int32(taxonomyId),
+		BlockId: blockID,
+		Name:    taxName,
 	}
 
 	res, err := client.JoinTag(context.Background(), req)
@@ -114,16 +108,11 @@ func addCategToBlock(c echo.Context) error {
 	client := c.Get("client").(pb.FlipFlopClient)
 
 	blockID := c.Param("id")
-	tempTaxId := c.Param("taxonomy-id")
-
-	taxonomyId, err := strconv.Atoi(tempTaxId)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
-	}
+	taxName := c.Param("name")
 
 	req := &pb.JoinTaxonomy{
-		BlockId:    blockID,
-		TaxonomyId: int32(taxonomyId),
+		BlockId: blockID,
+		Name:    taxName,
 	}
 
 	res, err := client.JoinCategory(context.Background(), req)

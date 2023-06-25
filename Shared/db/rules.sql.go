@@ -162,18 +162,17 @@ const updateBlockRules = `-- name: UpdateBlockRules :exec
 
 
 Update block_rules
-    SET name = $2,
-        nested = $3,
-        has_likes = $4,
-        has_comments = $5,
-        comments_max_nest = $6,
-        comments_has_likes = $7,
-        comment_editable = $8
-WHERE id = $1
+    SET nested = $2,
+        has_likes = $3,
+        has_comments = $4,
+        comments_max_nest = $5,
+        comments_has_likes = $6,
+        comment_editable = $7,
+        descr = $8
+WHERE name = $1
 `
 
 type UpdateBlockRulesParams struct {
-	ID               int32
 	Name             string
 	Nested           sql.NullBool
 	HasLikes         sql.NullBool
@@ -181,6 +180,7 @@ type UpdateBlockRulesParams struct {
 	CommentsMaxNest  sql.NullInt16
 	CommentsHasLikes sql.NullBool
 	CommentEditable  sql.NullBool
+	Descr            string
 }
 
 // ----------------
@@ -191,7 +191,6 @@ type UpdateBlockRulesParams struct {
 // ----------------
 func (q *Queries) UpdateBlockRules(ctx context.Context, arg UpdateBlockRulesParams) error {
 	_, err := q.db.ExecContext(ctx, updateBlockRules,
-		arg.ID,
 		arg.Name,
 		arg.Nested,
 		arg.HasLikes,
@@ -199,6 +198,7 @@ func (q *Queries) UpdateBlockRules(ctx context.Context, arg UpdateBlockRulesPara
 		arg.CommentsMaxNest,
 		arg.CommentsHasLikes,
 		arg.CommentEditable,
+		arg.Descr,
 	)
 	return err
 }

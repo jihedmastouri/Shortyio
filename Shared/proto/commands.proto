@@ -73,5 +73,5 @@ message ActionResponse {
 
 message JoinTaxonomy {
     string block_id = 1;
-    int32 taxonomy_id = 2;
+    string name = 2;
 }

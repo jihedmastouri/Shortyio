@@ -152,7 +152,7 @@ func (c *CommandService) CreateBlockLang(ctx context.Context, rq *pb.CreateLangR
 
 	params := db.CreateLangParams{
 		LangName: rq.LangName,
-		LangCode: rq.LangName,
+		LangCode: rq.LangCode,
 		BlockID:  blockid,
 	}
 

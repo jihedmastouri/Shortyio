@@ -23,6 +23,10 @@ func (s *CommandService) CreateTag(ctx context.Context, in *pb.CreateTaxonomy) (
 	defer conn.Close()
 	q := db.New(conn)
 
+	if in.Name == "" {
+		return nil, errors.New("NAME CANNOT BE EMPTY")
+	}
+
 	params := db.CreateTagParams{
 		Name: in.GetName(),
 		Descr: sql.NullString{
@@ -53,9 +57,16 @@ func (s *CommandService) CreateCategory(ctx context.Context, in *pb.CreateTaxono
 	defer conn.Close()
 	q := db.New(conn)
 
+	if in.Name == "" {
+		return nil, errors.New("NAME CANNOT BE EMPTY")
+	}
+
 	params := db.CreateCategParams{
-		Name:  "",
-		Descr: sql.NullString{},
+		Name: in.Name,
+		Descr: sql.NullString{
+			String: in.Descr,
+			Valid:  false,
+		},
 	}
 
 	id, err := q.CreateCateg(ctx, params)
@@ -117,7 +128,7 @@ func (s *CommandService) DeleteCategory(ctx context.Context, rq *pb.DeleteTaxono
 	}, nil
 }
 
-func JoinBlockTag(ctx context.Context, rq *pb.JoinTaxonomy) (*pb.ActionResponse, error) {
+func JoinTag(ctx context.Context, rq *pb.JoinTaxonomy) (*pb.ActionResponse, error) {
 	conn, err := newConn()
 	if err != nil {
 		return nil, errors.New("FAILED TO CONNECT TO DATABASE")
@@ -134,7 +145,7 @@ func JoinBlockTag(ctx context.Context, rq *pb.JoinTaxonomy) (*pb.ActionResponse,
 
 	params := db.AddTagToBlockParams{
 		BlockID: blockid,
-		TagID:   rq.TaxonomyId,
+		Name:    rq.Name,
 	}
 
 	err = q.AddTagToBlock(ctx, params)
@@ -151,7 +162,7 @@ func JoinBlockTag(ctx context.Context, rq *pb.JoinTaxonomy) (*pb.ActionResponse,
 	}, nil
 }
 
-func JoinBlockCategory(ctx context.Context, rq *pb.JoinTaxonomy) (*pb.ActionResponse, error) {
+func JoinCategory(ctx context.Context, rq *pb.JoinTaxonomy) (*pb.ActionResponse, error) {
 	conn, err := newConn()
 	if err != nil {
 		return nil, errors.New("FAILED TO CONNECT TO DATABASE")
@@ -168,11 +179,10 @@ func JoinBlockCategory(ctx context.Context, rq *pb.JoinTaxonomy) (*pb.ActionResp
 
 	params := db.AddCategToBlockParams{
 		BlockID: blockid,
-		CategID: rq.TaxonomyId,
+		Name:    rq.Name,
 	}
 
 	err = q.AddCategToBlock(ctx, params)
-
 	if err != nil {
 		log.Print("Failed to add categ to block:", err)
 		return nil, errors.New("FAILED TO JOIN CATEG")

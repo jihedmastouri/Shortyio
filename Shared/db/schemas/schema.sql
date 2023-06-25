@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS block_langs
     block_id       UUID        NOT NULL
         REFERENCES blocks (id) ON DELETE CASCADE ON UPDATE CASCADE,
 
-    CONSTRAINT unique_pair_constraint UNIQUE (id, lang_code)
+    CONSTRAINT unique_pair_constraint UNIQUE (lang_name, lang_code)
 );
 
 CREATE INDEX IF NOT EXISTS idx_block_langs_block_id_lang_name ON block_langs (block_id, lang_name);
@@ -107,7 +107,7 @@ CREATE TABLE IF NOT EXISTS block_nested
 CREATE TABLE IF NOT EXISTS tags
 (
     id    SERIAL PRIMARY KEY,
-    name  VARCHAR(20) NOT NULL,
+    name  VARCHAR(20) UNIQUE NOT NULL,
     descr VARCHAR(200)
 );
 
@@ -121,7 +121,7 @@ CREATE TABLE IF NOT EXISTS block_tags
 CREATE TABLE IF NOT EXISTS categories
 (
     id    SERIAL PRIMARY KEY,
-    name  VARCHAR(20) NOT NULL,
+    name  VARCHAR(20) UNIQUE NOT NULL,
     descr VARCHAR(200)
 );
 

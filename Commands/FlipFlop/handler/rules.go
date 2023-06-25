@@ -24,6 +24,10 @@ func (c *CommandService) CreateBlockRule(ctx context.Context, rq *pb.BlockRules)
 		return nil, errors.New("NO RULES PROVIDED")
 	}
 
+	if rq.GetRules().Descr == "" {
+		return nil, errors.New("NO DESCRIPTION PROVIDED")
+	}
+
 	params := db.CreateBlockRuleParams{
 		Name: rq.GetRules().RuleName,
 		Nested: sql.NullBool{
@@ -50,10 +54,7 @@ func (c *CommandService) CreateBlockRule(ctx context.Context, rq *pb.BlockRules)
 			Bool:  rq.GetRules().CommentsEditable,
 			Valid: true,
 		},
-		Descr: sql.NullString{
-			String: rq.GetRules().Description,
-			Valid:  true,
-		},
+		Descr: rq.GetRules().Descr,
 	}
 
 	id, err := q.CreateBlockRule(ctx, params)
@@ -69,7 +70,6 @@ func (c *CommandService) CreateBlockRule(ctx context.Context, rq *pb.BlockRules)
 	}, nil
 }
 
-// TODO: CHANGE THIS TO UPDATE INSTEAD OF DELETE+CREATE
 func (*CommandService) UpdateBlockRule(ctx context.Context, rq *pb.BlockRules) (*pb.ActionResponse, error) {
 	conn, err := newConn()
 	if err != nil {
@@ -79,25 +79,15 @@ func (*CommandService) UpdateBlockRule(ctx context.Context, rq *pb.BlockRules) (
 	defer conn.Close()
 	q := db.New(conn)
 
-	tx, err := conn.BeginTx(ctx, nil)
-	if err != nil {
-		return nil, errors.New("FAILED TO START TRANSACTION")
-	}
-	defer tx.Rollback()
-
 	if rq.GetRules() == nil {
-		return &pb.ActionResponse{
-			IsSuceess: false,
-			Message:   "No Rules Provided",
-		}, nil
+		return nil, errors.New("NO RULES PROVIDED")
 	}
 
-	if err = q.DeleteBlockRule(ctx, rq.GetRules().RuleName); err != nil {
-		log.Print(err)
-		return nil, errors.New("FAILED TO DELETE RULE")
+	if rq.GetRules().Descr == "" {
+		return nil, errors.New("NO DESCRIPTION PROVIDED")
 	}
 
-	params := db.CreateBlockRuleParams{
+	params := db.UpdateBlockRulesParams{
 		Name: rq.GetRules().RuleName,
 		Nested: sql.NullBool{
 			Bool:  rq.GetRules().Nested,
@@ -123,21 +113,16 @@ func (*CommandService) UpdateBlockRule(ctx context.Context, rq *pb.BlockRules) (
 			Bool:  rq.GetRules().CommentsEditable,
 			Valid: true,
 		},
-		Descr: sql.NullString{
-			String: rq.GetRules().Descr,
-			Valid:  true,
-		},
+		Descr: rq.GetRules().Descr,
 	}
 
-	id, err := q.CreateBlockRule(ctx, params)
-	if err != nil {
+	if err = q.UpdateBlockRules(ctx, params); err != nil {
 		log.Print(err)
 		return nil, errors.New("FAILED TO CREATE RULE")
 	}
 
 	return &pb.ActionResponse{
 		IsSuceess: true,
-		Id:        id,
 		Message:   "Great Success",
 	}, nil
 }
@@ -156,7 +141,6 @@ func (*CommandService) DeleteBlockRule(ctx context.Context, rq *pb.BlockRules) (
 	} else {
 		ruleName = rq.GetRules().RuleName
 	}
-	log.Print(ruleName)
 
 	if err = q.DeleteBlockRule(ctx, ruleName); err != nil {
 		log.Print(err)

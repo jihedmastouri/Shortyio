@@ -40,16 +40,16 @@ func New(e *echo.Echo, fn handler.Dialfn) {
 
 	// Rules
 	cmd.POST("/block-rule", createRule)
-	cmd.DELETE("/block-rule/:id", deleteRule)
-	cmd.PUT("/block-rule/:id", updateRule)
+	cmd.DELETE("/block-rule/:name", deleteRule)
+	cmd.PUT("/block-rule/:name", updateRule)
 
 	// Tags
 	cmd.POST("/tag", createTag)
-	cmd.DELETE("/tag/:id", deleteTag)
-	cmd.POST("/block/:id/tag/:taxonomy-id", addTagToBlock)
+	cmd.DELETE("/tag/:name", deleteTag)
+	cmd.POST("/block/:id/tag/:name", addTagToBlock)
 
 	// Categories
 	cmd.POST("/categ", createCateg)
-	cmd.DELETE("/categ/:id", deleteCateg)
-	cmd.POST("/block/:id/categ/:taxonomy-id", addCategToBlock)
+	cmd.DELETE("/categ/:name", deleteCateg)
+	cmd.POST("/block/:id/categ/:name", addCategToBlock)
 }

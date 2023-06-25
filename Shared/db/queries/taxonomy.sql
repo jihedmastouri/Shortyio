@@ -37,12 +37,12 @@ INSERT INTO categories (
 -- name: AddTagToBlock :exec
 INSERT INTO block_tags(
     block_id, tag_id
-) VALUES ($1,$2);
+) VALUES ($1, (SELECT id FROM tags WHERE name = $2));
 
 -- name: AddCategToBlock :exec
 INSERT INTO block_categs(
     block_id, categ_id
-) VALUES ($1,$2);
+) VALUES ($1, (SELECT id FROM categories WHERE name = $2));
 
 -- name: UpdateTag :one
 Update tags
