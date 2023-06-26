@@ -2,7 +2,6 @@ package queries
 
 import (
 	"context"
-	"log"
 	"net/http"
 	"strconv"
 	"strings"

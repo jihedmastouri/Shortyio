@@ -8,8 +8,9 @@ import (
 	"time"
 
 	"github.com/nats-io/nats.go"
-	"github.com/shorty-io/go-shorty/aggregator/handler"
 )
+
+func BlockUpdated(m *nats.Msg) {}
 
 func main() {
 	natsUrl := os.Getenv("NATS")
@@ -23,7 +24,7 @@ func main() {
 	}
 	defer nc.Close()
 
-	sub, err := nc.QueueSubscribe("BlockUpdate", "BlockUpdatedQ", handler.BlockUpdated)
+	sub, err := nc.QueueSubscribe("BlockUpdate", "BlockUpdatedQ", BlockUpdated)
 	if err != nil {
 		log.Fatal(err)
 	}

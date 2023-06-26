@@ -1,4 +1,4 @@
-package handler
+package main
 
 import (
 	"fmt"
@@ -9,7 +9,6 @@ import (
 	"github.com/google/uuid"
 	_ "github.com/lib/pq"
 )
-
 
 func AggregateDB(msg Msg) (*[]byte, error) {
 	query, err := os.ReadFile("../temp.sql")
@@ -31,7 +30,6 @@ func AggregateDB(msg Msg) (*[]byte, error) {
 }
 
 func executeJSONQuery(id uuid.UUID, lang string, query string) (*[]byte, error) {
-	var db *sql.DB
 	db, err := newConn()
 	if err != nil {
 		return nil, err

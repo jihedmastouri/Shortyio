@@ -13,10 +13,11 @@ message Block {
   repeated string tags = 6;
   repeated string categories = 7;
   repeated Author authors = 8;
-  optional Content content = 9;
-  BlockRules rules = 10;
-  string updated_at = 11;
-  string created_at = 12;
+  repeated ElementType content = 9;
+  repeated BlockContent children = 10;
+  BlockRules rules = 11;
+  string updated_at = 12;
+  string created_at = 13;
 }
 
 message BlockContent {
@@ -24,9 +25,11 @@ message BlockContent {
   string name = 2;
   string lang = 3;
   int32 version = 4;
-  optional Content content = 5;
+  repeated ElementType content = 5;
+  repeated BlockContent children = 6;
 }
 
+// TODO: Add Description
 message BlockMeta {
   string block_id = 1;
   string name = 2;
@@ -64,44 +67,40 @@ message BlockRules {
   }
 }
 
-message Content {
-  repeated ElementType elements = 1;
-  repeated BlockContent children = 2;
-
-  message ElementType {
-    oneof Element {
-      Media media = 1;
-      Textual text = 2;
-    }
+message ElementType {
+  oneof Element {
+    Media media = 1;
+    Textual text = 2;
   }
+}
 
-  message Media {
-    string title = 1;
-    MediaType type = 2;
-    string file = 3;
-    string alt = 4;
-  }
+message Media {
+  string title = 1;
+  MediaType type = 2;
+  string file = 3;
+  string alt = 4;
+}
 
-  message Textual {
-    string name = 1;
-    TextualType type = 2;
-    string content = 3;
-    string hint = 4;
-  }
+message Textual {
+  string name = 1;
+  TextualType type = 2;
+  string content = 3;
+  string hint = 4;
+}
 
-  enum TextualType {
-    TEXTUAL_TYPE_UNKNOWN = 0;
-    TEXTUAL_TYPE_TEXT = 1;
-    TEXTUAL_TYPE_CODE = 2;
-    TEXTUAL_TYPE_HTML = 3;
-    TEXTUAL_TYPE_MARKDOWN = 4;
-  }
 
-  enum MediaType {
-    MEDIA_TYPE_UNKNOWN = 0;
-    MEDIA_TYPE_IMAGE = 1;
-    MEDIA_TYPE_VIDEO = 2;
-    MEDIA_TYPE_AUDIO = 3;
-    MEDIA_TYPE_FILE = 4;
-  }
+enum TextualType {
+  TEXTUAL_TYPE_UNKNOWN = 0;
+  TEXTUAL_TYPE_TEXT = 1;
+  TEXTUAL_TYPE_CODE = 2;
+  TEXTUAL_TYPE_HTML = 3;
+  TEXTUAL_TYPE_MARKDOWN = 4;
+}
+
+enum MediaType {
+  MEDIA_TYPE_UNKNOWN = 0;
+  MEDIA_TYPE_IMAGE = 1;
+  MEDIA_TYPE_VIDEO = 2;
+  MEDIA_TYPE_AUDIO = 3;
+  MEDIA_TYPE_FILE = 4;
 }

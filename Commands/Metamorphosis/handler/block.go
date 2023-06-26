@@ -1,5 +1,0 @@
-package handler
-
-func updateContent() {
-
-}

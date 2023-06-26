@@ -9,6 +9,35 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+type Rules struct {
+	RuleName          string `bson:"rule_name"`
+	Descr             string `bson:"descr"`
+	Nested            bool   `bson:"nested"`
+	HasLikes          bool   `bson:"has_likes"`
+	HasComments       bool   `bson:"has_comments"`
+	CommentsNested    bool   `bson:"comments_nested"`
+	CommentsHasLike   bool   `bson:"comments_has_likes"`
+	CommentsEditable  bool   `bson:"comments_editable"`
+	CommentsMaxNested int32  `bson:"comments_max_nested"`
+}
+
+type Content struct {
+	Elements []struct {
+		Media struct {
+			Title string `bson:"title"`
+			Type  int    `bson:"type"`
+			File  string `bson:"file"`
+			Alt   string `bson:"alt"`
+		} `bson:"media"`
+		Text struct {
+			Name    string `bson:"name"`
+			Type    int    `bson:"type"`
+			Content string `bson:"content"`
+			Hint    string `bson:"hint"`
+		} `bson:"text"`
+	} `bson:"elements"`
+}
+
 func GetBlockMeta(ctx context.Context, bq *pb.BlockRequest) (*pb.BlockMeta, error) {
 	client, err := connectMongo(ctx)
 	if err != nil {
@@ -55,14 +84,38 @@ func GetBlock(ctx context.Context, bq *pb.BlockRequest) (*pb.Block, error) {
 	collection := getCollection(client)
 
 	query, option := buildQuery(bq)
-	log.Println(query, option, bq)
+
+	// 	&pb.Content_ElementType{
+	// 	Element: &pb.Content_ElementType_Text{
+	// 		Text: &pb.Content_Textual{
+	// 			Name:    "",
+	// 			Type:    0,
+	// 			Content: "",
+	// 			Hint:    "",
+	// 		},
+	// 	},
+	// }
+	//
+
+	type Block struct {
+		pb.BlockMeta
+		LangCode string  `bson:"lang_code"`
+		Version  int32   `bson:"version"`
+		content  Content `bson:"content"`
+		Rules    Rules   `bson:"rules"`
+	}
+
+	block := new(Block)
+
 	cusror := collection.FindOne(ctx, query, option)
-	block := &pb.Block{}
-	if err := cusror.Decode(block); err != nil {
+	if err := cusror.Decode(&block); err != nil {
 		log.Println(err)
 		return nil, err
 	}
-	return block, nil
+
+	log.Println(block)
+
+	return nil, nil
 }
 
 func GetLanguages(ctx context.Context, bq *pb.LanguageRequest) (*pb.LanguageList, error) {
