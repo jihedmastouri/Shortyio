@@ -1,8 +1,8 @@
 package db
 
-import (
-	pb "github.com/shorty-io/go-shorty/Shared/proto"
-)
+// import (
+// 	pb "github.com/shorty-io/go-shorty/Shared/proto"
+// )
 
 type Rules struct {
 	RuleName          string `bson:"rule_name"`
@@ -17,16 +17,16 @@ type Rules struct {
 
 type Content struct {
 	Media struct {
-		Title string       `bson:"title"`
-		Type  pb.MediaType `bson:"type"`
-		File  string       `bson:"file"`
-		Alt   string       `bson:"alt"`
+		Title string `bson:"title"`
+		// Type  pb.MediaType `bson:"type"`
+		File string `bson:"file"`
+		Alt  string `bson:"alt"`
 	} `bson:"media"`
 	Text struct {
-		Name    string         `bson:"name"`
-		Type    pb.TextualType `bson:"type"`
-		Content string         `bson:"content"`
-		Hint    string         `bson:"hint"`
+		Name string `bson:"name"`
+		// Type    pb.TextualType `bson:"type"`
+		Content string `bson:"content"`
+		Hint    string `bson:"hint"`
 	} `bson:"text"`
 }
 

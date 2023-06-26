@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"log"
 
 	"github.com/shorty-io/go-shorty/queries/db"
 
@@ -26,11 +27,14 @@ func (q *Queries) GetBlock(ctx context.Context, rq *pb.BlockRequest) (*pb.Block,
 		Version:    block.Version,
 		Tags:       block.Tags,
 		Categories: block.Categories,
+		Content:    []*pb.ElementType{},
 		// Children:   []*pb.BlockContent{},
 		Rules:     getRules(block),
 		UpdatedAt: block.UpdatedAt,
 		CreatedAt: block.CreatedAt,
 	}
+
+	log.Println("content at 1:", block.Content[0])
 
 	for _, author := range block.Authors {
 		res.Authors = append(res.Authors, &pb.Author{
@@ -46,9 +50,9 @@ func (q *Queries) GetBlock(ctx context.Context, rq *pb.BlockRequest) (*pb.Block,
 				Element: &pb.ElementType_Media{
 					Media: &pb.Media{
 						Title: content.Media.Title,
-						Type:  content.Media.Type,
-						File:  content.Media.File,
-						Alt:   content.Media.Alt,
+						// Type:  content.Media.Type,
+						File: content.Media.File,
+						Alt:  content.Media.Alt,
 					},
 				},
 			})
@@ -58,8 +62,8 @@ func (q *Queries) GetBlock(ctx context.Context, rq *pb.BlockRequest) (*pb.Block,
 					Text: &pb.Textual{
 						Name:    content.Text.Name,
 						Content: content.Text.Content,
-						Type:    content.Text.Type,
-						Hint:    content.Text.Hint,
+						// Type:    content.Text.Type,
+						Hint: content.Text.Hint,
 					},
 				},
 			})

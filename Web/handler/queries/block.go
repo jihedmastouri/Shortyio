@@ -50,11 +50,8 @@ func getStuffBlock[T blockStuff](fn fnc[T], c echo.Context) error {
 
 	res, err := fn(context.Background(), req)
 	if err != nil {
-		log.Println(err)
 		return c.JSON(http.StatusInternalServerError, echo.Map{"err": err.Error()})
 	}
-
-	c.Logger().Debug(res)
 
 	return c.JSON(http.StatusOK, res)
 }

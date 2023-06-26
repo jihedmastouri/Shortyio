@@ -7,7 +7,6 @@ import (
 
 	pb "github.com/shorty-io/go-shorty/Shared/proto"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func Search(ctx context.Context, req *pb.SearchRequest) (*pb.BlockList, error) {
@@ -50,13 +49,18 @@ func Search(ctx context.Context, req *pb.SearchRequest) (*pb.BlockList, error) {
 
 	skip := pagenum * pageSize
 
-	findOptions := options.Find()
-	findOptions.SetSkip(int64(skip))
-	findOptions.SetLimit(int64(pageSize))
+	pipeline := []bson.M{
+		{"$match": query},
+		{"$group": bson.M{
+			"_id": "block_id", // Specify the field to make distinct
+			"doc": bson.M{"$first": "$$ROOT"},
+		}},
+		{"$replaceRoot": bson.M{"newRoot": "$doc"}},
+		{"$skip": int64(skip)},      // Add the $skip stage
+		{"$limit": int64(pageSize)}, // Add the $limit stage
+	}
 
-	log.Println(query)
-
-	cursor, err := collection.Find(ctx, query)
+	cursor, err := collection.Aggregate(ctx, pipeline)
 	if err != nil {
 		log.Println(err)
 		return nil, errors.New("ERROR GETTING BLOCKS")
@@ -97,19 +101,22 @@ func Search(ctx context.Context, req *pb.SearchRequest) (*pb.BlockList, error) {
 		return nil, errors.New("ERROR GETTING BLOCKS")
 	}
 
-	totalCount, err := collection.CountDocuments(ctx, query)
+	entries, err := collection.Distinct(ctx, "block_id", query)
 	if err != nil {
 		log.Println(err)
 		return nil, errors.New("ERROR GETTING BLOCKS")
 	}
-	count := uint32(totalCount) - uint32(skip)
+	totalCount := len(entries)
+	count := uint32(skip)
+	total := uint32(totalCount)
 
 	return &pb.BlockList{
 		Metas: metaList,
 		Pagination: &pb.Pagination{
-			PageNum:   uint32(pagenum) + 1,
-			PageSize:  uint32(len(metaList)),
-			TotalRest: &count,
+			PageNum:  uint32(pagenum) + 1,
+			PageSize: uint32(len(metaList)),
+			Total:    &total,
+			Offset:   &count,
 		},
 	}, nil
 }
