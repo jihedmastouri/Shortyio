@@ -95,7 +95,6 @@ func getBlockRules(q *db.Queries, br *pb.BlockRulesRq) pb.BlockRules {
 		Nested:            rules.Nested.Bool,
 		HasLikes:          rules.HasLikes.Bool,
 		HasComments:       rules.HasComments.Bool,
-		CommentsNested:    rules.Nested.Bool,
 		CommentsHasLikes:  rules.CommentsHasLikes.Bool,
 		CommentsEditable:  rules.CommentEditable.Bool,
 		CommentsMaxNested: int32(rules.CommentsMaxNest.Int16),

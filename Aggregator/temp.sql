@@ -1,18 +1,24 @@
 SELECT json_agg(
  json_build_object(
          'id', b.id,
-         'has_comments', b.has_comments,
-         'has_likes', b.has_likes,
+          'rules', json_build_object(
+             'rule_name', b.rule_name,
+             'has_likes', b.has_likes,
+             'has_comments', b.has_comments,
+             'nested', b.nested,
+             'comments_max_nested', b.comments_max_nested,
+             'comments_has_likes', b.comments_has_likes,
+             'comments_editable', b.comments_editable,
+          ),
          'version_number', bl.version_number,
+         'changelog', $3,
          'created_at', b.created_at,
          'updated_at', bl.updated_at,
          'author', b.author,
          'block_type', bt.name,
          'lang_name', bl.lang_name,
          'lang_code', bl.lang_code,
-         'content', (
-             json_build_object(
-             'elements', (SELECT array_agg(
+         'content', (SELECT array_agg(
                      json_build_object(
                          'media',
                          json_build_object(
@@ -60,14 +66,13 @@ SELECT json_agg(
                          )
                      )
               FROM block_texts bt
-              WHERE bt.block_lang_id = bl.id)
+              WHERE bt.block_lang_id = bl.id
             )
         )
-     )
-)
+    )
 FROM blocks b
        INNER JOIN block_langs bl ON b.id = bl.block_id
        INNER JOIN block_types bt ON b.type = bt.id
-WHERE b.id = '71e9706d-b03c-4aff-a032-31f075dae868'
-AND bl.lang_code = 'en_US'
+WHERE b.id = $1
+AND bl.lang_code = $2
 LIMIT 1;

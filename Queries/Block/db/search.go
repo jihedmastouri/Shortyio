@@ -78,7 +78,7 @@ func Search(ctx context.Context, req *pb.SearchRequest) (*pb.BlockList, error) {
 	return &pb.BlockList{
 		Metas: metaList,
 		Pagination: &pb.Pagination{
-			PageNum:  req.Pagination.PageNum + 1,
+			PageNum:  uint32(pagenum) + 1,
 			PageSize: uint32(len(metaList)),
 			Total:    &count,
 		},

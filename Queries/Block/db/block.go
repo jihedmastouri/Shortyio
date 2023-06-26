@@ -2,49 +2,13 @@ package db
 
 import (
 	"context"
+	"errors"
 	"log"
 
 	pb "github.com/shorty-io/go-shorty/Shared/proto"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
-
-type Rules struct {
-	RuleName          string `bson:"rule_name"`
-	Descr             string `bson:"descr"`
-	Nested            bool   `bson:"nested"`
-	HasLikes          bool   `bson:"has_likes"`
-	HasComments       bool   `bson:"has_comments"`
-	CommentsNested    bool   `bson:"comments_nested"`
-	CommentsHasLike   bool   `bson:"comments_has_likes"`
-	CommentsEditable  bool   `bson:"comments_editable"`
-	CommentsMaxNested int32  `bson:"comments_max_nested"`
-}
-
-type Content struct {
-	Elements []struct {
-		Media struct {
-			Title string `bson:"title"`
-			Type  int    `bson:"type"`
-			File  string `bson:"file"`
-			Alt   string `bson:"alt"`
-		} `bson:"media"`
-		Text struct {
-			Name    string `bson:"name"`
-			Type    int    `bson:"type"`
-			Content string `bson:"content"`
-			Hint    string `bson:"hint"`
-		} `bson:"text"`
-	} `bson:"elements"`
-}
-
-type Block struct {
-	pb.BlockMeta
-	LangCode string  `bson:"lang_code"`
-	Version  int32   `bson:"version"`
-	content  Content `bson:"content"`
-	Rules    Rules   `bson:"rules"`
-}
 
 func GetBlockMeta(ctx context.Context, bq *pb.BlockRequest) (*pb.BlockMeta, error) {
 	client, err := connectMongo(ctx)
@@ -86,31 +50,20 @@ func GetBlock(ctx context.Context, bq *pb.BlockRequest) (*pb.Block, error) {
 	client, err := connectMongo(ctx)
 	if err != nil {
 		log.Println(err)
-		return nil, err
+		return nil, errors.New("CONNECTION ERROR")
 	}
+
 	defer client.Disconnect(ctx)
 	collection := getCollection(client)
 
 	query, option := buildQuery(bq)
 
-	// 	&pb.Content_ElementType{
-	// 	Element: &pb.Content_ElementType_Text{
-	// 		Text: &pb.Content_Textual{
-	// 			Name:    "",
-	// 			Type:    0,
-	// 			Content: "",
-	// 			Hint:    "",
-	// 		},
-	// 	},
-	// }
-	//
-
-	block := &pb.Block{}
+	block := new(pb.Block)
 
 	cusror := collection.FindOne(ctx, query, option)
 	if err := cusror.Decode(block); err != nil {
 		log.Println(err)
-		return nil, err
+		return nil, errors.New("BLOCK NOT FOUND")
 	}
 
 	return block, nil

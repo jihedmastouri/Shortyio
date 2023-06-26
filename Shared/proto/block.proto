@@ -18,6 +18,7 @@ message Block {
   BlockRules rules = 11;
   string updated_at = 12;
   string created_at = 13;
+  string description = 14;
 }
 
 message BlockContent {
@@ -37,8 +38,7 @@ message BlockMeta {
   repeated string tags = 4;
   repeated string categories = 5;
   repeated Author authors = 6;
-  string updated_at = 7;
-  string created_at = 8;
+  string descr = 7;
 }
 
 message Author {
@@ -54,7 +54,6 @@ message BlockRules {
   bool nested = 3;
   bool has_likes = 4;
   bool has_comments = 5;
-  bool comments_nested = 6;
   bool comments_has_likes = 7;
   bool comments_editable = 8;
   int32 comments_max_nested = 9;
