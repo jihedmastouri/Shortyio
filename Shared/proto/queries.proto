@@ -63,9 +63,9 @@ message Selectors {
 }
 
 message Pagination {
-    int32 pageSize = 1;
-    int32 pageNum = 2;
-    optional int64 total = 3;
+    uint32 pageSize = 1;
+    uint32 pageNum = 2;
+    optional uint32 total = 3;
 }
 
 message SearchRequest {

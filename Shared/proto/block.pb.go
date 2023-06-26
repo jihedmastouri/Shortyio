@@ -20,6 +20,116 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type Content_TextualType int32
+
+const (
+	Content_TEXTUAL_TYPE_UNKNOWN  Content_TextualType = 0
+	Content_TEXTUAL_TYPE_TEXT     Content_TextualType = 1
+	Content_TEXTUAL_TYPE_CODE     Content_TextualType = 2
+	Content_TEXTUAL_TYPE_HTML     Content_TextualType = 3
+	Content_TEXTUAL_TYPE_MARKDOWN Content_TextualType = 4
+)
+
+// Enum value maps for Content_TextualType.
+var (
+	Content_TextualType_name = map[int32]string{
+		0: "TEXTUAL_TYPE_UNKNOWN",
+		1: "TEXTUAL_TYPE_TEXT",
+		2: "TEXTUAL_TYPE_CODE",
+		3: "TEXTUAL_TYPE_HTML",
+		4: "TEXTUAL_TYPE_MARKDOWN",
+	}
+	Content_TextualType_value = map[string]int32{
+		"TEXTUAL_TYPE_UNKNOWN":  0,
+		"TEXTUAL_TYPE_TEXT":     1,
+		"TEXTUAL_TYPE_CODE":     2,
+		"TEXTUAL_TYPE_HTML":     3,
+		"TEXTUAL_TYPE_MARKDOWN": 4,
+	}
+)
+
+func (x Content_TextualType) Enum() *Content_TextualType {
+	p := new(Content_TextualType)
+	*p = x
+	return p
+}
+
+func (x Content_TextualType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (Content_TextualType) Descriptor() protoreflect.EnumDescriptor {
+	return file_block_proto_enumTypes[0].Descriptor()
+}
+
+func (Content_TextualType) Type() protoreflect.EnumType {
+	return &file_block_proto_enumTypes[0]
+}
+
+func (x Content_TextualType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use Content_TextualType.Descriptor instead.
+func (Content_TextualType) EnumDescriptor() ([]byte, []int) {
+	return file_block_proto_rawDescGZIP(), []int{5, 0}
+}
+
+type Content_MediaType int32
+
+const (
+	Content_MEDIA_TYPE_UNKNOWN Content_MediaType = 0
+	Content_MEDIA_TYPE_IMAGE   Content_MediaType = 1
+	Content_MEDIA_TYPE_VIDEO   Content_MediaType = 2
+	Content_MEDIA_TYPE_AUDIO   Content_MediaType = 3
+	Content_MEDIA_TYPE_FILE    Content_MediaType = 4
+)
+
+// Enum value maps for Content_MediaType.
+var (
+	Content_MediaType_name = map[int32]string{
+		0: "MEDIA_TYPE_UNKNOWN",
+		1: "MEDIA_TYPE_IMAGE",
+		2: "MEDIA_TYPE_VIDEO",
+		3: "MEDIA_TYPE_AUDIO",
+		4: "MEDIA_TYPE_FILE",
+	}
+	Content_MediaType_value = map[string]int32{
+		"MEDIA_TYPE_UNKNOWN": 0,
+		"MEDIA_TYPE_IMAGE":   1,
+		"MEDIA_TYPE_VIDEO":   2,
+		"MEDIA_TYPE_AUDIO":   3,
+		"MEDIA_TYPE_FILE":    4,
+	}
+)
+
+func (x Content_MediaType) Enum() *Content_MediaType {
+	p := new(Content_MediaType)
+	*p = x
+	return p
+}
+
+func (x Content_MediaType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (Content_MediaType) Descriptor() protoreflect.EnumDescriptor {
+	return file_block_proto_enumTypes[1].Descriptor()
+}
+
+func (Content_MediaType) Type() protoreflect.EnumType {
+	return &file_block_proto_enumTypes[1]
+}
+
+func (x Content_MediaType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use Content_MediaType.Descriptor instead.
+func (Content_MediaType) EnumDescriptor() ([]byte, []int) {
+	return file_block_proto_rawDescGZIP(), []int{5, 1}
+}
+
 type Block struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -486,10 +596,8 @@ type Content struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Images   []*Content_Image    `protobuf:"bytes,1,rep,name=images,proto3" json:"images,omitempty"`
-	Text     []*Content_Text     `protobuf:"bytes,2,rep,name=text,proto3" json:"text,omitempty"`
-	Html     []*Content_RichText `protobuf:"bytes,3,rep,name=html,proto3" json:"html,omitempty"`
-	Children []*BlockContent     `protobuf:"bytes,4,rep,name=children,proto3" json:"children,omitempty"`
+	Elements []*Content_ElementType `protobuf:"bytes,1,rep,name=elements,proto3" json:"elements,omitempty"`
+	Children []*BlockContent        `protobuf:"bytes,2,rep,name=children,proto3" json:"children,omitempty"`
 }
 
 func (x *Content) Reset() {
@@ -524,23 +632,9 @@ func (*Content) Descriptor() ([]byte, []int) {
 	return file_block_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *Content) GetImages() []*Content_Image {
+func (x *Content) GetElements() []*Content_ElementType {
 	if x != nil {
-		return x.Images
-	}
-	return nil
-}
-
-func (x *Content) GetText() []*Content_Text {
-	if x != nil {
-		return x.Text
-	}
-	return nil
-}
-
-func (x *Content) GetHtml() []*Content_RichText {
-	if x != nil {
-		return x.Html
+		return x.Elements
 	}
 	return nil
 }
@@ -663,18 +757,20 @@ func (x *BlockRules_Rules) GetCommentsMaxNested() int32 {
 	return 0
 }
 
-type Content_Image struct {
+type Content_ElementType struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Title string `protobuf:"bytes,1,opt,name=title,proto3" json:"title,omitempty"`
-	File  string `protobuf:"bytes,2,opt,name=file,proto3" json:"file,omitempty"`
-	Alt   string `protobuf:"bytes,3,opt,name=alt,proto3" json:"alt,omitempty"`
+	// Types that are assignable to Element:
+	//
+	//	*Content_ElementType_Media
+	//	*Content_ElementType_Text
+	Element isContent_ElementType_Element `protobuf_oneof:"Element"`
 }
 
-func (x *Content_Image) Reset() {
-	*x = Content_Image{}
+func (x *Content_ElementType) Reset() {
+	*x = Content_ElementType{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_block_proto_msgTypes[7]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -682,13 +778,13 @@ func (x *Content_Image) Reset() {
 	}
 }
 
-func (x *Content_Image) String() string {
+func (x *Content_ElementType) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Content_Image) ProtoMessage() {}
+func (*Content_ElementType) ProtoMessage() {}
 
-func (x *Content_Image) ProtoReflect() protoreflect.Message {
+func (x *Content_ElementType) ProtoReflect() protoreflect.Message {
 	mi := &file_block_proto_msgTypes[7]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -700,44 +796,61 @@ func (x *Content_Image) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Content_Image.ProtoReflect.Descriptor instead.
-func (*Content_Image) Descriptor() ([]byte, []int) {
+// Deprecated: Use Content_ElementType.ProtoReflect.Descriptor instead.
+func (*Content_ElementType) Descriptor() ([]byte, []int) {
 	return file_block_proto_rawDescGZIP(), []int{5, 0}
 }
 
-func (x *Content_Image) GetTitle() string {
-	if x != nil {
-		return x.Title
+func (m *Content_ElementType) GetElement() isContent_ElementType_Element {
+	if m != nil {
+		return m.Element
 	}
-	return ""
+	return nil
 }
 
-func (x *Content_Image) GetFile() string {
-	if x != nil {
-		return x.File
+func (x *Content_ElementType) GetMedia() *Content_Media {
+	if x, ok := x.GetElement().(*Content_ElementType_Media); ok {
+		return x.Media
 	}
-	return ""
+	return nil
 }
 
-func (x *Content_Image) GetAlt() string {
-	if x != nil {
-		return x.Alt
+func (x *Content_ElementType) GetText() *Content_Textual {
+	if x, ok := x.GetElement().(*Content_ElementType_Text); ok {
+		return x.Text
 	}
-	return ""
+	return nil
 }
 
-type Content_RichText struct {
+type isContent_ElementType_Element interface {
+	isContent_ElementType_Element()
+}
+
+type Content_ElementType_Media struct {
+	Media *Content_Media `protobuf:"bytes,1,opt,name=media,proto3,oneof"`
+}
+
+type Content_ElementType_Text struct {
+	Text *Content_Textual `protobuf:"bytes,2,opt,name=text,proto3,oneof"`
+}
+
+func (*Content_ElementType_Media) isContent_ElementType_Element() {}
+
+func (*Content_ElementType_Text) isContent_ElementType_Element() {}
+
+type Content_Media struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Html string `protobuf:"bytes,2,opt,name=html,proto3" json:"html,omitempty"`
-	Hint string `protobuf:"bytes,3,opt,name=hint,proto3" json:"hint,omitempty"`
+	Title string            `protobuf:"bytes,1,opt,name=title,proto3" json:"title,omitempty"`
+	Type  Content_MediaType `protobuf:"varint,2,opt,name=type,proto3,enum=proto.Content_MediaType" json:"type,omitempty"`
+	File  string            `protobuf:"bytes,3,opt,name=file,proto3" json:"file,omitempty"`
+	Alt   string            `protobuf:"bytes,4,opt,name=alt,proto3" json:"alt,omitempty"`
 }
 
-func (x *Content_RichText) Reset() {
-	*x = Content_RichText{}
+func (x *Content_Media) Reset() {
+	*x = Content_Media{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_block_proto_msgTypes[8]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -745,13 +858,13 @@ func (x *Content_RichText) Reset() {
 	}
 }
 
-func (x *Content_RichText) String() string {
+func (x *Content_Media) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Content_RichText) ProtoMessage() {}
+func (*Content_Media) ProtoMessage() {}
 
-func (x *Content_RichText) ProtoReflect() protoreflect.Message {
+func (x *Content_Media) ProtoReflect() protoreflect.Message {
 	mi := &file_block_proto_msgTypes[8]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -763,44 +876,52 @@ func (x *Content_RichText) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Content_RichText.ProtoReflect.Descriptor instead.
-func (*Content_RichText) Descriptor() ([]byte, []int) {
+// Deprecated: Use Content_Media.ProtoReflect.Descriptor instead.
+func (*Content_Media) Descriptor() ([]byte, []int) {
 	return file_block_proto_rawDescGZIP(), []int{5, 1}
 }
 
-func (x *Content_RichText) GetName() string {
+func (x *Content_Media) GetTitle() string {
 	if x != nil {
-		return x.Name
+		return x.Title
 	}
 	return ""
 }
 
-func (x *Content_RichText) GetHtml() string {
+func (x *Content_Media) GetType() Content_MediaType {
 	if x != nil {
-		return x.Html
+		return x.Type
+	}
+	return Content_MEDIA_TYPE_UNKNOWN
+}
+
+func (x *Content_Media) GetFile() string {
+	if x != nil {
+		return x.File
 	}
 	return ""
 }
 
-func (x *Content_RichText) GetHint() string {
+func (x *Content_Media) GetAlt() string {
 	if x != nil {
-		return x.Hint
+		return x.Alt
 	}
 	return ""
 }
 
-type Content_Text struct {
+type Content_Textual struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Name    string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Content string `protobuf:"bytes,2,opt,name=content,proto3" json:"content,omitempty"`
-	Hint    string `protobuf:"bytes,3,opt,name=hint,proto3" json:"hint,omitempty"`
+	Name    string              `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Type    Content_TextualType `protobuf:"varint,2,opt,name=type,proto3,enum=proto.Content_TextualType" json:"type,omitempty"`
+	Content string              `protobuf:"bytes,3,opt,name=content,proto3" json:"content,omitempty"`
+	Hint    string              `protobuf:"bytes,4,opt,name=hint,proto3" json:"hint,omitempty"`
 }
 
-func (x *Content_Text) Reset() {
-	*x = Content_Text{}
+func (x *Content_Textual) Reset() {
+	*x = Content_Textual{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_block_proto_msgTypes[9]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -808,13 +929,13 @@ func (x *Content_Text) Reset() {
 	}
 }
 
-func (x *Content_Text) String() string {
+func (x *Content_Textual) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Content_Text) ProtoMessage() {}
+func (*Content_Textual) ProtoMessage() {}
 
-func (x *Content_Text) ProtoReflect() protoreflect.Message {
+func (x *Content_Textual) ProtoReflect() protoreflect.Message {
 	mi := &file_block_proto_msgTypes[9]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -826,26 +947,33 @@ func (x *Content_Text) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Content_Text.ProtoReflect.Descriptor instead.
-func (*Content_Text) Descriptor() ([]byte, []int) {
+// Deprecated: Use Content_Textual.ProtoReflect.Descriptor instead.
+func (*Content_Textual) Descriptor() ([]byte, []int) {
 	return file_block_proto_rawDescGZIP(), []int{5, 2}
 }
 
-func (x *Content_Text) GetName() string {
+func (x *Content_Textual) GetName() string {
 	if x != nil {
 		return x.Name
 	}
 	return ""
 }
 
-func (x *Content_Text) GetContent() string {
+func (x *Content_Textual) GetType() Content_TextualType {
+	if x != nil {
+		return x.Type
+	}
+	return Content_TEXTUAL_TYPE_UNKNOWN
+}
+
+func (x *Content_Textual) GetContent() string {
 	if x != nil {
 		return x.Content
 	}
 	return ""
 }
 
-func (x *Content_Text) GetHint() string {
+func (x *Content_Textual) GetHint() string {
 	if x != nil {
 		return x.Hint
 	}
@@ -936,34 +1064,55 @@ var file_block_proto_rawDesc = []byte{
 	0x2e, 0x0a, 0x13, 0x63, 0x6f, 0x6d, 0x6d, 0x65, 0x6e, 0x74, 0x73, 0x5f, 0x6d, 0x61, 0x78, 0x5f,
 	0x6e, 0x65, 0x73, 0x74, 0x65, 0x64, 0x18, 0x09, 0x20, 0x01, 0x28, 0x05, 0x52, 0x11, 0x63, 0x6f,
 	0x6d, 0x6d, 0x65, 0x6e, 0x74, 0x73, 0x4d, 0x61, 0x78, 0x4e, 0x65, 0x73, 0x74, 0x65, 0x64, 0x42,
-	0x0d, 0x0a, 0x0b, 0x62, 0x6c, 0x6f, 0x63, 0x6b, 0x5f, 0x72, 0x75, 0x6c, 0x65, 0x73, 0x22, 0x95,
-	0x03, 0x0a, 0x07, 0x43, 0x6f, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x12, 0x2c, 0x0a, 0x06, 0x69, 0x6d,
-	0x61, 0x67, 0x65, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x14, 0x2e, 0x70, 0x72, 0x6f,
-	0x74, 0x6f, 0x2e, 0x43, 0x6f, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x2e, 0x49, 0x6d, 0x61, 0x67, 0x65,
-	0x52, 0x06, 0x69, 0x6d, 0x61, 0x67, 0x65, 0x73, 0x12, 0x27, 0x0a, 0x04, 0x74, 0x65, 0x78, 0x74,
-	0x18, 0x02, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x13, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x43,
-	0x6f, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x2e, 0x54, 0x65, 0x78, 0x74, 0x52, 0x04, 0x74, 0x65, 0x78,
-	0x74, 0x12, 0x2b, 0x0a, 0x04, 0x68, 0x74, 0x6d, 0x6c, 0x18, 0x03, 0x20, 0x03, 0x28, 0x0b, 0x32,
-	0x17, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x43, 0x6f, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x2e,
-	0x52, 0x69, 0x63, 0x68, 0x54, 0x65, 0x78, 0x74, 0x52, 0x04, 0x68, 0x74, 0x6d, 0x6c, 0x12, 0x2f,
-	0x0a, 0x08, 0x63, 0x68, 0x69, 0x6c, 0x64, 0x72, 0x65, 0x6e, 0x18, 0x04, 0x20, 0x03, 0x28, 0x0b,
-	0x32, 0x13, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x43, 0x6f,
-	0x6e, 0x74, 0x65, 0x6e, 0x74, 0x52, 0x08, 0x63, 0x68, 0x69, 0x6c, 0x64, 0x72, 0x65, 0x6e, 0x1a,
-	0x43, 0x0a, 0x05, 0x49, 0x6d, 0x61, 0x67, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x74, 0x69, 0x74, 0x6c,
-	0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x74, 0x69, 0x74, 0x6c, 0x65, 0x12, 0x12,
-	0x0a, 0x04, 0x66, 0x69, 0x6c, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x66, 0x69,
-	0x6c, 0x65, 0x12, 0x10, 0x0a, 0x03, 0x61, 0x6c, 0x74, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52,
-	0x03, 0x61, 0x6c, 0x74, 0x1a, 0x46, 0x0a, 0x08, 0x52, 0x69, 0x63, 0x68, 0x54, 0x65, 0x78, 0x74,
-	0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04,
-	0x6e, 0x61, 0x6d, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x68, 0x74, 0x6d, 0x6c, 0x18, 0x02, 0x20, 0x01,
-	0x28, 0x09, 0x52, 0x04, 0x68, 0x74, 0x6d, 0x6c, 0x12, 0x12, 0x0a, 0x04, 0x68, 0x69, 0x6e, 0x74,
-	0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x68, 0x69, 0x6e, 0x74, 0x1a, 0x48, 0x0a, 0x04,
-	0x54, 0x65, 0x78, 0x74, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01,
-	0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x18, 0x0a, 0x07, 0x63, 0x6f, 0x6e, 0x74,
-	0x65, 0x6e, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x63, 0x6f, 0x6e, 0x74, 0x65,
-	0x6e, 0x74, 0x12, 0x12, 0x0a, 0x04, 0x68, 0x69, 0x6e, 0x74, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09,
-	0x52, 0x04, 0x68, 0x69, 0x6e, 0x74, 0x42, 0x0f, 0x5a, 0x0d, 0x2e, 0x2f, 0x70, 0x72, 0x6f, 0x74,
-	0x6f, 0x3b, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x0d, 0x0a, 0x0b, 0x62, 0x6c, 0x6f, 0x63, 0x6b, 0x5f, 0x72, 0x75, 0x6c, 0x65, 0x73, 0x22, 0xde,
+	0x05, 0x0a, 0x07, 0x43, 0x6f, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x12, 0x36, 0x0a, 0x08, 0x65, 0x6c,
+	0x65, 0x6d, 0x65, 0x6e, 0x74, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x1a, 0x2e, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x43, 0x6f, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x2e, 0x45, 0x6c, 0x65,
+	0x6d, 0x65, 0x6e, 0x74, 0x54, 0x79, 0x70, 0x65, 0x52, 0x08, 0x65, 0x6c, 0x65, 0x6d, 0x65, 0x6e,
+	0x74, 0x73, 0x12, 0x2f, 0x0a, 0x08, 0x63, 0x68, 0x69, 0x6c, 0x64, 0x72, 0x65, 0x6e, 0x18, 0x02,
+	0x20, 0x03, 0x28, 0x0b, 0x32, 0x13, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x42, 0x6c, 0x6f,
+	0x63, 0x6b, 0x43, 0x6f, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x52, 0x08, 0x63, 0x68, 0x69, 0x6c, 0x64,
+	0x72, 0x65, 0x6e, 0x1a, 0x74, 0x0a, 0x0b, 0x45, 0x6c, 0x65, 0x6d, 0x65, 0x6e, 0x74, 0x54, 0x79,
+	0x70, 0x65, 0x12, 0x2c, 0x0a, 0x05, 0x6d, 0x65, 0x64, 0x69, 0x61, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x0b, 0x32, 0x14, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x43, 0x6f, 0x6e, 0x74, 0x65, 0x6e,
+	0x74, 0x2e, 0x4d, 0x65, 0x64, 0x69, 0x61, 0x48, 0x00, 0x52, 0x05, 0x6d, 0x65, 0x64, 0x69, 0x61,
+	0x12, 0x2c, 0x0a, 0x04, 0x74, 0x65, 0x78, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x16,
+	0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x43, 0x6f, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x2e, 0x54,
+	0x65, 0x78, 0x74, 0x75, 0x61, 0x6c, 0x48, 0x00, 0x52, 0x04, 0x74, 0x65, 0x78, 0x74, 0x42, 0x09,
+	0x0a, 0x07, 0x45, 0x6c, 0x65, 0x6d, 0x65, 0x6e, 0x74, 0x1a, 0x71, 0x0a, 0x05, 0x4d, 0x65, 0x64,
+	0x69, 0x61, 0x12, 0x14, 0x0a, 0x05, 0x74, 0x69, 0x74, 0x6c, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x05, 0x74, 0x69, 0x74, 0x6c, 0x65, 0x12, 0x2c, 0x0a, 0x04, 0x74, 0x79, 0x70, 0x65,
+	0x18, 0x02, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x18, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x43,
+	0x6f, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x2e, 0x4d, 0x65, 0x64, 0x69, 0x61, 0x54, 0x79, 0x70, 0x65,
+	0x52, 0x04, 0x74, 0x79, 0x70, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x66, 0x69, 0x6c, 0x65, 0x18, 0x03,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x66, 0x69, 0x6c, 0x65, 0x12, 0x10, 0x0a, 0x03, 0x61, 0x6c,
+	0x74, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x61, 0x6c, 0x74, 0x1a, 0x7b, 0x0a, 0x07,
+	0x54, 0x65, 0x78, 0x74, 0x75, 0x61, 0x6c, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x2e, 0x0a, 0x04, 0x74,
+	0x79, 0x70, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x1a, 0x2e, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x2e, 0x43, 0x6f, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x2e, 0x54, 0x65, 0x78, 0x74, 0x75, 0x61,
+	0x6c, 0x54, 0x79, 0x70, 0x65, 0x52, 0x04, 0x74, 0x79, 0x70, 0x65, 0x12, 0x18, 0x0a, 0x07, 0x63,
+	0x6f, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x63, 0x6f,
+	0x6e, 0x74, 0x65, 0x6e, 0x74, 0x12, 0x12, 0x0a, 0x04, 0x68, 0x69, 0x6e, 0x74, 0x18, 0x04, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x04, 0x68, 0x69, 0x6e, 0x74, 0x22, 0x87, 0x01, 0x0a, 0x0b, 0x54, 0x65,
+	0x78, 0x74, 0x75, 0x61, 0x6c, 0x54, 0x79, 0x70, 0x65, 0x12, 0x18, 0x0a, 0x14, 0x54, 0x45, 0x58,
+	0x54, 0x55, 0x41, 0x4c, 0x5f, 0x54, 0x59, 0x50, 0x45, 0x5f, 0x55, 0x4e, 0x4b, 0x4e, 0x4f, 0x57,
+	0x4e, 0x10, 0x00, 0x12, 0x15, 0x0a, 0x11, 0x54, 0x45, 0x58, 0x54, 0x55, 0x41, 0x4c, 0x5f, 0x54,
+	0x59, 0x50, 0x45, 0x5f, 0x54, 0x45, 0x58, 0x54, 0x10, 0x01, 0x12, 0x15, 0x0a, 0x11, 0x54, 0x45,
+	0x58, 0x54, 0x55, 0x41, 0x4c, 0x5f, 0x54, 0x59, 0x50, 0x45, 0x5f, 0x43, 0x4f, 0x44, 0x45, 0x10,
+	0x02, 0x12, 0x15, 0x0a, 0x11, 0x54, 0x45, 0x58, 0x54, 0x55, 0x41, 0x4c, 0x5f, 0x54, 0x59, 0x50,
+	0x45, 0x5f, 0x48, 0x54, 0x4d, 0x4c, 0x10, 0x03, 0x12, 0x19, 0x0a, 0x15, 0x54, 0x45, 0x58, 0x54,
+	0x55, 0x41, 0x4c, 0x5f, 0x54, 0x59, 0x50, 0x45, 0x5f, 0x4d, 0x41, 0x52, 0x4b, 0x44, 0x4f, 0x57,
+	0x4e, 0x10, 0x04, 0x22, 0x7a, 0x0a, 0x09, 0x4d, 0x65, 0x64, 0x69, 0x61, 0x54, 0x79, 0x70, 0x65,
+	0x12, 0x16, 0x0a, 0x12, 0x4d, 0x45, 0x44, 0x49, 0x41, 0x5f, 0x54, 0x59, 0x50, 0x45, 0x5f, 0x55,
+	0x4e, 0x4b, 0x4e, 0x4f, 0x57, 0x4e, 0x10, 0x00, 0x12, 0x14, 0x0a, 0x10, 0x4d, 0x45, 0x44, 0x49,
+	0x41, 0x5f, 0x54, 0x59, 0x50, 0x45, 0x5f, 0x49, 0x4d, 0x41, 0x47, 0x45, 0x10, 0x01, 0x12, 0x14,
+	0x0a, 0x10, 0x4d, 0x45, 0x44, 0x49, 0x41, 0x5f, 0x54, 0x59, 0x50, 0x45, 0x5f, 0x56, 0x49, 0x44,
+	0x45, 0x4f, 0x10, 0x02, 0x12, 0x14, 0x0a, 0x10, 0x4d, 0x45, 0x44, 0x49, 0x41, 0x5f, 0x54, 0x59,
+	0x50, 0x45, 0x5f, 0x41, 0x55, 0x44, 0x49, 0x4f, 0x10, 0x03, 0x12, 0x13, 0x0a, 0x0f, 0x4d, 0x45,
+	0x44, 0x49, 0x41, 0x5f, 0x54, 0x59, 0x50, 0x45, 0x5f, 0x46, 0x49, 0x4c, 0x45, 0x10, 0x04, 0x42,
+	0x0f, 0x5a, 0x0d, 0x2e, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x3b, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -978,35 +1127,40 @@ func file_block_proto_rawDescGZIP() []byte {
 	return file_block_proto_rawDescData
 }
 
+var file_block_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
 var file_block_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_block_proto_goTypes = []interface{}{
-	(*Block)(nil),            // 0: proto.Block
-	(*BlockContent)(nil),     // 1: proto.BlockContent
-	(*BlockMeta)(nil),        // 2: proto.BlockMeta
-	(*Author)(nil),           // 3: proto.Author
-	(*BlockRules)(nil),       // 4: proto.BlockRules
-	(*Content)(nil),          // 5: proto.Content
-	(*BlockRules_Rules)(nil), // 6: proto.BlockRules.Rules
-	(*Content_Image)(nil),    // 7: proto.Content.Image
-	(*Content_RichText)(nil), // 8: proto.Content.RichText
-	(*Content_Text)(nil),     // 9: proto.Content.Text
+	(Content_TextualType)(0),    // 0: proto.Content.TextualType
+	(Content_MediaType)(0),      // 1: proto.Content.MediaType
+	(*Block)(nil),               // 2: proto.Block
+	(*BlockContent)(nil),        // 3: proto.BlockContent
+	(*BlockMeta)(nil),           // 4: proto.BlockMeta
+	(*Author)(nil),              // 5: proto.Author
+	(*BlockRules)(nil),          // 6: proto.BlockRules
+	(*Content)(nil),             // 7: proto.Content
+	(*BlockRules_Rules)(nil),    // 8: proto.BlockRules.Rules
+	(*Content_ElementType)(nil), // 9: proto.Content.ElementType
+	(*Content_Media)(nil),       // 10: proto.Content.Media
+	(*Content_Textual)(nil),     // 11: proto.Content.Textual
 }
 var file_block_proto_depIdxs = []int32{
-	3,  // 0: proto.Block.authors:type_name -> proto.Author
-	5,  // 1: proto.Block.content:type_name -> proto.Content
-	4,  // 2: proto.Block.rules:type_name -> proto.BlockRules
-	5,  // 3: proto.BlockContent.content:type_name -> proto.Content
-	3,  // 4: proto.BlockMeta.authors:type_name -> proto.Author
-	6,  // 5: proto.BlockRules.rules:type_name -> proto.BlockRules.Rules
-	7,  // 6: proto.Content.images:type_name -> proto.Content.Image
-	9,  // 7: proto.Content.text:type_name -> proto.Content.Text
-	8,  // 8: proto.Content.html:type_name -> proto.Content.RichText
-	1,  // 9: proto.Content.children:type_name -> proto.BlockContent
-	10, // [10:10] is the sub-list for method output_type
-	10, // [10:10] is the sub-list for method input_type
-	10, // [10:10] is the sub-list for extension type_name
-	10, // [10:10] is the sub-list for extension extendee
-	0,  // [0:10] is the sub-list for field type_name
+	5,  // 0: proto.Block.authors:type_name -> proto.Author
+	7,  // 1: proto.Block.content:type_name -> proto.Content
+	6,  // 2: proto.Block.rules:type_name -> proto.BlockRules
+	7,  // 3: proto.BlockContent.content:type_name -> proto.Content
+	5,  // 4: proto.BlockMeta.authors:type_name -> proto.Author
+	8,  // 5: proto.BlockRules.rules:type_name -> proto.BlockRules.Rules
+	9,  // 6: proto.Content.elements:type_name -> proto.Content.ElementType
+	3,  // 7: proto.Content.children:type_name -> proto.BlockContent
+	10, // 8: proto.Content.ElementType.media:type_name -> proto.Content.Media
+	11, // 9: proto.Content.ElementType.text:type_name -> proto.Content.Textual
+	1,  // 10: proto.Content.Media.type:type_name -> proto.Content.MediaType
+	0,  // 11: proto.Content.Textual.type:type_name -> proto.Content.TextualType
+	12, // [12:12] is the sub-list for method output_type
+	12, // [12:12] is the sub-list for method input_type
+	12, // [12:12] is the sub-list for extension type_name
+	12, // [12:12] is the sub-list for extension extendee
+	0,  // [0:12] is the sub-list for field type_name
 }
 
 func init() { file_block_proto_init() }
@@ -1100,7 +1254,7 @@ func file_block_proto_init() {
 			}
 		}
 		file_block_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Content_Image); i {
+			switch v := v.(*Content_ElementType); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1112,7 +1266,7 @@ func file_block_proto_init() {
 			}
 		}
 		file_block_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Content_RichText); i {
+			switch v := v.(*Content_Media); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1124,7 +1278,7 @@ func file_block_proto_init() {
 			}
 		}
 		file_block_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Content_Text); i {
+			switch v := v.(*Content_Textual); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1142,18 +1296,23 @@ func file_block_proto_init() {
 		(*BlockRules_RuleName)(nil),
 		(*BlockRules_Rules_)(nil),
 	}
+	file_block_proto_msgTypes[7].OneofWrappers = []interface{}{
+		(*Content_ElementType_Media)(nil),
+		(*Content_ElementType_Text)(nil),
+	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_block_proto_rawDesc,
-			NumEnums:      0,
+			NumEnums:      2,
 			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
 		GoTypes:           file_block_proto_goTypes,
 		DependencyIndexes: file_block_proto_depIdxs,
+		EnumInfos:         file_block_proto_enumTypes,
 		MessageInfos:      file_block_proto_msgTypes,
 	}.Build()
 	File_block_proto = out.File

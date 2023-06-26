@@ -2,6 +2,7 @@ package queries
 
 import (
 	"context"
+	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -16,10 +17,16 @@ func searchBlock(c echo.Context) error {
 	tagsParam := c.QueryParam("tags")
 	tags := strings.Split(tagsParam, ",")
 
+	log.Println(tags)
+
 	catgsParam := c.QueryParam("catgs")
 	catgs := strings.Split(catgsParam, ",")
 
+	log.Println(catgs)
+
 	typeName := c.QueryParam("type")
+
+	log.Println(catgs)
 
 	l := c.Logger()
 
@@ -28,11 +35,17 @@ func searchBlock(c echo.Context) error {
 	if err != nil {
 		l.Warn(err)
 	}
+	if pageSize <= 0 || pageSize > 100 {
+		pageSize = 100
+	}
 
 	pageNumParam := c.QueryParam("pagenum")
 	pageNum, err := strconv.Atoi(pageNumParam)
 	if err != nil {
 		l.Warn(err)
+	}
+	if pageNum <= 0 {
+		pageNum = 1
 	}
 
 	selectors := &pb.Selectors{
@@ -42,8 +55,8 @@ func searchBlock(c echo.Context) error {
 	}
 
 	pagination := &pb.Pagination{
-		PageSize: int32(pageSize),
-		PageNum:  int32(pageNum),
+		PageSize: uint32(pageSize),
+		PageNum:  uint32(pageNum),
 	}
 
 	res, err := client.Search(context.Background(), &pb.SearchRequest{

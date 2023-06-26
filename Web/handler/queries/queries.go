@@ -11,6 +11,7 @@ import (
 func New(e *echo.Echo, fn handler.Dialfn) {
 
 	createClient := func(next echo.HandlerFunc) echo.HandlerFunc {
+
 		return func(c echo.Context) error {
 			conn, err := fn(namespace.Queries, nil)
 			if err != nil {
@@ -26,6 +27,7 @@ func New(e *echo.Echo, fn handler.Dialfn) {
 
 			return err
 		}
+
 	}
 
 	block := e.Group("/public/block", createClient)

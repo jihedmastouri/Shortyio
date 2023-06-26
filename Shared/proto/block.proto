@@ -47,45 +47,61 @@ message Author {
 message BlockRules {
 
   oneof block_rules {
-     string rule_name = 1;
-     Rules rules = 2;
+    string rule_name = 1;
+    Rules rules = 2;
   }
 
   message Rules {
-      string rule_name = 1;
-      string descr = 2;
-      bool nested = 3;
-      bool has_likes = 4;
-      bool has_comments = 5;
-      bool comments_nested = 6;
-      bool comments_has_likes = 7;
-      bool comments_editable = 8;
-      int32 comments_max_nested = 9;
+    string rule_name = 1;
+    string descr = 2;
+    bool nested = 3;
+    bool has_likes = 4;
+    bool has_comments = 5;
+    bool comments_nested = 6;
+    bool comments_has_likes = 7;
+    bool comments_editable = 8;
+    int32 comments_max_nested = 9;
   }
-
 }
 
 message Content {
-  repeated Image images = 1;
-  repeated Text text = 2;
-  repeated RichText html = 3;
-  repeated BlockContent children = 4;
+  repeated ElementType elements = 1;
+  repeated BlockContent children = 2;
 
-  message Image {
-    string  title = 1;
-    string file = 2;
-    string alt = 3;
+  message ElementType {
+    oneof Element {
+      Media media = 1;
+      Textual text = 2;
+    }
   }
 
-  message RichText {
-    string  name = 1;
-    string html = 2;
-    string hint = 3;
+  message Media {
+    string title = 1;
+    MediaType type = 2;
+    string file = 3;
+    string alt = 4;
   }
 
-  message Text {
-    string  name = 1;
-    string content = 2;
-    string hint = 3;
+  message Textual {
+    string name = 1;
+    TextualType type = 2;
+    string content = 3;
+    string hint = 4;
+  }
+
+  enum TextualType {
+    TEXTUAL_TYPE_UNKNOWN = 0;
+    TEXTUAL_TYPE_TEXT = 1;
+    TEXTUAL_TYPE_CODE = 2;
+    TEXTUAL_TYPE_HTML = 3;
+    TEXTUAL_TYPE_MARKDOWN = 4;
+  }
+
+  enum MediaType {
+    MEDIA_TYPE_UNKNOWN = 0;
+    MEDIA_TYPE_IMAGE = 1;
+    MEDIA_TYPE_VIDEO = 2;
+    MEDIA_TYPE_AUDIO = 3;
+    MEDIA_TYPE_FILE = 4;
   }
 }
