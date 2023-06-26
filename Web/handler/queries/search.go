@@ -13,22 +13,21 @@ import (
 
 func searchBlock(c echo.Context) error {
 	client := c.Get("client").(pb.QueriesClient)
+	l := c.Logger()
 
 	tagsParam := c.QueryParam("tags")
-	tags := strings.Split(tagsParam, ",")
-
-	log.Println(tags)
+	var tags []string
+	if tagsParam != "" {
+		tags = strings.Split(tagsParam, ",")
+	}
 
 	catgsParam := c.QueryParam("catgs")
-	catgs := strings.Split(catgsParam, ",")
-
-	log.Println(catgs)
+	var catgs []string
+	if catgsParam != "" {
+		catgs = strings.Split(catgsParam, ",")
+	}
 
 	typeName := c.QueryParam("type")
-
-	log.Println(catgs)
-
-	l := c.Logger()
 
 	pageSizeParam := c.QueryParam("pagesize")
 	pageSize, err := strconv.Atoi(pageSizeParam)
