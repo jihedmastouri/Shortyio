@@ -13,7 +13,61 @@ type Queries struct {
 }
 
 func (q *Queries) GetBlock(ctx context.Context, rq *pb.BlockRequest) (*pb.Block, error) {
-	return db.GetBlock(ctx, rq)
+	block, error := db.GetBlock(ctx, rq)
+	if error != nil {
+		return nil, error
+	}
+
+	res := &pb.Block{
+		BlockId:    block.BlockID,
+		Name:       block.Name,
+		Type:       block.Type,
+		Lang:       block.LangCode,
+		Version:    block.Version,
+		Tags:       block.Tags,
+		Categories: block.Categories,
+		// Children:   []*pb.BlockContent{},
+		Rules:     getRules(block),
+		UpdatedAt: block.UpdatedAt,
+		CreatedAt: block.CreatedAt,
+	}
+
+	for _, author := range block.Authors {
+		res.Authors = append(res.Authors, &pb.Author{
+			Id:    author.ID,
+			Name:  author.Name,
+			Image: author.Image,
+		})
+	}
+
+	for _, content := range block.Content {
+		if content.Media.Title != "" {
+			res.Content = append(res.Content, &pb.ElementType{
+				Element: &pb.ElementType_Media{
+					Media: &pb.Media{
+						Title: content.Media.Title,
+						Type:  content.Media.Type,
+						File:  content.Media.File,
+						Alt:   content.Media.Alt,
+					},
+				},
+			})
+		} else {
+			res.Content = append(res.Content, &pb.ElementType{
+				Element: &pb.ElementType_Text{
+					Text: &pb.Textual{
+						Name:    content.Text.Name,
+						Content: content.Text.Content,
+						Type:    content.Text.Type,
+						Hint:    content.Text.Hint,
+					},
+				},
+			})
+
+		}
+	}
+
+	return res, nil
 }
 
 func (q *Queries) GetBlockMeta(ctx context.Context, rq *pb.BlockRequest) (*pb.BlockMeta, error) {
@@ -25,22 +79,17 @@ func (q *Queries) GetBlockRules(ctx context.Context, rq *pb.BlockRequest) (*pb.B
 	if err != nil {
 		return nil, err
 	}
-	return block.GetRules(), nil
+	return getRules(block), nil
 }
 
 // Fix this later
 func (q *Queries) GetBlockContent(ctx context.Context, rq *pb.BlockRequest) (*pb.BlockContent, error) {
-	block, err := db.GetBlock(ctx, rq)
+	_, err := db.GetBlock(ctx, rq)
 	if err != nil {
 		return nil, err
 	}
 
-	return &pb.BlockContent{
-		BlockId: block.GetBlockId(),
-		Content: block.GetContent(),
-		Lang:    block.GetLang(),
-		Version: block.GetVersion(),
-	}, nil
+	return &pb.BlockContent{}, nil
 }
 
 func (q *Queries) GetVersions(ctx context.Context, rq *pb.VersionsRequest) (*pb.VersionResponse, error) {

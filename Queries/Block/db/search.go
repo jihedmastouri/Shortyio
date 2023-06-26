@@ -61,9 +61,38 @@ func Search(ctx context.Context, req *pb.SearchRequest) (*pb.BlockList, error) {
 		log.Println(err)
 		return nil, errors.New("ERROR GETTING BLOCKS")
 	}
+	defer cursor.Close(context.Background())
 
 	var metaList []*pb.BlockMeta
-	if err := cursor.All(ctx, &metaList); err != nil {
+
+	// Iterate over the cursor
+	for cursor.Next(context.Background()) {
+		var bm *BlockMeta
+		err := cursor.Decode(&bm)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		auths := []*pb.Author{}
+		for _, a := range bm.Authors {
+			auths = append(auths, &pb.Author{
+				Name:  a.Name,
+				Id:    a.ID,
+				Image: a.Image,
+			})
+		}
+
+		metaList = append(metaList, &pb.BlockMeta{
+			BlockId:    bm.BlockID,
+			Name:       bm.Name,
+			Type:       bm.Type,
+			Tags:       bm.Tags,
+			Categories: bm.Categories,
+			Authors:    auths,
+		})
+	}
+
+	if err := cursor.Err(); err != nil {
 		log.Println(err)
 		return nil, errors.New("ERROR GETTING BLOCKS")
 	}
@@ -73,14 +102,14 @@ func Search(ctx context.Context, req *pb.SearchRequest) (*pb.BlockList, error) {
 		log.Println(err)
 		return nil, errors.New("ERROR GETTING BLOCKS")
 	}
-	count := uint32(totalCount)
+	count := uint32(totalCount) - uint32(skip)
 
 	return &pb.BlockList{
 		Metas: metaList,
 		Pagination: &pb.Pagination{
-			PageNum:  uint32(pagenum) + 1,
-			PageSize: uint32(len(metaList)),
-			Total:    &count,
+			PageNum:   uint32(pagenum) + 1,
+			PageSize:  uint32(len(metaList)),
+			TotalRest: &count,
 		},
 	}, nil
 }

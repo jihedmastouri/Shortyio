@@ -6,8 +6,10 @@ ARG DIR=.
 WORKDIR /app
 # Copy the source code into the container
 COPY . .
+
 # Copy the vendor directory into the container
-COPY ${DIR}/vendor/. vendor
+#COPY ${DIR}/vendor/. ${DIR}/vendor
+
 # Build the binary
 RUN go build -o server ${DIR}/main.go
 

@@ -46,7 +46,7 @@ func GetBlockContent(ctx context.Context, bq *pb.BlockRequest) (*pb.BlockContent
 	return content, nil
 }
 
-func GetBlock(ctx context.Context, bq *pb.BlockRequest) (*pb.Block, error) {
+func GetBlock(ctx context.Context, bq *pb.BlockRequest) (*Block, error) {
 	client, err := connectMongo(ctx)
 	if err != nil {
 		log.Println(err)
@@ -58,7 +58,7 @@ func GetBlock(ctx context.Context, bq *pb.BlockRequest) (*pb.Block, error) {
 
 	query, option := buildQuery(bq)
 
-	block := new(pb.Block)
+	block := new(Block)
 
 	cusror := collection.FindOne(ctx, query, option)
 	if err := cusror.Decode(block); err != nil {
