@@ -38,6 +38,14 @@ type Content struct {
 	} `bson:"elements"`
 }
 
+type Block struct {
+	pb.BlockMeta
+	LangCode string  `bson:"lang_code"`
+	Version  int32   `bson:"version"`
+	content  Content `bson:"content"`
+	Rules    Rules   `bson:"rules"`
+}
+
 func GetBlockMeta(ctx context.Context, bq *pb.BlockRequest) (*pb.BlockMeta, error) {
 	client, err := connectMongo(ctx)
 	if err != nil {
@@ -97,25 +105,15 @@ func GetBlock(ctx context.Context, bq *pb.BlockRequest) (*pb.Block, error) {
 	// }
 	//
 
-	type Block struct {
-		pb.BlockMeta
-		LangCode string  `bson:"lang_code"`
-		Version  int32   `bson:"version"`
-		content  Content `bson:"content"`
-		Rules    Rules   `bson:"rules"`
-	}
-
-	block := new(Block)
+	block := &pb.Block{}
 
 	cusror := collection.FindOne(ctx, query, option)
-	if err := cusror.Decode(&block); err != nil {
+	if err := cusror.Decode(block); err != nil {
 		log.Println(err)
 		return nil, err
 	}
 
-	log.Println(block)
-
-	return nil, nil
+	return block, nil
 }
 
 func GetLanguages(ctx context.Context, bq *pb.LanguageRequest) (*pb.LanguageList, error) {

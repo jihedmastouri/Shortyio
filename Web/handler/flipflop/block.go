@@ -20,9 +20,9 @@ func createBlock(c echo.Context) error {
 		Name:      brq.Name,
 		BlockType: brq.BlockType,
 		Author:    brq.Author,
-		Rules: &pb.BlockRules{
-			BlockRules: &pb.BlockRules_Rules_{
-				Rules: &pb.BlockRules_Rules{
+		Rules: &pb.BlockRulesRq{
+			BlockRules: &pb.BlockRulesRq_Rules{
+				Rules: &pb.BlockRules{
 					RuleName:          brq.Rules.RuleName,
 					Nested:            brq.Rules.Nested,
 					HasLikes:          brq.Rules.HasLikes,
@@ -74,9 +74,9 @@ func updateBlock(c echo.Context) error {
 		Name:      brq.Name,
 		BlockType: brq.BlockType,
 		Author:    brq.Author,
-		Rules: &pb.BlockRules{
-			BlockRules: &pb.BlockRules_Rules_{
-				Rules: &pb.BlockRules_Rules{
+		Rules: &pb.BlockRulesRq{
+			BlockRules: &pb.BlockRulesRq_Rules{
+				Rules: &pb.BlockRules{
 					RuleName:          brq.Rules.RuleName,
 					Nested:            brq.Rules.Nested,
 					HasLikes:          brq.Rules.HasLikes,

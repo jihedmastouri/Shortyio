@@ -12,7 +12,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func (c *CommandService) CreateBlockRule(ctx context.Context, rq *pb.BlockRules) (*pb.ActionResponse, error) {
+func (c *CommandService) CreateBlockRule(ctx context.Context, rq *pb.BlockRulesRq) (*pb.ActionResponse, error) {
 	conn, err := newConn()
 	if err != nil {
 		return nil, errors.New("FAILED TO CONNECT TO DATABASE")
@@ -70,7 +70,7 @@ func (c *CommandService) CreateBlockRule(ctx context.Context, rq *pb.BlockRules)
 	}, nil
 }
 
-func (*CommandService) UpdateBlockRule(ctx context.Context, rq *pb.BlockRules) (*pb.ActionResponse, error) {
+func (*CommandService) UpdateBlockRule(ctx context.Context, rq *pb.BlockRulesRq) (*pb.ActionResponse, error) {
 	conn, err := newConn()
 	if err != nil {
 		return nil, errors.New("FAILED TO CONNECT TO DATABASE")
@@ -127,7 +127,7 @@ func (*CommandService) UpdateBlockRule(ctx context.Context, rq *pb.BlockRules) (
 	}, nil
 }
 
-func (*CommandService) DeleteBlockRule(ctx context.Context, rq *pb.BlockRules) (*pb.ActionResponse, error) {
+func (*CommandService) DeleteBlockRule(ctx context.Context, rq *pb.BlockRulesRq) (*pb.ActionResponse, error) {
 	conn, err := newConn()
 	if err != nil {
 		return nil, errors.New("FAILED TO CONNECT TO DATABASE")

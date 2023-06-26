@@ -47,24 +47,17 @@ message Author {
   string image = 3;
 }
 
+
 message BlockRules {
-
-  oneof block_rules {
-    string rule_name = 1;
-    Rules rules = 2;
-  }
-
-  message Rules {
-    string rule_name = 1;
-    string descr = 2;
-    bool nested = 3;
-    bool has_likes = 4;
-    bool has_comments = 5;
-    bool comments_nested = 6;
-    bool comments_has_likes = 7;
-    bool comments_editable = 8;
-    int32 comments_max_nested = 9;
-  }
+  string rule_name = 1;
+  string descr = 2;
+  bool nested = 3;
+  bool has_likes = 4;
+  bool has_comments = 5;
+  bool comments_nested = 6;
+  bool comments_has_likes = 7;
+  bool comments_editable = 8;
+  int32 comments_max_nested = 9;
 }
 
 message ElementType {

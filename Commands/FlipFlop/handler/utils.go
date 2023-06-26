@@ -78,10 +78,10 @@ func newConn() (*sql.DB, error) {
 }
 
 // Takes a BlockRules (Name or rules) and returns a BlockRules_Rules
-func getBlockRules(q *db.Queries, br *pb.BlockRules) (pb.BlockRules_Rules, string) {
+func getBlockRules(q *db.Queries, br *pb.BlockRulesRq) pb.BlockRules {
 
 	if br.GetRules() != nil {
-		return *br.GetRules(), "custom"
+		return *br.GetRules()
 	}
 
 	ctx := context.Background()
@@ -90,7 +90,8 @@ func getBlockRules(q *db.Queries, br *pb.BlockRules) (pb.BlockRules_Rules, strin
 		panic(err)
 	}
 
-	return pb.BlockRules_Rules{
+	return pb.BlockRules{
+		RuleName:          br.GetRuleName(),
 		Nested:            rules.Nested.Bool,
 		HasLikes:          rules.HasLikes.Bool,
 		HasComments:       rules.HasComments.Bool,
@@ -98,7 +99,7 @@ func getBlockRules(q *db.Queries, br *pb.BlockRules) (pb.BlockRules_Rules, strin
 		CommentsHasLikes:  rules.CommentsHasLikes.Bool,
 		CommentsEditable:  rules.CommentEditable.Bool,
 		CommentsMaxNested: int32(rules.CommentsMaxNest.Int16),
-	}, br.GetRuleName()
+	}
 }
 
 // func publishEvent(ctx context.Context, event service.) error {

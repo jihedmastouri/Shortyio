@@ -33,7 +33,7 @@ func (c *CommandService) CreateBlock(ctx context.Context, rq *pb.CreateRequest) 
 		return nil, errors.New("FAILED TO PARSE AUTHOR ID")
 	}
 
-	rules, name_rule := getBlockRules(q, rq.GetRules())
+	rules := getBlockRules(q, rq.GetRules())
 
 	blockType, err := q.GetTypeByName(ctx, rq.BlockType)
 	if err != nil {
@@ -50,7 +50,7 @@ func (c *CommandService) CreateBlock(ctx context.Context, rq *pb.CreateRequest) 
 		CommentsMaxNest:  int16(rules.GetCommentsMaxNested()),
 		CommentsHasLikes: rules.GetCommentsHasLikes(),
 		CommentEditable:  rules.GetCommentsEditable(),
-		RulesName:        sql.NullString{String: name_rule, Valid: true},
+		RulesName:        sql.NullString{String: rules.RuleName, Valid: true},
 		Type:             blockType,
 	}
 
@@ -82,12 +82,12 @@ func (c *CommandService) UpdateBlock(ctx context.Context, rq *pb.CreateRequest) 
 		return nil, errors.New("FAILED TO PARSE BLOCK ID")
 	}
 
-	rules, name_rule := getBlockRules(q, rq.GetRules())
+	rules := getBlockRules(q, rq.GetRules())
 
 	params := db.UpdateBlockParams{
 		ID:               id,
 		Name:             rq.Name,
-		RulesName:        sql.NullString{String: name_rule, Valid: true},
+		RulesName:        sql.NullString{String: rules.RuleName, Valid: true},
 		Nested:           rules.GetNested(),
 		HasLikes:         rules.GetHasLikes(),
 		HasComments:      rules.GetHasComments(),

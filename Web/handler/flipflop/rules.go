@@ -16,9 +16,9 @@ func createRule(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	req := &pb.BlockRules{
-		BlockRules: &pb.BlockRules_Rules_{
-			Rules: &pb.BlockRules_Rules{
+	req := &pb.BlockRulesRq{
+		BlockRules: &pb.BlockRulesRq_Rules{
+			Rules: &pb.BlockRules{
 				RuleName:          rrq.RuleName,
 				Nested:            rrq.Nested,
 				HasLikes:          rrq.HasLikes,
@@ -45,8 +45,8 @@ func deleteRule(c echo.Context) error {
 	name := c.Param("name")
 	c.Logger().Debug(name)
 
-	req := &pb.BlockRules{
-		BlockRules: &pb.BlockRules_RuleName{
+	req := &pb.BlockRulesRq{
+		BlockRules: &pb.BlockRulesRq_RuleName{
 			RuleName: name,
 		},
 	}
@@ -69,9 +69,9 @@ func updateRule(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	req := &pb.BlockRules{
-		BlockRules: &pb.BlockRules_Rules_{
-			Rules: &pb.BlockRules_Rules{
+	req := &pb.BlockRulesRq{
+		BlockRules: &pb.BlockRulesRq_Rules{
+			Rules: &pb.BlockRules{
 				RuleName:          name,
 				Nested:            rrq.Nested,
 				HasLikes:          rrq.HasLikes,
