@@ -14,44 +14,6 @@ type Msg struct {
 	ChangeLog string
 }
 
-// TODO: IF No Lang Execute on all Langs (tags, categories, etc)
-func BlockUpdated(m *nats.Msg) {
-	if m == nil {
-		log.Println("Error receiving message")
-		m.Nak()
-		return
-	}
-
-	log.Println("Received a message: ", string(m.Data))
-
-	var msg Msg
-	err := json.Unmarshal(m.Data, &msg)
-	if err != nil {
-		log.Println("failed to unmarshal message:", err)
-		m.Nak()
-		return
-	}
-
-	data, err := AggregateDB(msg)
-	if err != nil {
-		log.Println("Error aggregating data: ", err)
-		m.Nak()
-		return
-	}
-
-	log.Println("Aggregated data: ", data)
-
-	err = SaveToDB(data)
-	if err != nil {
-		log.Println("Error saving data: ", err)
-		m.Nak()
-		return
-	}
-
-	log.Println("Data Saved!")
-	m.Ack()
-}
-
 func main() {
 	natsUrl := os.Getenv("NATS")
 	if natsUrl == "" {
@@ -76,4 +38,42 @@ func main() {
 	log.Println("Waiting for messages...")
 
 	select {}
+}
+
+// TODO: IF No Lang Execute on all Langs (tags, categories, etc)
+func BlockUpdated(m *nats.Msg) {
+	if m == nil {
+		log.Println("Error receiving message")
+		m.Nak()
+		return
+	}
+
+	log.Println("Received a message: ", string(m.Data))
+
+	var msg Msg
+	err := json.Unmarshal(m.Data, &msg)
+	if err != nil {
+		log.Println("failed to unmarshal message:", err)
+		m.Nak()
+		return
+	}
+
+	data, err := aggregateDB(msg)
+	if err != nil {
+		log.Println("Error aggregating data: ", err)
+		m.Nak()
+		return
+	}
+
+	log.Println("Aggregated data: ", data)
+
+	err = saveToDB(data)
+	if err != nil {
+		log.Println("Error saving data: ", err)
+		m.Nak()
+		return
+	}
+
+	log.Println("Data Saved!")
+	m.Ack()
 }

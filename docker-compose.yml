@@ -77,10 +77,8 @@ services:
 
   aggregator:
     build:
-      args:
-        - DIR=Aggregator
-      context: .
-      dockerfile: ./Web/Dockerfile
+      context: ./Aggregator
+      dockerfile: Dockerfile
     depends_on:
       - consulserver
     environment:

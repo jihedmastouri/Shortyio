@@ -2,13 +2,13 @@ SELECT json_agg(
  json_build_object(
          'id', b.id,
           'rules', json_build_object(
-             'rule_name', b.rule_name,
+             'rule_name', b.rules_name,
              'has_likes', b.has_likes,
              'has_comments', b.has_comments,
              'nested', b.nested,
-             'comments_max_nested', b.comments_max_nested,
+             'comments_max_nested', b.comments_max_nest,
              'comments_has_likes', b.comments_has_likes,
-             'comments_editable', b.comments_editable,
+             'comments_editable', b.comment_editable
           ),
          'version_number', bl.version_number,
          'changelog', $3,

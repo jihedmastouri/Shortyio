@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"log"
 
@@ -108,24 +109,27 @@ type Msg struct {
 }
 
 func publishEvent(msg Msg) {
-	natsURL, err := srv.GetKV("NATS_URL")
-	if err != nil {
-		log.Printf("Failed to retrieve NATS_URL from Consul key-value store: %s", err)
-	}
+	go func(msg Msg) {
+		natsURL, err := srv.GetKV("NATS_URL")
+		if err != nil {
+			log.Println("Failed to retrieve NATS_URL from Consul key-value store:", err)
+			return
+		}
 
-	nc, err = nats.Connect(natsURL)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer nc.Close()
+		nc, err = nats.Connect(natsURL)
+		if err != nil {
+			log.Println("Failed to Connect to nats:", err)
+			return
+		}
+		defer nc.Close()
 
-	message := []byte(fmt.Sprintf(
-		`{"id": "%s", "langCode": "%s", "changeLog": "%s"}`,
-		msg.Id,
-		msg.LangCode,
-		msg.ChangeLog,
-	))
+		// marshal the message
+		message, err := json.Marshal(msg)
+		if err != nil {
+			log.Println("Failed to marshal", err)
+			return
+		}
 
-	nc.Publish("BlockUpdated", message)
-
+		nc.Publish("BlockUpdated", message)
+	}(msg)
 }

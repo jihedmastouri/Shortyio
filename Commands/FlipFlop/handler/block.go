@@ -60,6 +60,12 @@ func (c *CommandService) CreateBlock(ctx context.Context, rq *pb.CreateRequest) 
 		return nil, errors.New("FAILED TO CREATE BLOCK")
 	}
 
+	publishEvent(Msg{
+		Id:        id.String(),
+		LangCode:  "en",
+		ChangeLog: "Created Block",
+	})
+
 	return &pb.ActionResponse{
 		IsSuceess: true,
 		Id:        id.String(),
@@ -162,8 +168,8 @@ func (c *CommandService) CreateBlockLang(ctx context.Context, rq *pb.CreateLangR
 		return nil, errors.New("FAILED TO CREATE BLOCK")
 	}
 
-	defer publishEvent(Msg{
-		Id:        strconv.Itoa(int(id)),
+	publishEvent(Msg{
+		Id:        rq.BlockId,
 		LangCode:  rq.LangCode,
 		ChangeLog: "Created BLOCKLANG",
 	})
@@ -200,7 +206,7 @@ func (c *CommandService) DeleteBlockLang(ctx context.Context, rq *pb.DeleteLangR
 		return nil, errors.New("FAILED TO DELETE BLOCK LANG")
 	}
 
-	defer publishEvent(Msg{
+	publishEvent(Msg{
 		Id:        id.String(),
 		LangCode:  rq.LangCode,
 		ChangeLog: "DELETED BLOCKLANG",

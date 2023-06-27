@@ -10,7 +10,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func AggregateDB(msg Msg) (*[]byte, error) {
+func aggregateDB(msg Msg) (*[]byte, error) {
 	query, err := os.ReadFile("./temp.sql")
 	if err != nil {
 		return nil, err

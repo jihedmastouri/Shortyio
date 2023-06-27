@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS block_langs
     block_id       UUID        NOT NULL
         REFERENCES blocks (id) ON DELETE CASCADE ON UPDATE CASCADE,
 
-    CONSTRAINT unique_pair_constraint UNIQUE (lang_name, lang_code)
+    CONSTRAINT unique_pair_constraint UNIQUE (block_id, lang_code)
 );
 
 CREATE INDEX IF NOT EXISTS idx_block_langs_block_id_lang_name ON block_langs (block_id, lang_name);
