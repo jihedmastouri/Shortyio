@@ -26,9 +26,9 @@ func SaveToDB(data interface{}) error {
 }
 
 func connectMongo() (*mongo.Collection, error) {
-	host := os.Getenv("MONGO_HOST")
-	username := os.Getenv("MONGO_USER")
-	psswd := os.Getenv("MONGO_PASSWORD")
+	host := "cluster0.2qj8o.mongodb.net/?w=majority"
+	username := "reader"
+	psswd := "DWldoNa8losWte27"
 
 	connString := fmt.Sprintf(
 		"mongodb+srv://%s:%s@%s",

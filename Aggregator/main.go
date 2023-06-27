@@ -9,8 +9,9 @@ import (
 )
 
 type Msg struct {
-	Id       string
-	LangCode string
+	Id        string
+	LangCode  string
+	ChangeLog string
 }
 
 func BlockUpdated(m *nats.Msg) {
@@ -19,6 +20,7 @@ func BlockUpdated(m *nats.Msg) {
 		m.Nak()
 		return
 	}
+
 	log.Println("Received a message: ", string(m.Data))
 
 	var msg Msg
@@ -50,7 +52,6 @@ func BlockUpdated(m *nats.Msg) {
 }
 
 func main() {
-
 	natsUrl := os.Getenv("NATS")
 	if natsUrl == "" {
 		natsUrl = nats.DefaultURL
