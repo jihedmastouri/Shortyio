@@ -14,6 +14,7 @@ type Msg struct {
 	ChangeLog string
 }
 
+// TODO: IF No Lang Execute on all Langs (tags, categories, etc)
 func BlockUpdated(m *nats.Msg) {
 	if m == nil {
 		log.Println("Error receiving message")

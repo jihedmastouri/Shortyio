@@ -188,6 +188,13 @@ func (s *CommandService) JoinCategory(ctx context.Context, rq *pb.JoinTaxonomy) 
 		return nil, errors.New("FAILED TO JOIN CATEG")
 	}
 
+	defer publishEvent(Msg{
+		Id: blockid.String(),
+		// TODO: Make it empty after fixing the bug
+		LangCode:  "en",
+		ChangeLog: "Added Taggs",
+	})
+
 	return &pb.ActionResponse{
 		IsSuceess: true,
 		Id:        "",

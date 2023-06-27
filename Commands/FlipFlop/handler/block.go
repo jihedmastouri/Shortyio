@@ -162,6 +162,12 @@ func (c *CommandService) CreateBlockLang(ctx context.Context, rq *pb.CreateLangR
 		return nil, errors.New("FAILED TO CREATE BLOCK")
 	}
 
+	defer publishEvent(Msg{
+		Id:        strconv.Itoa(int(id)),
+		LangCode:  rq.LangCode,
+		ChangeLog: "Created BLOCKLANG",
+	})
+
 	return &pb.ActionResponse{
 		IsSuceess: true,
 		Id:        strconv.Itoa(int(id)),
@@ -193,6 +199,12 @@ func (c *CommandService) DeleteBlockLang(ctx context.Context, rq *pb.DeleteLangR
 		log.Print("Failed to delete block lang:", err)
 		return nil, errors.New("FAILED TO DELETE BLOCK LANG")
 	}
+
+	defer publishEvent(Msg{
+		Id:        id.String(),
+		LangCode:  rq.LangCode,
+		ChangeLog: "DELETED BLOCKLANG",
+	})
 
 	return &pb.ActionResponse{
 		IsSuceess: true,

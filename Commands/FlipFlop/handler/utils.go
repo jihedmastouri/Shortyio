@@ -101,11 +101,31 @@ func getBlockRules(q *db.Queries, br *pb.BlockRulesRq) pb.BlockRules {
 	}
 }
 
-// func publishEvent(ctx context.Context, event service.) error {
-// 	_, err := srv.Publish(ctx, event)
-// 	if err != nil {
-// 		log.Printf("Failed to publish event: %s", err)
-// 		return err
-// 	}
-// 	return nil
-// }
+type Msg struct {
+	Id        string
+	LangCode  string
+	ChangeLog string
+}
+
+func publishEvent(msg Msg) {
+	natsURL, err := srv.GetKV("NATS_URL")
+	if err != nil {
+		log.Printf("Failed to retrieve NATS_URL from Consul key-value store: %s", err)
+	}
+
+	nc, err = nats.Connect(natsURL)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer nc.Close()
+
+	message := []byte(fmt.Sprintf(
+		`{"id": "%s", "langCode": "%s", "changeLog": "%s"}`,
+		msg.Id,
+		msg.LangCode,
+		msg.ChangeLog,
+	))
+
+	nc.Publish("BlockUpdated", message)
+
+}
