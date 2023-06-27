@@ -11,6 +11,18 @@ import (
 	"google.golang.org/grpc"
 )
 
+// Get Block Like Crazy
+//
+//	@Summary      Get Block
+//	@Description  get block by id and lang
+//	@Produce      json
+//	@Param        id    path     string
+//	@Param        lang    path   string
+//	@Success      200  {array}   pb.Block
+//	@Failure      400  {object}  httputil.HTTPError
+//	@Failure      404  {object}  httputil.HTTPError
+//	@Failure      500  {object}  httputil.HTTPError
+//	@Router       /full [get]
 func getBlock(c echo.Context) error {
 	client := c.Get("client").(pb.QueriesClient)
 	return getStuffBlock(client.GetBlock, c)
