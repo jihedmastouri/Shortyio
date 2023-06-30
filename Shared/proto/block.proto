@@ -30,7 +30,6 @@ message BlockContent {
   repeated BlockContent children = 6;
 }
 
-// TODO: Add Description
 message BlockMeta {
   string block_id = 1;
   string name = 2;
@@ -38,7 +37,7 @@ message BlockMeta {
   repeated string tags = 4;
   repeated string categories = 5;
   repeated Author authors = 6;
-  string descr = 7;
+  string description = 7;
 }
 
 message Author {

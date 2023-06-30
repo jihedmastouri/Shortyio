@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"github.com/shorty-io/go-shorty/Shared/service"
 
 	"github.com/shorty-io/go-shorty/web/handler"
@@ -15,6 +16,8 @@ func main() {
 	defer handler.Cleanup()
 
 	e := echo.New()
+
+	e.Use(middleware.CORS())
 
 	e.GET("/", func(c echo.Context) error {
 

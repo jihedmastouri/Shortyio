@@ -2,14 +2,11 @@
 FROM golang:1.19-alpine AS builder
 # Specify DIR as an ARG
 ARG DIR=.
+# Copy the source code
+COPY . /app/
 # Set the working directory
-WORKDIR /app
-# Copy the source code into the container
-COPY . .
-# Change the current directory
-WORKDIR ${DIR}
-# Download dependencies
-RUN go mod download
+WORKDIR /app/${DIR}/
+RUN go mod tidy -e
 # Build the binary
 RUN go build -o /app/server
 

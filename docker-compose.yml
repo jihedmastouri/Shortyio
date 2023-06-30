@@ -40,6 +40,8 @@ services:
       - "50051"
       - "8500"
     restart: always
+    volumes:
+      - .:/app/
 
   db:
     environment:
@@ -52,23 +54,25 @@ services:
     volumes:
       - ./Shared/db/schemas/schema.sql:/docker-entrypoint-initdb.d/init.sql
 
-  # query:
-  #   build:
-  #     args:
-  #       - DIR=Queries/Block
-  #     context: .
-  #     dockerfile: ./Dockerfile
-  #   depends_on:
-  #     - consulserver
-  #   environment:
-  #     - CONSUL_HTTP_ADDR=consulserver:8500
-  #   deploy:
-  #     mode: replicated
-  #     replicas: 3
-  #   expose:
-  #     - "50051"
-  #     - "8500"
-  #   restart: always
+  query:
+    build:
+      args:
+        - DIR=Queries/Block
+      context: .
+      dockerfile: ./Dockerfile
+    depends_on:
+      - consulserver
+    deploy:
+      mode: replicated
+      replicas: 3
+    environment:
+      - CONSUL_HTTP_ADDR=consulserver:8500
+    expose:
+      - "50051"
+      - "8500"
+    restart: always
+    volumes:
+      - ./:/app/
 
   nats:
     expose:
@@ -107,3 +111,5 @@ services:
     ports:
       - "42069:8080"
     restart: always
+    volumes:
+      - .:/app/
