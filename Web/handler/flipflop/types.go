@@ -1,10 +1,11 @@
 package flipflop
 
 type BlockRq struct {
-	Name      string `json:"name"`
-	BlockType string `json:"blockType"`
-	Author    string `json:"author"`
-	Rules     struct {
+	Name        string `json:"name"`
+	BlockType   string `json:"blockType"`
+	Author      string `json:"author"`
+	Description string `json:"description"`
+	Rules       struct {
 		RuleName          string `json:"ruleName"`
 		Nested            bool   `json:"nested"`
 		HasLikes          bool   `json:"hasLikes"`

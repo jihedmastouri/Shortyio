@@ -17,9 +17,10 @@ func createBlock(c echo.Context) error {
 	}
 
 	req := &pb.CreateRequest{
-		Name:      brq.Name,
-		BlockType: brq.BlockType,
-		Author:    brq.Author,
+		Name:        brq.Name,
+		BlockType:   brq.BlockType,
+		Author:      brq.Author,
+		Description: brq.Description,
 		Rules: &pb.BlockRulesRq{
 			BlockRules: &pb.BlockRulesRq_Rules{
 				Rules: &pb.BlockRules{

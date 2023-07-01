@@ -38,7 +38,7 @@ func Search(ctx context.Context, req *pb.SearchRequest) (*pb.BlockList, error) {
 	}
 
 	pageSize := 100
-	if req.Pagination.PageSize <= 0 && req.Pagination.PageSize > 100 {
+	if req.Pagination.PageSize > 0 && req.Pagination.PageSize < uint32(pageSize) {
 		pageSize = int(req.Pagination.PageSize)
 	}
 
@@ -46,18 +46,19 @@ func Search(ctx context.Context, req *pb.SearchRequest) (*pb.BlockList, error) {
 	if req.Pagination.PageNum > 0 {
 		pagenum = int(req.Pagination.PageNum) - 1
 	}
-
 	skip := pagenum * pageSize
+
+	log.Println(skip, pageSize, pagenum)
 
 	pipeline := []bson.M{
 		{"$match": query},
 		{"$group": bson.M{
-			"_id": "block_id", // Specify the field to make distinct
+			"_id": "$block_id",
 			"doc": bson.M{"$first": "$$ROOT"},
 		}},
 		{"$replaceRoot": bson.M{"newRoot": "$doc"}},
-		{"$skip": int64(skip)},      // Add the $skip stage
-		{"$limit": int64(pageSize)}, // Add the $limit stage
+		{"$skip": int64(skip)},
+		{"$limit": int64(pageSize)},
 	}
 
 	cursor, err := collection.Aggregate(ctx, pipeline)
@@ -66,27 +67,19 @@ func Search(ctx context.Context, req *pb.SearchRequest) (*pb.BlockList, error) {
 		return nil, errors.New("ERROR GETTING BLOCKS")
 	}
 	defer cursor.Close(ctx)
+	log.Println(cursor.RemainingBatchLength())
 
-	var metaList []*pb.BlockMeta
+	var metaList []BlockMeta
+	if err = cursor.All(ctx, &metaList); err != nil {
+		log.Println(err)
+		return nil, errors.New("ERROR GETTING BLOCKS")
+	}
 
-	// Iterate over the cursor
-	for cursor.Next(context.Background()) {
-		var bm *BlockMeta
-		err := cursor.Decode(&bm)
-		if err != nil {
-			log.Fatal(err)
-		}
+	var metaFinal []*pb.BlockMeta
+	for _, bm := range metaList {
+		log.Println(bm)
 
-		// auths := []*pb.Author{}
-		// for _, a := range bm.Authors {
-		// 	auths = append(auths, &pb.Author{
-		// 		Name:  a.Name,
-		// 		Id:    a.ID,
-		// 		Image: a.Image,
-		// 	})
-		// }
-
-		metaList = append(metaList, &pb.BlockMeta{
+		metaFinal = append(metaFinal, &pb.BlockMeta{
 			BlockId:    bm.BlockID,
 			Name:       bm.Name,
 			Type:       bm.Type,
@@ -94,11 +87,6 @@ func Search(ctx context.Context, req *pb.SearchRequest) (*pb.BlockList, error) {
 			Categories: bm.Categories,
 			// Authors:    auths,
 		})
-	}
-
-	if err := cursor.Err(); err != nil {
-		log.Println(err)
-		return nil, errors.New("ERROR GETTING BLOCKS")
 	}
 
 	entries, err := collection.Distinct(ctx, "block_id", query)
@@ -111,7 +99,7 @@ func Search(ctx context.Context, req *pb.SearchRequest) (*pb.BlockList, error) {
 	total := uint32(totalCount)
 
 	return &pb.BlockList{
-		Metas: metaList,
+		Metas: metaFinal,
 		Pagination: &pb.Pagination{
 			PageNum:  uint32(pagenum) + 1,
 			PageSize: uint32(len(metaList)),
