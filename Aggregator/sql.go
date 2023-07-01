@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -12,9 +11,9 @@ import (
 	_ "github.com/lib/pq"
 )
 
-type foo []map[string]any
+type foo []byte
 
-func aggregateDB(id uuid.UUID, lang string) (*foo, error) {
+func aggregateDB(id uuid.UUID, lang string) (foo, error) {
 	query, err := os.ReadFile("./temp.sql")
 	if err != nil {
 		return nil, err
@@ -28,7 +27,7 @@ func aggregateDB(id uuid.UUID, lang string) (*foo, error) {
 	return data, nil
 }
 
-func executeJSONQuery(id uuid.UUID, lang, query string) (*foo, error) {
+func executeJSONQuery(id uuid.UUID, lang, query string) (foo, error) {
 	db, err := newConn()
 	if err != nil {
 		return nil, err
@@ -36,23 +35,13 @@ func executeJSONQuery(id uuid.UUID, lang, query string) (*foo, error) {
 
 	defer db.Close()
 
-	row := db.QueryRow(query, id, lang)
-
-	var data string
-	row.Scan(&data)
-	//Scan(&json)
-	if err != nil {
+	var json []byte
+	if err = db.QueryRow(query, id, lang).Scan(&json); err != nil {
 		log.Println(err)
 		return nil, err
 	}
 
-	var res foo
-	if err = json.Unmarshal([]byte(data), &res); err != nil {
-		log.Println(err)
-		return nil, err
-	}
-
-	return &res, nil
+	return json, nil
 }
 
 type Language struct {

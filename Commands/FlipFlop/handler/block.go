@@ -53,6 +53,7 @@ func (c *CommandService) CreateBlock(ctx context.Context, rq *pb.CreateRequest) 
 		CommentsHasLikes: rules.GetCommentsHasLikes(),
 		CommentEditable:  rules.GetCommentsEditable(),
 		RulesName:        sql.NullString{String: rules.RuleName, Valid: true},
+		Description:      sql.NullString{String: rq.Description, Valid: true},
 		Type:             blockType,
 	}
 

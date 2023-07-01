@@ -1,6 +1,7 @@
 SELECT json_agg(
  json_build_object(
-         'id', b.id,
+         'block_id', b.id,
+         'name', b.name,
           'rules', json_build_object(
              'rule_name', b.rules_name,
              'has_likes', b.has_likes,

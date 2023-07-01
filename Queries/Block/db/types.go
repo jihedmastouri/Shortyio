@@ -8,6 +8,7 @@ type Block struct {
 	Tags        []string      `bson:"tags"`
 	Categories  []string      `bson:"categories"`
 	LangCode    string        `bson:"lang_code"`
+	LangName    string        `bson:"lang_name"`
 	Version     int32         `bson:"version"`
 	CreatedAt   string        `bson:"created_at"`
 	UpdatedAt   string        `bson:"updated_at"`
@@ -32,6 +33,7 @@ type BlockContent struct {
 	Tags       []string      `bson:"tags"`
 	Categories []string      `bson:"categories"`
 	LangCode   string        `bson:"lang_code"`
+	LangName   string        `bson:"lang_name"`
 	Version    int32         `bson:"version"`
 	CreatedAt  string        `bson:"created_at"`
 	UpdatedAt  string        `bson:"updated_at"`

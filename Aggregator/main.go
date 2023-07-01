@@ -92,8 +92,6 @@ func BlockUpdated(m *nats.Msg) {
 			return
 		}
 
-		log.Println("Aggregated data: ", data)
-
 		err = saveToMongo(data, msg.ChangeLog)
 		if err != nil {
 			log.Println("Error saving data: ", err)

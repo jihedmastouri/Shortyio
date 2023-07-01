@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 
@@ -10,24 +11,29 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func saveToMongo(data *foo, changelog string) error {
+func saveToMongo(data foo, changelog string) error {
 	collection, err := connectMongo()
 	if err != nil {
 		log.Print(err)
 		return err
 	}
 
-	ctx := context.Background()
+	var bar []any
+	if err = json.Unmarshal(data, &bar); err != nil {
+		log.Print(err)
+		return err
+	}
 
-	res, err := collection.InsertOne(ctx, (*data)[0])
+	ctx := context.Background()
+	res, err := collection.InsertOne(ctx, bar[0])
 	if err != nil {
 		log.Println(err)
 		return err
 	}
 
-	if _, err = collection.UpdateByID(ctx, res.InsertedID, bson.M{
-		"changelog": changelog,
-	}); err != nil {
+	if _, err = collection.UpdateOne(ctx, bson.M{"_id": res.InsertedID},
+		bson.M{"$set": bson.M{"changelog": changelog}},
+	); err != nil {
 		log.Println(err)
 		return err
 	}
