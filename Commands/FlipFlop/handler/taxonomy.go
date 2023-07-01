@@ -189,9 +189,8 @@ func (s *CommandService) JoinCategory(ctx context.Context, rq *pb.JoinTaxonomy) 
 	}
 
 	publishEvent(Msg{
-		Id: blockid.String(),
-		// TODO: Make it empty after fixing the bug
-		LangCode:  "en",
+		Id:        blockid.String(),
+		LangCode:  "",
 		ChangeLog: "Added Taggs",
 	})
 

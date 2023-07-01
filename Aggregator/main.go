@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/google/uuid"
 	"github.com/nats-io/nats.go"
 )
 
@@ -57,36 +58,34 @@ func BlockUpdated(m *nats.Msg) {
 		return
 	}
 
-	if msg.Id == "" {
-		log.Println("Invalid message")
+	id, err := uuid.Parse(msg.Id)
+	if err != nil {
+		log.Println("Error parsing uuid: ", err)
 		m.Nak()
 		return
 	}
 
-	var msgs []Msg
-
+	var langs []string
 	if msg.LangCode == "" {
-		langs, err := getAllLanguages(msg.Id)
+		langs, err = getAllLanguages(id)
 		if err != nil {
 			log.Println("Error getting all languages: ", err)
 			m.Nak()
 			return
 		}
-
-		for _, lang := range langs {
-			msg.LangCode = lang
-			msgs = append(msgs, Msg{
-				Id:        msg.Id,
-				LangCode:  lang,
-				ChangeLog: msg.ChangeLog,
-			})
-		}
 	} else {
-		msgs = []Msg{msg}
+		langs = []string{msg.LangCode}
 	}
 
-	for _, msg := range msgs {
-		data, err := aggregateDB(msg)
+	if len(langs) == 0 {
+		log.Println("No languages found")
+		langs = []string{"en_US"}
+		m.Nak()
+		return
+	}
+
+	for _, lang := range langs {
+		data, err := aggregateDB(id, lang)
 		if err != nil {
 			log.Println("Error aggregating data: ", err)
 			m.Nak()
@@ -95,7 +94,7 @@ func BlockUpdated(m *nats.Msg) {
 
 		log.Println("Aggregated data: ", data)
 
-		err = saveToMongo(data)
+		err = saveToMongo(data, msg.ChangeLog)
 		if err != nil {
 			log.Println("Error saving data: ", err)
 			m.Nak()

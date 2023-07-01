@@ -40,6 +40,12 @@ func (c *CommandService) UpdateBlockRules(ctx context.Context, rq *pb.BlockRules
 		return nil, errors.New("FAILED TO UPDATE BLOCK")
 	}
 
+	publishEvent(Msg{
+		Id:        id.String(),
+		LangCode:  "",
+		ChangeLog: "Block Rules Updated",
+	})
+
 	return &pb.ActionResponse{
 		IsSuceess: true,
 		Id:        id.String(),
@@ -70,6 +76,30 @@ func (c *CommandService) UpdateBlockMeta(ctx context.Context, rq *pb.BlockMeta) 
 		log.Print("Failed to update block:", err)
 		return nil, errors.New("FAILED TO UPDATE BLOCK")
 	}
+
+	for _, tag := range rq.GetTags() {
+		if err = q.AddTagToBlock(ctx, db.AddTagToBlockParams{
+			BlockID: id,
+			Name:    tag,
+		}); err != nil {
+			log.Print("Failed to add tag to block:", err)
+		}
+	}
+
+	for _, category := range rq.GetCategories() {
+		if err = q.AddCategToBlock(ctx, db.AddCategToBlockParams{
+			BlockID: id,
+			Name:    category,
+		}); err != nil {
+			log.Print("Failed to add category to block:", err)
+		}
+	}
+
+	publishEvent(Msg{
+		Id:        id.String(),
+		LangCode:  "",
+		ChangeLog: "Block Info Updated",
+	})
 
 	return &pb.ActionResponse{
 		IsSuceess: true,
@@ -112,6 +142,12 @@ func (c *CommandService) UpdateBlock(ctx context.Context, rq *pb.CreateRequest) 
 		log.Print("Failed to delete block:", err)
 		return nil, errors.New("FAILED TO UPDATE BLOCK")
 	}
+
+	publishEvent(Msg{
+		Id:        id.String(),
+		LangCode:  "",
+		ChangeLog: "Block Updated",
+	})
 
 	return &pb.ActionResponse{
 		IsSuceess: true,

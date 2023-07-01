@@ -11,7 +11,6 @@ SELECT json_agg(
              'comments_editable', b.comment_editable
           ),
          'version_number', bl.version_number,
-         'changelog', $3,
          'created_at', b.created_at,
          'updated_at', bl.updated_at,
          'description', b.description,

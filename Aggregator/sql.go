@@ -1,7 +1,9 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 
 	"database/sql"
@@ -10,18 +12,15 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func aggregateDB(msg Msg) (*[]byte, error) {
+type foo []map[string]any
+
+func aggregateDB(id uuid.UUID, lang string) (*foo, error) {
 	query, err := os.ReadFile("./temp.sql")
 	if err != nil {
 		return nil, err
 	}
 
-	id, err := uuid.Parse(msg.Id)
-	if err != nil {
-		return nil, err
-	}
-
-	data, err := executeJSONQuery(id, msg.LangCode, msg.ChangeLog, string(query))
+	data, err := executeJSONQuery(id, lang, string(query))
 	if err != nil {
 		return nil, err
 	}
@@ -29,7 +28,7 @@ func aggregateDB(msg Msg) (*[]byte, error) {
 	return data, nil
 }
 
-func executeJSONQuery(id uuid.UUID, lang, changelog, query string) (*[]byte, error) {
+func executeJSONQuery(id uuid.UUID, lang, query string) (*foo, error) {
 	db, err := newConn()
 	if err != nil {
 		return nil, err
@@ -37,20 +36,30 @@ func executeJSONQuery(id uuid.UUID, lang, changelog, query string) (*[]byte, err
 
 	defer db.Close()
 
-	var json *[]byte
-	err = db.QueryRow(query, id, lang, changelog).Scan(json)
+	row := db.QueryRow(query, id, lang)
+
+	var data string
+	row.Scan(&data)
+	//Scan(&json)
 	if err != nil {
+		log.Println(err)
 		return nil, err
 	}
 
-	return json, nil
+	var res foo
+	if err = json.Unmarshal([]byte(data), &res); err != nil {
+		log.Println(err)
+		return nil, err
+	}
+
+	return &res, nil
 }
 
 type Language struct {
 	Code string `db:"lang_code"`
 }
 
-func getAllLanguages(id string) ([]string, error) {
+func getAllLanguages(id uuid.UUID) ([]string, error) {
 	db, err := newConn()
 	if err != nil {
 		return nil, err
@@ -58,7 +67,7 @@ func getAllLanguages(id string) ([]string, error) {
 	defer db.Close()
 
 	var langs []string
-	query := `SELECT lang_code FROM block_lang WHERE block_id = $1`
+	query := `SELECT lang_code FROM block_langs WHERE block_id = $1`
 
 	rows, err := db.Query(query, id)
 	if err != nil {

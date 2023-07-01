@@ -27,7 +27,9 @@ func (c *CommandService) CreateBlock(ctx context.Context, rq *pb.CreateRequest) 
 	defer conn.Close()
 	q := db.New(conn)
 
-	author, err := uuid.Parse(rq.GetAuthor())
+	log.Print("Creating block:", rq.Author)
+
+	author, err := uuid.Parse(rq.Author)
 	if err != nil {
 		log.Print("Failed to parse author UUID:", err)
 		return nil, errors.New("FAILED TO PARSE AUTHOR ID")
@@ -60,16 +62,28 @@ func (c *CommandService) CreateBlock(ctx context.Context, rq *pb.CreateRequest) 
 		return nil, errors.New("FAILED TO CREATE BLOCK")
 	}
 
-	publishEvent(Msg{
+	langParam := db.CreateLangParams{
+		LangName: "English",
+		LangCode: "en_US",
+		BlockID:  id,
+	}
+
+	_, err = q.CreateLang(ctx, langParam)
+	if err != nil {
+		log.Print("Failed to create block:", err)
+		return nil, errors.New("FAILED TO CREATE BLOCK")
+	}
+
+	defer publishEvent(Msg{
 		Id:        id.String(),
-		LangCode:  "en",
+		LangCode:  "en_US",
 		ChangeLog: "Created Block",
 	})
 
 	return &pb.ActionResponse{
 		IsSuceess: true,
 		Id:        id.String(),
-		Message:   "",
+		Message:   "Created With Default Language en_US",
 	}, nil
 }
 

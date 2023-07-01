@@ -5,19 +5,30 @@ import (
 	"fmt"
 	"log"
 
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func saveToMongo(data interface{}) error {
+func saveToMongo(data *foo, changelog string) error {
 	collection, err := connectMongo()
 	if err != nil {
+		log.Print(err)
 		return err
 	}
 
 	ctx := context.Background()
-	_, err = collection.InsertOne(ctx, data)
+
+	res, err := collection.InsertOne(ctx, (*data)[0])
 	if err != nil {
+		log.Println(err)
+		return err
+	}
+
+	if _, err = collection.UpdateByID(ctx, res.InsertedID, bson.M{
+		"changelog": changelog,
+	}); err != nil {
+		log.Println(err)
 		return err
 	}
 
@@ -25,15 +36,15 @@ func saveToMongo(data interface{}) error {
 }
 
 func connectMongo() (*mongo.Collection, error) {
-	host := "cluster0.2qj8o.mongodb.net/?w=majority"
+	host := "cluster0.ptlgsef.mongodb.net/?retryWrites=true&w=majority"
 	username := "reader"
 	psswd := "DWldoNa8losWte27"
 
 	connString := fmt.Sprintf(
 		"mongodb+srv://%s:%s@%s",
-		host,
 		username,
 		psswd,
+		host,
 	)
 	log.Print(connString)
 
@@ -42,13 +53,13 @@ func connectMongo() (*mongo.Collection, error) {
 
 	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return nil, err
 	}
 
 	err = client.Ping(ctx, nil)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return nil, err
 	}
 
