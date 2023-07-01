@@ -58,5 +58,5 @@ func New(e *echo.Echo, fn handler.Dialfn) {
 	block.GET("/versions/:lang/:id", getVersions)
 	block.GET("/languages/:id", getLanguages)
 
-	block.GET("/search/", searchBlock)
+	block.GET("/search", searchBlock)
 }

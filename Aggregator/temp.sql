@@ -14,6 +14,7 @@ SELECT json_agg(
          'changelog', $3,
          'created_at', b.created_at,
          'updated_at', bl.updated_at,
+         'description', b.description,
          'author', b.author,
          'block_type', bt.name,
          'lang_name', bl.lang_name,

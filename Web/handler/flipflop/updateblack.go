@@ -8,7 +8,7 @@ import (
 	pb "github.com/shorty-io/go-shorty/Shared/proto"
 )
 
-func createBlock(c echo.Context) error {
+func updateBlock(c echo.Context) error {
 	client := c.Get("client").(pb.FlipFlopClient)
 
 	var brq BlockRq
@@ -16,7 +16,10 @@ func createBlock(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
+	id := c.Param("id")
+
 	req := &pb.CreateRequest{
+		Id:        &id,
 		Name:      brq.Name,
 		BlockType: brq.BlockType,
 		Author:    brq.Author,
@@ -35,67 +38,67 @@ func createBlock(c echo.Context) error {
 		},
 	}
 
-	res, err := client.CreateBlock(context.Background(), req)
+	res, err := client.UpdateBlock(context.Background(), req)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 	return c.JSON(http.StatusOK, res)
 }
 
-func deleteBlock(c echo.Context) error {
+func updateBlockMeta(c echo.Context) error {
 	client := c.Get("client").(pb.FlipFlopClient)
 
-	id := c.Param("id")
-
-	req := &pb.DeleteRequest{
-		Id: id,
-	}
-
-	res, err := client.DeleteBlock(context.Background(), req)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
-	}
-	return c.JSON(http.StatusOK, res)
-}
-
-func createLanguage(c echo.Context) error {
-	client := c.Get("client").(pb.FlipFlopClient)
-
-	id := c.Param("id")
-
-	var langRq LangRq
-	if err := c.Bind(&langRq); err != nil {
+	var brq BlockMetaRq
+	if err := c.Bind(&brq); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	req := &pb.CreateLangRequest{
-		BlockId:      id,
-		LangName:     langRq.Name,
-		LangCode:     langRq.Code,
-		PreviousLang: langRq.PreviousLang,
+	id := c.Param("id")
+
+	req := &pb.BlockMeta{
+		BlockId:    id,
+		Name:       brq.Name,
+		Tags:       brq.Tags,
+		Categories: brq.Categories,
 	}
 
-	res, err := client.CreateBlockLang(context.Background(), req)
+	res, err := client.UpdateBlocMeta(context.Background(), req)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
+
 	return c.JSON(http.StatusOK, res)
 }
 
-func deleteLanguage(c echo.Context) error {
+func updateBlockRules(c echo.Context) error {
 	client := c.Get("client").(pb.FlipFlopClient)
 
-	id := c.Param("id")
-	code := c.Param("code")
-
-	req := &pb.DeleteLangRequest{
-		Id:       id,
-		LangCode: code,
+	var brq BlockRulesRq
+	if err := c.Bind(&brq); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	res, err := client.DeleteBlockLang(context.Background(), req)
+	id := c.Param("id")
+
+	req := &pb.BlockRulesRq{
+		BlockId: id,
+		BlockRules: &pb.BlockRulesRq_Rules{
+			Rules: &pb.BlockRules{
+				RuleName:          brq.RuleName,
+				Nested:            brq.Nested,
+				HasLikes:          brq.HasLikes,
+				HasComments:       brq.HasComments,
+				CommentsHasLikes:  brq.CommentsHasLikes,
+				CommentsEditable:  brq.CommentsEditable,
+				CommentsMaxNested: int32(brq.CommentsMaxNested),
+			},
+		},
+	}
+
+	res, err := client.UpdateBlockRule(context.Background(), req)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
+
 	return c.JSON(http.StatusOK, res)
 }

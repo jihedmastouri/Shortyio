@@ -29,7 +29,7 @@ LIMIT $1
 OFFSET $2;
 
 -- name: GetBlockByID :one
-SELECT id, author, created_at, name
+SELECT id, author, created_at, name, description
 FROM blocks b
 WHERE b.id = $1;
 
@@ -64,9 +64,9 @@ where bl.lang_code = $1 and  bl.block_id = $2;
 ------------------
 
 -- name: CreateBlock :one
-INSERT INTO blocks (author, name, nested, has_likes, has_comments, comments_max_nest,
+INSERT INTO blocks (author, name, description, nested, has_likes, has_comments, comments_max_nest,
         comments_has_likes, comment_editable, rules_name, type)
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id;
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id;
 
 -- name: CreateLang :one
 INSERT INTO block_langs (lang_name, lang_code, block_id)
@@ -94,7 +94,25 @@ Update blocks
         comments_max_nest = $6,
         comments_has_likes = $7,
         comment_editable = $8,
-        name = $9
+        name = $9,
+        description = $10
+WHERE id = $1;
+
+-- name: UpdateBlockRules :exec
+Update blocks
+    SET rules_name = $2,
+        nested = $3,
+        has_likes = $4,
+        has_comments = $5,
+        comments_max_nest = $6,
+        comments_has_likes = $7,
+        comment_editable = $8
+WHERE id = $1;
+
+-- name: UpdateBlockMeta :exec
+Update blocks
+    SET name = $2,
+        description = $3
 WHERE id = $1;
 
 ------------------

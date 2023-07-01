@@ -14,14 +14,15 @@ import (
 
 const createBlock = `-- name: CreateBlock :one
 
-INSERT INTO blocks (author, name, nested, has_likes, has_comments, comments_max_nest,
+INSERT INTO blocks (author, name, description, nested, has_likes, has_comments, comments_max_nest,
         comments_has_likes, comment_editable, rules_name, type)
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id
 `
 
 type CreateBlockParams struct {
 	Author           uuid.UUID
 	Name             string
+	Description      sql.NullString
 	Nested           bool
 	HasLikes         bool
 	HasComments      bool
@@ -39,6 +40,7 @@ func (q *Queries) CreateBlock(ctx context.Context, arg CreateBlockParams) (uuid.
 	row := q.db.QueryRowContext(ctx, createBlock,
 		arg.Author,
 		arg.Name,
+		arg.Description,
 		arg.Nested,
 		arg.HasLikes,
 		arg.HasComments,
@@ -229,16 +231,17 @@ func (q *Queries) GetBlock(ctx context.Context, arg GetBlockParams) ([]GetBlockR
 }
 
 const getBlockByID = `-- name: GetBlockByID :one
-SELECT id, author, created_at, name
+SELECT id, author, created_at, name, description
 FROM blocks b
 WHERE b.id = $1
 `
 
 type GetBlockByIDRow struct {
-	ID        uuid.UUID
-	Author    uuid.UUID
-	CreatedAt sql.NullTime
-	Name      string
+	ID          uuid.UUID
+	Author      uuid.UUID
+	CreatedAt   sql.NullTime
+	Name        string
+	Description sql.NullString
 }
 
 func (q *Queries) GetBlockByID(ctx context.Context, id uuid.UUID) (GetBlockByIDRow, error) {
@@ -249,6 +252,7 @@ func (q *Queries) GetBlockByID(ctx context.Context, id uuid.UUID) (GetBlockByIDR
 		&i.Author,
 		&i.CreatedAt,
 		&i.Name,
+		&i.Description,
 	)
 	return i, err
 }
@@ -422,7 +426,8 @@ Update blocks
         comments_max_nest = $6,
         comments_has_likes = $7,
         comment_editable = $8,
-        name = $9
+        name = $9,
+        description = $10
 WHERE id = $1
 `
 
@@ -436,6 +441,7 @@ type UpdateBlockParams struct {
 	CommentsHasLikes bool
 	CommentEditable  bool
 	Name             string
+	Description      sql.NullString
 }
 
 // ----------------
@@ -452,6 +458,62 @@ func (q *Queries) UpdateBlock(ctx context.Context, arg UpdateBlockParams) error 
 		arg.CommentsHasLikes,
 		arg.CommentEditable,
 		arg.Name,
+		arg.Description,
+	)
+	return err
+}
+
+const updateBlockMeta = `-- name: UpdateBlockMeta :exec
+Update blocks
+    SET name = $2,
+        description = $3
+WHERE id = $1
+`
+
+type UpdateBlockMetaParams struct {
+	ID          uuid.UUID
+	Name        string
+	Description sql.NullString
+}
+
+func (q *Queries) UpdateBlockMeta(ctx context.Context, arg UpdateBlockMetaParams) error {
+	_, err := q.db.ExecContext(ctx, updateBlockMeta, arg.ID, arg.Name, arg.Description)
+	return err
+}
+
+const updateBlockRules = `-- name: UpdateBlockRules :exec
+Update blocks
+    SET rules_name = $2,
+        nested = $3,
+        has_likes = $4,
+        has_comments = $5,
+        comments_max_nest = $6,
+        comments_has_likes = $7,
+        comment_editable = $8
+WHERE id = $1
+`
+
+type UpdateBlockRulesParams struct {
+	ID               uuid.UUID
+	RulesName        sql.NullString
+	Nested           bool
+	HasLikes         bool
+	HasComments      bool
+	CommentsMaxNest  int16
+	CommentsHasLikes bool
+	CommentEditable  bool
+}
+
+func (q *Queries) UpdateBlockRules(ctx context.Context, arg UpdateBlockRulesParams) error {
+	_, err := q.db.ExecContext(ctx, updateBlockRules,
+		arg.ID,
+		arg.RulesName,
+		arg.Nested,
+		arg.HasLikes,
+		arg.HasComments,
+		arg.CommentsMaxNest,
+		arg.CommentsHasLikes,
+		arg.CommentEditable,
 	)
 	return err
 }

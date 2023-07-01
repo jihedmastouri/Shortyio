@@ -9,7 +9,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func saveToDB(data interface{}) error {
+func saveToMongo(data interface{}) error {
 	collection, err := connectMongo()
 	if err != nil {
 		return err

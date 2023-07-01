@@ -27,23 +27,24 @@ CREATE TABLE IF NOT EXISTS block_rules
 
 CREATE TABLE IF NOT EXISTS blocks
 (
-    id                 UUID        DEFAULT gen_random_uuid() PRIMARY KEY,
-    name               VARCHAR(20) NOT NULL,
-    created_at         TIMESTAMP   DEFAULT NOW(),
-    author             UUID        NOT NULL,
+    id                 UUID         DEFAULT gen_random_uuid() PRIMARY KEY,
+    name               VARCHAR(20)  NOT NULL,
+    created_at         TIMESTAMP    DEFAULT NOW(),
+    author             UUID         NOT NULL,
+    description        VARCHAR(200) DEFAULT '',
 
     -- General Rules:
-    rules_name         VARCHAR(20) DEFAULT 'Custom',
-    nested             BOOLEAN     NOT NULL,
-    has_likes          BOOLEAN     NOT NULL,
+    rules_name         VARCHAR(20)  DEFAULT 'Custom',
+    nested             BOOLEAN      NOT NULL,
+    has_likes          BOOLEAN      NOT NULL,
 
     -- Comments Rules:
-    has_comments       BOOLEAN     NOT NULL,
-    comments_max_nest  SMALLINT    NOT NULL,
-    comments_has_likes BOOLEAN     NOT NULL,
-    comment_editable   BOOLEAN     NOT NULL,
+    has_comments       BOOLEAN      NOT NULL,
+    comments_max_nest  SMALLINT     NOT NULL,
+    comments_has_likes BOOLEAN      NOT NULL,
+    comment_editable   BOOLEAN      NOT NULL,
 
-    type               INTEGER     NOT NULL
+    type               INTEGER      NOT NULL
         REFERENCES block_types (id) ON DELETE CASCADE
 );
 

@@ -22,13 +22,13 @@
 -- 1- Selections
 ------------------
 
--- name: GetBlockRulesByName :one
+-- name: GetRuleGroupByName :one
 SELECT nested, has_comments, has_likes,
     comments_max_nest, comments_has_likes, comment_editable
 FROM block_rules
 WHERE name = $1;
 
--- name: GetAllBlockRules :many
+-- name: GetAllRuleGroups :many
 SELECT name, descr
 FROM block_rules
 LIMIT 100;
@@ -37,7 +37,7 @@ LIMIT 100;
 -- 2- Adding
 ------------------
 
--- name: CreateBlockRule :one
+-- name: CreateRuleGroup :one
 INSERT INTO block_rules (name, nested, descr, has_likes, has_comments, comments_max_nest,
         comments_has_likes, comment_editable)
 VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING name;
@@ -50,7 +50,7 @@ VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING name;
 -- 5- Updates
 ------------------
 
--- name: UpdateBlockRules :exec
+-- name: UpdateRuleGroup :exec
 Update block_rules
     SET nested = $2,
         has_likes = $3,
@@ -65,8 +65,8 @@ WHERE name = $1;
 -- 6- Deletions
 ------------------
 
--- name: DeleteBlockRuleById :exec
+-- name: DeleteRuleGroupById :exec
 DELETE FROM block_rules WHERE id = $1;
 
--- name: DeleteBlockRule :exec
+-- name: DeleteRuleGroup :exec
 DELETE FROM block_rules WHERE name = $1;

@@ -4,7 +4,8 @@ init:
 
 .PHONY: proto
 proto:
-	@protoc --proto_path=./proto/ \
+	@protoc \
+		--proto_path=./proto/ \
 		--go_out=plugins=grpc:. \
 		./proto/block.proto \
 		./proto/queries.proto \

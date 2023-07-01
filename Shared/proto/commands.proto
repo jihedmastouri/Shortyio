@@ -9,16 +9,19 @@ import "block.proto";
 service FlipFlop {
   // Block
   rpc CreateBlock(CreateRequest) returns (ActionResponse) {}
-  rpc UpdateBlock(CreateRequest) returns (ActionResponse) {}
   rpc DeleteBlock(DeleteRequest) returns (ActionResponse) {}
+  rpc UpdateBlock(CreateRequest) returns (ActionResponse) {}
+
+  rpc UpdateBlockRule(BlockRulesRq) returns (ActionResponse) {}
+  rpc UpdateBlocMeta(BlockMeta) returns (ActionResponse) {}
 
   rpc CreateBlockLang(CreateLangRequest) returns (ActionResponse) {}
   rpc DeleteBlockLang(DeleteLangRequest) returns (ActionResponse) {}
 
   // Rules
-  rpc CreateBlockRule(BlockRulesRq) returns (ActionResponse) {}
-  rpc UpdateBlockRule(BlockRulesRq) returns (ActionResponse) {}
-  rpc DeleteBlockRule(BlockRulesRq) returns (ActionResponse) {}
+  rpc CreateRuleGroup(BlockRulesRq) returns (ActionResponse) {}
+  rpc UpdateRuleGroup(BlockRulesRq) returns (ActionResponse) {}
+  rpc DeleteRuleGroup(BlockRulesRq) returns (ActionResponse) {}
 
   // Taxonomy:
   rpc CreateTag(CreateTaxonomy) returns (ActionResponse) {}
@@ -35,8 +38,9 @@ message CreateRequest {
     optional string id = 1;
     string name = 2;
     string block_type = 3;
-    optional BlockRulesRq rules = 4;
-    string author = 5;
+    string description = 4;
+    optional BlockRulesRq rules = 5;
+    string author = 6;
 }
 
 message CreateLangRequest {
@@ -78,8 +82,9 @@ message JoinTaxonomy {
 
 
 message BlockRulesRq {
+ string block_id = 1;
   oneof block_rules {
-    string rule_name = 1;
-    BlockRules rules = 2;
+    string rule_name = 2;
+    BlockRules rules = 3;
   }
 }

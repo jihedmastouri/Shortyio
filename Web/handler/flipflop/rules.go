@@ -26,12 +26,12 @@ func createRule(c echo.Context) error {
 				CommentsHasLikes:  rrq.CommentsHasLikes,
 				CommentsEditable:  rrq.CommentsEditable,
 				CommentsMaxNested: int32(rrq.CommentsMaxNested),
-				Descr:             rrq.Descr,
+				Description:       rrq.Descr,
 			},
 		},
 	}
 
-	res, err := client.CreateBlockRule(context.Background(), req)
+	res, err := client.CreateRuleGroup(context.Background(), req)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
@@ -50,7 +50,7 @@ func deleteRule(c echo.Context) error {
 		},
 	}
 
-	res, err := client.DeleteBlockRule(context.Background(), req)
+	res, err := client.DeleteRuleGroup(context.Background(), req)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
@@ -78,7 +78,7 @@ func updateRule(c echo.Context) error {
 				CommentsHasLikes:  rrq.CommentsHasLikes,
 				CommentsEditable:  rrq.CommentsEditable,
 				CommentsMaxNested: int32(rrq.CommentsMaxNested),
-				Descr:             rrq.Descr,
+				Description:       rrq.Descr,
 			},
 		},
 	}

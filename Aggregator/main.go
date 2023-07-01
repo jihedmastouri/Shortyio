@@ -40,7 +40,6 @@ func main() {
 	select {}
 }
 
-// TODO: IF No Lang Execute on all Langs (tags, categories, etc)
 func BlockUpdated(m *nats.Msg) {
 	if m == nil {
 		log.Println("Error receiving message")
@@ -58,20 +57,50 @@ func BlockUpdated(m *nats.Msg) {
 		return
 	}
 
-	data, err := aggregateDB(msg)
-	if err != nil {
-		log.Println("Error aggregating data: ", err)
+	if msg.Id == "" {
+		log.Println("Invalid message")
 		m.Nak()
 		return
 	}
 
-	log.Println("Aggregated data: ", data)
+	var msgs []Msg
 
-	err = saveToDB(data)
-	if err != nil {
-		log.Println("Error saving data: ", err)
-		m.Nak()
-		return
+	if msg.LangCode == "" {
+		langs, err := getAllLanguages(msg.Id)
+		if err != nil {
+			log.Println("Error getting all languages: ", err)
+			m.Nak()
+			return
+		}
+
+		for _, lang := range langs {
+			msg.LangCode = lang
+			msgs = append(msgs, Msg{
+				Id:        msg.Id,
+				LangCode:  lang,
+				ChangeLog: msg.ChangeLog,
+			})
+		}
+	} else {
+		msgs = []Msg{msg}
+	}
+
+	for _, msg := range msgs {
+		data, err := aggregateDB(msg)
+		if err != nil {
+			log.Println("Error aggregating data: ", err)
+			m.Nak()
+			return
+		}
+
+		log.Println("Aggregated data: ", data)
+
+		err = saveToMongo(data)
+		if err != nil {
+			log.Println("Error saving data: ", err)
+			m.Nak()
+			return
+		}
 	}
 
 	log.Println("Data Saved!")

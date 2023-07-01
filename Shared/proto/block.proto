@@ -4,8 +4,9 @@ package proto;
 
 option go_package = "./proto;proto";
 
+
 message Block {
-  string block_id = 1;
+  string block_id = 1 [json_name = "id"];
   string name = 2;
   string type = 3;
   string lang = 4;
@@ -16,8 +17,8 @@ message Block {
   repeated ElementType content = 9;
   repeated BlockContent children = 10;
   BlockRules rules = 11;
-  string updated_at = 12;
-  string created_at = 13;
+  string updated_at = 12 [json_name = "updatedAt"];
+  string created_at = 13 [json_name = "createdAt"];
   string description = 14;
 }
 
@@ -49,7 +50,7 @@ message Author {
 
 message BlockRules {
   string rule_name = 1;
-  string descr = 2;
+  string description = 2;
   bool nested = 3;
   bool has_likes = 4;
   bool has_comments = 5;

@@ -15,6 +15,7 @@ type Block struct {
 	Name             string
 	CreatedAt        sql.NullTime
 	Author           uuid.UUID
+	Description      sql.NullString
 	RulesName        sql.NullString
 	Nested           bool
 	HasLikes         bool

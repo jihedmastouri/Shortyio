@@ -6,7 +6,6 @@ ARG DIR=.
 COPY . /app/
 # Set the working directory
 WORKDIR /app/${DIR}/
-RUN go mod tidy -e
 # Build the binary
 RUN go build -o /app/server
 

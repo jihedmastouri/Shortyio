@@ -73,47 +73,6 @@ func (c *CommandService) CreateBlock(ctx context.Context, rq *pb.CreateRequest) 
 	}, nil
 }
 
-func (c *CommandService) UpdateBlock(ctx context.Context, rq *pb.CreateRequest) (*pb.ActionResponse, error) {
-	conn, err := newConn()
-	if err != nil {
-		return nil, errors.New("FAILED TO CONNECT TO DATABASE")
-	}
-
-	defer conn.Close()
-	q := db.New(conn)
-
-	id, err := uuid.Parse(rq.GetId())
-	if err != nil {
-		log.Print("Failed to parse Block UUID:", err)
-		return nil, errors.New("FAILED TO PARSE BLOCK ID")
-	}
-
-	rules := getBlockRules(q, rq.GetRules())
-
-	params := db.UpdateBlockParams{
-		ID:               id,
-		Name:             rq.Name,
-		RulesName:        sql.NullString{String: rules.RuleName, Valid: true},
-		Nested:           rules.GetNested(),
-		HasLikes:         rules.GetHasLikes(),
-		HasComments:      rules.GetHasComments(),
-		CommentsMaxNest:  int16(rules.GetCommentsMaxNested()),
-		CommentsHasLikes: rules.GetCommentsHasLikes(),
-		CommentEditable:  rules.GetCommentsEditable(),
-	}
-
-	if err = q.UpdateBlock(ctx, params); err != nil {
-		log.Print("Failed to delete block:", err)
-		return nil, errors.New("FAILED TO UPDATE BLOCK")
-	}
-
-	return &pb.ActionResponse{
-		IsSuceess: true,
-		Id:        id.String(),
-		Message:   "Updated successfully",
-	}, nil
-}
-
 func (c *CommandService) DeleteBlock(ctx context.Context, rq *pb.DeleteRequest) (*pb.ActionResponse, error) {
 	conn, err := newConn()
 	if err != nil {

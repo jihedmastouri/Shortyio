@@ -86,7 +86,7 @@ func getBlockRules(q *db.Queries, br *pb.BlockRulesRq) pb.BlockRules {
 	}
 
 	ctx := context.Background()
-	rules, err := q.GetBlockRulesByName(ctx, br.GetRuleName())
+	rules, err := q.GetRuleGroupByName(ctx, br.GetRuleName())
 	if err != nil {
 		panic(err)
 	}

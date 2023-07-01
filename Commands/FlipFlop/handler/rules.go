@@ -12,7 +12,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func (c *CommandService) CreateBlockRule(ctx context.Context, rq *pb.BlockRulesRq) (*pb.ActionResponse, error) {
+func (c *CommandService) CreateRuleGroup(ctx context.Context, rq *pb.BlockRulesRq) (*pb.ActionResponse, error) {
 	conn, err := newConn()
 	if err != nil {
 		return nil, errors.New("FAILED TO CONNECT TO DATABASE")
@@ -24,11 +24,11 @@ func (c *CommandService) CreateBlockRule(ctx context.Context, rq *pb.BlockRulesR
 		return nil, errors.New("NO RULES PROVIDED")
 	}
 
-	if rq.GetRules().Descr == "" {
+	if rq.GetRules().Description == "" {
 		return nil, errors.New("NO DESCRIPTION PROVIDED")
 	}
 
-	params := db.CreateBlockRuleParams{
+	params := db.CreateRuleGroupParams{
 		Name: rq.GetRules().RuleName,
 		Nested: sql.NullBool{
 			Bool:  rq.GetRules().Nested,
@@ -54,10 +54,10 @@ func (c *CommandService) CreateBlockRule(ctx context.Context, rq *pb.BlockRulesR
 			Bool:  rq.GetRules().CommentsEditable,
 			Valid: true,
 		},
-		Descr: rq.GetRules().Descr,
+		Descr: rq.GetRules().Description,
 	}
 
-	id, err := q.CreateBlockRule(ctx, params)
+	id, err := q.CreateRuleGroup(ctx, params)
 	if err != nil {
 		log.Print(err)
 		return nil, errors.New("FAILED TO CREATE RULE")
@@ -70,7 +70,7 @@ func (c *CommandService) CreateBlockRule(ctx context.Context, rq *pb.BlockRulesR
 	}, nil
 }
 
-func (*CommandService) UpdateBlockRule(ctx context.Context, rq *pb.BlockRulesRq) (*pb.ActionResponse, error) {
+func (*CommandService) UpdateRuleGroup(ctx context.Context, rq *pb.BlockRulesRq) (*pb.ActionResponse, error) {
 	conn, err := newConn()
 	if err != nil {
 		return nil, errors.New("FAILED TO CONNECT TO DATABASE")
@@ -83,11 +83,11 @@ func (*CommandService) UpdateBlockRule(ctx context.Context, rq *pb.BlockRulesRq)
 		return nil, errors.New("NO RULES PROVIDED")
 	}
 
-	if rq.GetRules().Descr == "" {
+	if rq.GetRules().Description == "" {
 		return nil, errors.New("NO DESCRIPTION PROVIDED")
 	}
 
-	params := db.UpdateBlockRulesParams{
+	params := db.UpdateRuleGroupParams{
 		Name: rq.GetRules().RuleName,
 		Nested: sql.NullBool{
 			Bool:  rq.GetRules().Nested,
@@ -113,10 +113,10 @@ func (*CommandService) UpdateBlockRule(ctx context.Context, rq *pb.BlockRulesRq)
 			Bool:  rq.GetRules().CommentsEditable,
 			Valid: true,
 		},
-		Descr: rq.GetRules().Descr,
+		Descr: rq.GetRules().Description,
 	}
 
-	if err = q.UpdateBlockRules(ctx, params); err != nil {
+	if err = q.UpdateRuleGroup(ctx, params); err != nil {
 		log.Print(err)
 		return nil, errors.New("FAILED TO CREATE RULE")
 	}
@@ -127,7 +127,7 @@ func (*CommandService) UpdateBlockRule(ctx context.Context, rq *pb.BlockRulesRq)
 	}, nil
 }
 
-func (*CommandService) DeleteBlockRule(ctx context.Context, rq *pb.BlockRulesRq) (*pb.ActionResponse, error) {
+func (*CommandService) DeleteRuleGroup(ctx context.Context, rq *pb.BlockRulesRq) (*pb.ActionResponse, error) {
 	conn, err := newConn()
 	if err != nil {
 		return nil, errors.New("FAILED TO CONNECT TO DATABASE")
@@ -142,7 +142,7 @@ func (*CommandService) DeleteBlockRule(ctx context.Context, rq *pb.BlockRulesRq)
 		ruleName = rq.GetRules().RuleName
 	}
 
-	if err = q.DeleteBlockRule(ctx, ruleName); err != nil {
+	if err = q.DeleteRuleGroup(ctx, ruleName); err != nil {
 		log.Print(err)
 		return nil, errors.New("FAILED TO DELETE RULE")
 	}

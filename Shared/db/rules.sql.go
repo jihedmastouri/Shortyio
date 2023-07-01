@@ -10,14 +10,14 @@ import (
 	"database/sql"
 )
 
-const createBlockRule = `-- name: CreateBlockRule :one
+const createRuleGroup = `-- name: CreateRuleGroup :one
 
 INSERT INTO block_rules (name, nested, descr, has_likes, has_comments, comments_max_nest,
         comments_has_likes, comment_editable)
 VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING name
 `
 
-type CreateBlockRuleParams struct {
+type CreateRuleGroupParams struct {
 	Name             string
 	Nested           sql.NullBool
 	Descr            string
@@ -31,8 +31,8 @@ type CreateBlockRuleParams struct {
 // ----------------
 // 2- Adding
 // ----------------
-func (q *Queries) CreateBlockRule(ctx context.Context, arg CreateBlockRuleParams) (string, error) {
-	row := q.db.QueryRowContext(ctx, createBlockRule,
+func (q *Queries) CreateRuleGroup(ctx context.Context, arg CreateRuleGroupParams) (string, error) {
+	row := q.db.QueryRowContext(ctx, createRuleGroup,
 		arg.Name,
 		arg.Nested,
 		arg.Descr,
@@ -47,16 +47,16 @@ func (q *Queries) CreateBlockRule(ctx context.Context, arg CreateBlockRuleParams
 	return name, err
 }
 
-const deleteBlockRule = `-- name: DeleteBlockRule :exec
+const deleteRuleGroup = `-- name: DeleteRuleGroup :exec
 DELETE FROM block_rules WHERE name = $1
 `
 
-func (q *Queries) DeleteBlockRule(ctx context.Context, name string) error {
-	_, err := q.db.ExecContext(ctx, deleteBlockRule, name)
+func (q *Queries) DeleteRuleGroup(ctx context.Context, name string) error {
+	_, err := q.db.ExecContext(ctx, deleteRuleGroup, name)
 	return err
 }
 
-const deleteBlockRuleById = `-- name: DeleteBlockRuleById :exec
+const deleteRuleGroupById = `-- name: DeleteRuleGroupById :exec
 
 DELETE FROM block_rules WHERE id = $1
 `
@@ -64,31 +64,31 @@ DELETE FROM block_rules WHERE id = $1
 // ----------------
 // 6- Deletions
 // ----------------
-func (q *Queries) DeleteBlockRuleById(ctx context.Context, id int32) error {
-	_, err := q.db.ExecContext(ctx, deleteBlockRuleById, id)
+func (q *Queries) DeleteRuleGroupById(ctx context.Context, id int32) error {
+	_, err := q.db.ExecContext(ctx, deleteRuleGroupById, id)
 	return err
 }
 
-const getAllBlockRules = `-- name: GetAllBlockRules :many
+const getAllRuleGroups = `-- name: GetAllRuleGroups :many
 SELECT name, descr
 FROM block_rules
 LIMIT 100
 `
 
-type GetAllBlockRulesRow struct {
+type GetAllRuleGroupsRow struct {
 	Name  string
 	Descr string
 }
 
-func (q *Queries) GetAllBlockRules(ctx context.Context) ([]GetAllBlockRulesRow, error) {
-	rows, err := q.db.QueryContext(ctx, getAllBlockRules)
+func (q *Queries) GetAllRuleGroups(ctx context.Context) ([]GetAllRuleGroupsRow, error) {
+	rows, err := q.db.QueryContext(ctx, getAllRuleGroups)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GetAllBlockRulesRow
+	var items []GetAllRuleGroupsRow
 	for rows.Next() {
-		var i GetAllBlockRulesRow
+		var i GetAllRuleGroupsRow
 		if err := rows.Scan(&i.Name, &i.Descr); err != nil {
 			return nil, err
 		}
@@ -103,7 +103,7 @@ func (q *Queries) GetAllBlockRules(ctx context.Context) ([]GetAllBlockRulesRow, 
 	return items, nil
 }
 
-const getBlockRulesByName = `-- name: GetBlockRulesByName :one
+const getRuleGroupByName = `-- name: GetRuleGroupByName :one
 
 
 SELECT nested, has_comments, has_likes,
@@ -112,7 +112,7 @@ FROM block_rules
 WHERE name = $1
 `
 
-type GetBlockRulesByNameRow struct {
+type GetRuleGroupByNameRow struct {
 	Nested           sql.NullBool
 	HasComments      sql.NullBool
 	HasLikes         sql.NullBool
@@ -144,9 +144,9 @@ type GetBlockRulesByNameRow struct {
 // ----------------
 // 1- Selections
 // ----------------
-func (q *Queries) GetBlockRulesByName(ctx context.Context, name string) (GetBlockRulesByNameRow, error) {
-	row := q.db.QueryRowContext(ctx, getBlockRulesByName, name)
-	var i GetBlockRulesByNameRow
+func (q *Queries) GetRuleGroupByName(ctx context.Context, name string) (GetRuleGroupByNameRow, error) {
+	row := q.db.QueryRowContext(ctx, getRuleGroupByName, name)
+	var i GetRuleGroupByNameRow
 	err := row.Scan(
 		&i.Nested,
 		&i.HasComments,
@@ -158,7 +158,7 @@ func (q *Queries) GetBlockRulesByName(ctx context.Context, name string) (GetBloc
 	return i, err
 }
 
-const updateBlockRules = `-- name: UpdateBlockRules :exec
+const updateRuleGroup = `-- name: UpdateRuleGroup :exec
 
 
 Update block_rules
@@ -172,7 +172,7 @@ Update block_rules
 WHERE name = $1
 `
 
-type UpdateBlockRulesParams struct {
+type UpdateRuleGroupParams struct {
 	Name             string
 	Nested           sql.NullBool
 	HasLikes         sql.NullBool
@@ -189,8 +189,8 @@ type UpdateBlockRulesParams struct {
 // ----------------
 // 5- Updates
 // ----------------
-func (q *Queries) UpdateBlockRules(ctx context.Context, arg UpdateBlockRulesParams) error {
-	_, err := q.db.ExecContext(ctx, updateBlockRules,
+func (q *Queries) UpdateRuleGroup(ctx context.Context, arg UpdateRuleGroupParams) error {
+	_, err := q.db.ExecContext(ctx, updateRuleGroup,
 		arg.Name,
 		arg.Nested,
 		arg.HasLikes,
