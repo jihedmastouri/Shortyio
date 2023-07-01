@@ -19,8 +19,8 @@ service Queries {
 
     rpc GetLanguages(LanguageRequest) returns (LanguageList) {}
 
-    rpc GetTags(Selectors) returns (TagList) {}
-    rpc GetCategories(Selectors) returns (CategoryList) {}
+    rpc GetTags(TagListRq) returns (TagList) {}
+    rpc GetCategories(CategoryListRq) returns (CategoryList) {}
 }
 
 message BlockRequest {
@@ -83,6 +83,13 @@ message TagList {
     repeated string tags = 1;
 }
 
+
 message CategoryList {
     repeated string categories = 1;
+}
+
+message TagListRq {
+}
+
+message CategoryListRq {
 }

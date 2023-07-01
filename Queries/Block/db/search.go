@@ -65,7 +65,7 @@ func Search(ctx context.Context, req *pb.SearchRequest) (*pb.BlockList, error) {
 		log.Println(err)
 		return nil, errors.New("ERROR GETTING BLOCKS")
 	}
-	defer cursor.Close(context.Background())
+	defer cursor.Close(ctx)
 
 	var metaList []*pb.BlockMeta
 
@@ -77,14 +77,14 @@ func Search(ctx context.Context, req *pb.SearchRequest) (*pb.BlockList, error) {
 			log.Fatal(err)
 		}
 
-		auths := []*pb.Author{}
-		for _, a := range bm.Authors {
-			auths = append(auths, &pb.Author{
-				Name:  a.Name,
-				Id:    a.ID,
-				Image: a.Image,
-			})
-		}
+		// auths := []*pb.Author{}
+		// for _, a := range bm.Authors {
+		// 	auths = append(auths, &pb.Author{
+		// 		Name:  a.Name,
+		// 		Id:    a.ID,
+		// 		Image: a.Image,
+		// 	})
+		// }
 
 		metaList = append(metaList, &pb.BlockMeta{
 			BlockId:    bm.BlockID,
@@ -92,7 +92,7 @@ func Search(ctx context.Context, req *pb.SearchRequest) (*pb.BlockList, error) {
 			Type:       bm.Type,
 			Tags:       bm.Tags,
 			Categories: bm.Categories,
-			Authors:    auths,
+			// Authors:    auths,
 		})
 	}
 

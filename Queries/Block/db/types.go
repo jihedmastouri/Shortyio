@@ -24,7 +24,7 @@ type BlockMeta struct {
 	Type        string   `bson:"type"`
 	Tags        []string `bson:"tags"`
 	Categories  []string `bson:"categories"`
-	Authors     []Author `bson:"authors"`
+	// Authors     []Author `bson:"authors"`
 }
 
 type BlockContent struct {

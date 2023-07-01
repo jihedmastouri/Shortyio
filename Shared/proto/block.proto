@@ -23,16 +23,16 @@ message Block {
 }
 
 message BlockContent {
-  string block_id = 1;
+  string block_id = 1 [json_name = "id"];
   string name = 2;
-  string lang = 3;
+  string lang_code = 3 [json_name = "langCode"];
   int32 version = 4;
   repeated ElementType content = 5;
   repeated BlockContent children = 6;
 }
 
 message BlockMeta {
-  string block_id = 1;
+  string block_id = 1 [json_name = "id"];
   string name = 2;
   string type = 3;
   repeated string tags = 4;
@@ -49,14 +49,14 @@ message Author {
 
 
 message BlockRules {
-  string rule_name = 1;
+  string rule_name = 1 [json_name = "name"];
   string description = 2;
   bool nested = 3;
-  bool has_likes = 4;
-  bool has_comments = 5;
-  bool comments_has_likes = 7;
-  bool comments_editable = 8;
-  int32 comments_max_nested = 9;
+  bool has_likes = 4 [json_name = "hasLikes"];
+  bool has_comments = 5 [json_name = "hasComments"];
+  bool comments_has_likes = 7 [json_name = "commentsHasLikes"];
+  bool comments_editable = 8 [json_name = "commentsEditable"];
+  int32 comments_max_nested = 9 [json_name = "commentsMaxNested"];
 }
 
 message ElementType {
