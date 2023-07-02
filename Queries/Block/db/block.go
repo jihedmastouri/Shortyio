@@ -14,16 +14,17 @@ func GetBlockMeta(ctx context.Context, bq *pb.BlockRequest) (*BlockMeta, error) 
 	client, err := connectMongo(ctx)
 	if err != nil {
 		log.Println(err)
-		return nil, err
+		return nil, errors.New("Failed To Connect")
 	}
 	defer client.Disconnect(ctx)
 	collection := getCollection(client)
 
 	query, option := buildQuery(bq)
 	cusror := collection.FindOne(ctx, query, option)
-	var meta *BlockMeta
+	meta := new(BlockMeta)
 	if err := cusror.Decode(meta); err != nil {
-		return nil, err
+		log.Println(err)
+		return nil, errors.New("Failed TO Decode Block")
 	}
 	return meta, nil
 }
@@ -52,14 +53,16 @@ func GetBlock(ctx context.Context, bq *pb.BlockRequest) (*Block, error) {
 		log.Println(err)
 		return nil, errors.New("CONNECTION ERROR")
 	}
-
 	defer client.Disconnect(ctx)
 	collection := getCollection(client)
+
+	if bq.GetLang() == "" {
+		return nil, errors.New("LANGUAGE NOT FOUND")
+	}
 
 	query, option := buildQuery(bq)
 
 	block := new(Block)
-
 	cusror := collection.FindOne(ctx, query, option)
 	if err := cusror.Decode(block); err != nil {
 		log.Println(err)
@@ -146,12 +149,10 @@ func buildQuery(bq *pb.BlockRequest) (bson.M, *options.FindOneOptions) {
 		{Key: "version", Value: -1},
 		{Key: "updated_at", Value: -1},
 	})
-
-	var query bson.M
+	query := bson.M{"block_id": bq.GetId()}
 	if bq.GetLang() != "" {
-		query = bson.M{"block_id": bq.GetId()}
+		query["lang_code"] = bq.GetLang()
 	}
-	query["block_id"] = bq.GetId()
 
 	return query, opts
 }

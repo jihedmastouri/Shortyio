@@ -79,7 +79,7 @@ func (c *CommandService) CreateBlock(ctx context.Context, rq *pb.CreateRequest) 
 		Id:        id.String(),
 		LangCode:  "en_US",
 		ChangeLog: "Created Block",
-	})
+	}, "BlockUpdated")
 
 	return &pb.ActionResponse{
 		IsSuceess: true,
@@ -107,6 +107,12 @@ func (c *CommandService) DeleteBlock(ctx context.Context, rq *pb.DeleteRequest) 
 		log.Print("Failed to delete block:", err)
 		return nil, errors.New("FAILED TO DELETE BLOCK")
 	}
+
+	publishEvent(Msg{
+		Id:        rq.GetId(),
+		LangCode:  "en_US",
+		ChangeLog: "Deleted Block",
+	}, "BlockDeleted")
 
 	return &pb.ActionResponse{
 		IsSuceess: true,
@@ -146,7 +152,7 @@ func (c *CommandService) CreateBlockLang(ctx context.Context, rq *pb.CreateLangR
 		Id:        rq.BlockId,
 		LangCode:  rq.LangCode,
 		ChangeLog: "Created BLOCKLANG",
-	})
+	}, "BlockUpdated")
 
 	return &pb.ActionResponse{
 		IsSuceess: true,
@@ -184,7 +190,7 @@ func (c *CommandService) DeleteBlockLang(ctx context.Context, rq *pb.DeleteLangR
 		Id:        id.String(),
 		LangCode:  rq.LangCode,
 		ChangeLog: "DELETED BLOCKLANG",
-	})
+	}, "BlockUpdated")
 
 	return &pb.ActionResponse{
 		IsSuceess: true,

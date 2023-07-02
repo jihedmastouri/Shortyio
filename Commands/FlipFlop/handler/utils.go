@@ -108,7 +108,7 @@ type Msg struct {
 	ChangeLog string
 }
 
-func publishEvent(msg Msg) {
+func publishEvent(msg Msg, queue string) {
 	go func(msg Msg) {
 		natsURL, err := srv.GetKV("NATS_URL")
 		if err != nil {
@@ -130,6 +130,6 @@ func publishEvent(msg Msg) {
 			return
 		}
 
-		nc.Publish("BlockUpdated", message)
+		nc.Publish(queue, message)
 	}(msg)
 }

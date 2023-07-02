@@ -220,7 +220,7 @@ func (s *CommandService) JoinCategory(ctx context.Context, rq *pb.JoinTaxonomy) 
 		Id:        blockid.String(),
 		LangCode:  "",
 		ChangeLog: "Added Taggs",
-	})
+	}, "BlockUpdated")
 
 	return &pb.ActionResponse{
 		IsSuceess: true,

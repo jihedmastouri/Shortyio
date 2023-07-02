@@ -44,7 +44,7 @@ func (c *CommandService) UpdateBlockRules(ctx context.Context, rq *pb.BlockRules
 		Id:        id.String(),
 		LangCode:  "",
 		ChangeLog: "Block Rules Updated",
-	})
+	}, "BlockUpdated")
 
 	return &pb.ActionResponse{
 		IsSuceess: true,
@@ -99,7 +99,7 @@ func (c *CommandService) UpdateBlockMeta(ctx context.Context, rq *pb.BlockMeta) 
 		Id:        id.String(),
 		LangCode:  "",
 		ChangeLog: "Block Info Updated",
-	})
+	}, "BlockUpdated")
 
 	return &pb.ActionResponse{
 		IsSuceess: true,
@@ -147,7 +147,7 @@ func (c *CommandService) UpdateBlock(ctx context.Context, rq *pb.CreateRequest) 
 		Id:        id.String(),
 		LangCode:  "",
 		ChangeLog: "Block Updated",
-	})
+	}, "BlockUpdated")
 
 	return &pb.ActionResponse{
 		IsSuceess: true,

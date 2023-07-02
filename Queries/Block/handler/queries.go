@@ -93,7 +93,10 @@ func (q *Queries) GetBlockMeta(ctx context.Context, rq *pb.BlockRequest) (*pb.Bl
 }
 
 func (q *Queries) GetBlockRules(ctx context.Context, rq *pb.BlockRequest) (*pb.BlockRules, error) {
-	block, err := db.GetBlock(ctx, rq)
+	block, err := db.GetBlock(ctx, &pb.BlockRequest{
+		Id:   rq.Id,
+		Lang: "en_US",
+	})
 	if err != nil {
 		return nil, err
 	}

@@ -32,6 +32,11 @@ func main() {
 		log.Fatal(err)
 	}
 
+	_, err = nc.QueueSubscribe("BlockDeleted", "BlockDeletedQ", BlockDeleted)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	nc.Flush()
 	if err := nc.LastError(); err != nil {
 		log.Fatal(err)
@@ -101,5 +106,40 @@ func BlockUpdated(m *nats.Msg) {
 	}
 
 	log.Println("Data Saved!")
+	m.Ack()
+}
+
+func BlockDeleted(m *nats.Msg) {
+	if m == nil {
+		log.Println("Error receiving message")
+		m.Nak()
+		return
+	}
+
+	log.Println("Received a message: ", string(m.Data))
+
+	var msg Msg
+	err := json.Unmarshal(m.Data, &msg)
+	if err != nil {
+		log.Println("failed to unmarshal message:", err)
+		m.Nak()
+		return
+	}
+
+	id, err := uuid.Parse(msg.Id)
+	if err != nil {
+		log.Println("Error parsing uuid: ", err)
+		m.Nak()
+		return
+	}
+
+	err = deleteFromMongo(id.String())
+	if err != nil {
+		log.Println("Error deleting data: ", err)
+		m.Nak()
+		return
+	}
+
+	log.Println("Data Deleted!")
 	m.Ack()
 }

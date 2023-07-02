@@ -84,6 +84,6 @@ SELECT json_agg(
 FROM blocks b
        INNER JOIN block_langs bl ON b.id = bl.block_id
        INNER JOIN block_types bt ON b.type = bt.id
-WHERE b.id = '56cd5f96-0b16-48b8-b422-b93bab5082e3'
-AND bl.lang_code = 'en_US'
+WHERE b.id = $1
+AND bl.lang_code = $2
 LIMIT 1;

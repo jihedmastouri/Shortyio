@@ -11,6 +11,21 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+func deleteFromMongo(id string) error {
+	collection, err := connectMongo()
+	if err != nil {
+		log.Print(err)
+		return err
+	}
+	ctx := context.Background()
+	_, err = collection.DeleteMany(ctx, bson.M{"block_id": id})
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	return nil
+}
+
 func saveToMongo(data foo, changelog string) error {
 	collection, err := connectMongo()
 	if err != nil {
