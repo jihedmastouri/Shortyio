@@ -2,14 +2,24 @@ package queries
 
 import (
 	"github.com/labstack/echo/v4"
+	"google.golang.org/protobuf/encoding/protojson"
 
 	pb "github.com/shorty-io/go-shorty/Shared/proto"
 	"github.com/shorty-io/go-shorty/Shared/service/namespace"
 	"github.com/shorty-io/go-shorty/web/handler"
 
 	_ "github.com/shorty-io/go-shorty/web/docs"
-	"github.com/swaggo/echo-swagger"
+	echoSwagger "github.com/swaggo/echo-swagger"
 )
+
+var marshaller = protojson.MarshalOptions{
+	Multiline:       true,
+	Indent:          "  ",
+	AllowPartial:    true,
+	UseProtoNames:   false,
+	UseEnumNumbers:  false,
+	EmitUnpopulated: true,
+}
 
 // @title Swagger Example API
 // @version 1.0
@@ -52,11 +62,14 @@ func New(e *echo.Echo, fn handler.Dialfn) {
 
 	block.GET("/full/:lang/:id", getBlock)
 	block.GET("/content/:lang/:id", getBlockContent)
-	block.GET("/meta/:lang/:id", getBlockMeta)
-	block.GET("/rules/:lang/:id", getBlockRules)
+	block.GET("/meta/:id", getBlockMeta)
+	block.GET("/rules/:id", getBlockRules)
 
 	block.GET("/versions/:lang/:id", getVersions)
 	block.GET("/languages/:id", getLanguages)
+
+	block.GET("/tags", getAllTags)
+	block.GET("/categories", getAllCategories)
 
 	block.GET("/search", searchBlock)
 }

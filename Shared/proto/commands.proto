@@ -77,7 +77,7 @@ message ActionResponse {
 
 message JoinTaxonomy {
     string block_id = 1;
-    string name = 2;
+    repeated string names = 2;
 }
 
 

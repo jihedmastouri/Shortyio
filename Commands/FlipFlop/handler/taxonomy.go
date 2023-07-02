@@ -143,18 +143,33 @@ func (s *CommandService) JoinTag(ctx context.Context, rq *pb.JoinTaxonomy) (*pb.
 		return nil, errors.New("FAILED TO PARSE BLOCK ID")
 	}
 
-	params := db.AddTagToBlockParams{
-		BlockID: blockid,
-		Name:    rq.Name,
+	for _, tag := range rq.Names {
+		if tag == "" {
+			continue
+		}
+
+		if _, err := q.GetTagByName(ctx, tag); err != nil {
+			log.Print("Failed to get tag by name:", err)
+			_, err := q.CreateTag(ctx, db.CreateTagParams{
+				Name: tag,
+			})
+			if err != nil && err != sql.ErrNoRows {
+				return nil, errors.New("FAILED TO CREATE New TAG")
+			}
+		}
+
+		params := db.AddTagToBlockParams{
+			BlockID: blockid,
+			Name:    tag,
+		}
+
+		err = q.AddTagToBlock(ctx, params)
+
+		if err != nil {
+			log.Print("Failed to add tag to block:", err)
+			return nil, errors.New("FAILED TO JOIN TAG")
+		}
 	}
-
-	err = q.AddTagToBlock(ctx, params)
-
-	if err != nil {
-		log.Print("Failed to add tag to block:", err)
-		return nil, errors.New("FAILED TO JOIN TAG")
-	}
-
 	return &pb.ActionResponse{
 		IsSuceess: true,
 		Id:        "",
@@ -177,15 +192,28 @@ func (s *CommandService) JoinCategory(ctx context.Context, rq *pb.JoinTaxonomy) 
 		return nil, errors.New("FAILED TO PARSE BLOCK ID")
 	}
 
-	params := db.AddCategToBlockParams{
-		BlockID: blockid,
-		Name:    rq.Name,
-	}
+	for _, categ := range rq.Names {
 
-	err = q.AddCategToBlock(ctx, params)
-	if err != nil {
-		log.Print("Failed to add categ to block:", err)
-		return nil, errors.New("FAILED TO JOIN CATEG")
+		if _, err := q.GetCategoryByName(ctx, categ); err != nil {
+			log.Print("Failed to get categ by name:", err)
+			_, err := q.CreateCateg(ctx, db.CreateCategParams{
+				Name: categ,
+			})
+			if err != nil && err != sql.ErrNoRows {
+				return nil, errors.New("FAILED TO CREATE New CATEG")
+			}
+		}
+
+		params := db.AddCategToBlockParams{
+			BlockID: blockid,
+			Name:    categ,
+		}
+
+		err = q.AddCategToBlock(ctx, params)
+		if err != nil {
+			log.Print("Failed to add categ to block:", err)
+			return nil, errors.New("FAILED TO JOIN CATEG")
+		}
 	}
 
 	publishEvent(Msg{

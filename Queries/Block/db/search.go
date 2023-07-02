@@ -80,11 +80,12 @@ func Search(ctx context.Context, req *pb.SearchRequest) (*pb.BlockList, error) {
 		log.Println(bm)
 
 		metaFinal = append(metaFinal, &pb.BlockMeta{
-			BlockId:    bm.BlockID,
-			Name:       bm.Name,
-			Type:       bm.Type,
-			Tags:       bm.Tags,
-			Categories: bm.Categories,
+			BlockId:     bm.BlockID,
+			Name:        bm.Name,
+			Type:        bm.Type,
+			Tags:        bm.Tags,
+			Categories:  bm.Categories,
+			Description: bm.Description,
 			// Authors:    auths,
 		})
 	}

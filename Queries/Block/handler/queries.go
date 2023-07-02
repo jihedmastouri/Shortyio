@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"log"
 
 	"github.com/shorty-io/go-shorty/queries/db"
 
@@ -13,6 +14,8 @@ type Queries struct {
 }
 
 func (q *Queries) GetBlock(ctx context.Context, rq *pb.BlockRequest) (*pb.Block, error) {
+	log.Println("Hello from Queries.GetBlock")
+
 	block, error := db.GetBlock(ctx, rq)
 	if error != nil {
 		return nil, error
@@ -74,7 +77,19 @@ func (q *Queries) GetBlock(ctx context.Context, rq *pb.BlockRequest) (*pb.Block,
 }
 
 func (q *Queries) GetBlockMeta(ctx context.Context, rq *pb.BlockRequest) (*pb.BlockMeta, error) {
-	return db.GetBlockMeta(ctx, rq)
+	block, err := db.GetBlockMeta(ctx, rq)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.BlockMeta{
+		BlockId:     block.BlockID,
+		Name:        block.Name,
+		Type:        block.Type,
+		Tags:        block.Tags,
+		Categories:  block.Categories,
+		Description: block.Description,
+	}, nil
 }
 
 func (q *Queries) GetBlockRules(ctx context.Context, rq *pb.BlockRequest) (*pb.BlockRules, error) {

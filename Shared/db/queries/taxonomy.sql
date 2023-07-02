@@ -24,6 +24,16 @@ SELECT name, descr
 FROM tags
 LIMIT 100;
 
+-- name: GetCategoryByName :one
+SELECT name, descr
+FROM categories
+WHERE name = $1;
+
+-- name: GetTagByName :one
+SELECT name, descr
+FROM tags
+WHERE name = $1;
+
 -- name: CreateTag :one
 INSERT INTO tags (
     name, descr

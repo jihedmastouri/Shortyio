@@ -32,7 +32,10 @@ func saveToMongo(data foo, changelog string) error {
 	}
 
 	if _, err = collection.UpdateOne(ctx, bson.M{"_id": res.InsertedID},
-		bson.M{"$set": bson.M{"changelog": changelog}},
+		bson.M{"$set": bson.M{
+			"changelog":  changelog,
+			"block_type": "Post",
+		}},
 	); err != nil {
 		log.Println(err)
 		return err

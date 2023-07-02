@@ -3,6 +3,7 @@ package flipflop
 import (
 	"context"
 	"net/http"
+	"strings"
 
 	"github.com/labstack/echo/v4"
 	pb "github.com/shorty-io/go-shorty/Shared/proto"
@@ -51,11 +52,15 @@ func addTagToBlock(c echo.Context) error {
 	client := c.Get("client").(pb.FlipFlopClient)
 
 	blockID := c.Param("id")
-	taxName := c.Param("name")
+	taxParam := c.QueryParam("names")
+	var taxNames []string
+	if taxParam != "" {
+		taxNames = strings.Split(taxParam, ",")
+	}
 
 	req := &pb.JoinTaxonomy{
 		BlockId: blockID,
-		Name:    taxName,
+		Names:   taxNames,
 	}
 
 	res, err := client.JoinTag(context.Background(), req)
@@ -108,11 +113,15 @@ func addCategToBlock(c echo.Context) error {
 	client := c.Get("client").(pb.FlipFlopClient)
 
 	blockID := c.Param("id")
-	taxName := c.Param("name")
+	taxParam := c.QueryParam("names")
+	var taxNames []string
+	if taxParam != "" {
+		taxNames = strings.Split(taxParam, ",")
+	}
 
 	req := &pb.JoinTaxonomy{
 		BlockId: blockID,
-		Name:    taxName,
+		Names:   taxNames,
 	}
 
 	res, err := client.JoinCategory(context.Background(), req)

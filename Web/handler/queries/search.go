@@ -66,5 +66,10 @@ func searchBlock(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, echo.Map{"err": err.Error()})
 	}
 
-	return c.JSON(http.StatusOK, res)
+	json, err := marshaller.Marshal(res)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, echo.Map{"err": err.Error()})
+	}
+
+	return c.JSONBlob(http.StatusOK, json)
 }

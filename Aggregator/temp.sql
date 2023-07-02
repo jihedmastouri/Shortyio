@@ -11,11 +11,21 @@ SELECT json_agg(
              'comments_has_likes', b.comments_has_likes,
              'comments_editable', b.comment_editable
           ),
+         'tags', (SELECT array_agg(
+                 t.name) FROM block_tags bt
+                INNER JOIN tags t ON bt.tag_id = t.id
+                WHERE bt.block_id = b.id
+         ),
+         'categories', (SELECT array_agg(
+                 c.name) FROM block_categs bc
+                INNER JOIN categories c ON bc.categ_id = c.id
+                WHERE bc.block_id = b.id
+         ),
          'version_number', bl.version_number,
          'created_at', b.created_at,
          'updated_at', bl.updated_at,
          'description', b.description,
-         'author', b.author,
+         -- 'author', b.author,
          'block_type', bt.name,
          'lang_name', bl.lang_name,
          'lang_code', bl.lang_code,
@@ -74,6 +84,6 @@ SELECT json_agg(
 FROM blocks b
        INNER JOIN block_langs bl ON b.id = bl.block_id
        INNER JOIN block_types bt ON b.type = bt.id
-WHERE b.id = $1
-AND bl.lang_code = $2
+WHERE b.id = '56cd5f96-0b16-48b8-b422-b93bab5082e3'
+AND bl.lang_code = 'en_US'
 LIMIT 1;

@@ -318,6 +318,42 @@ func (q *Queries) GetBlockTags(ctx context.Context, blockID uuid.UUID) ([]string
 	return items, nil
 }
 
+const getCategoryByName = `-- name: GetCategoryByName :one
+SELECT name, descr
+FROM categories
+WHERE name = $1
+`
+
+type GetCategoryByNameRow struct {
+	Name  string
+	Descr sql.NullString
+}
+
+func (q *Queries) GetCategoryByName(ctx context.Context, name string) (GetCategoryByNameRow, error) {
+	row := q.db.QueryRowContext(ctx, getCategoryByName, name)
+	var i GetCategoryByNameRow
+	err := row.Scan(&i.Name, &i.Descr)
+	return i, err
+}
+
+const getTagByName = `-- name: GetTagByName :one
+SELECT name, descr
+FROM tags
+WHERE name = $1
+`
+
+type GetTagByNameRow struct {
+	Name  string
+	Descr sql.NullString
+}
+
+func (q *Queries) GetTagByName(ctx context.Context, name string) (GetTagByNameRow, error) {
+	row := q.db.QueryRowContext(ctx, getTagByName, name)
+	var i GetTagByNameRow
+	err := row.Scan(&i.Name, &i.Descr)
+	return i, err
+}
+
 const updateCategory = `-- name: UpdateCategory :one
 Update categories
     SET name = $1,

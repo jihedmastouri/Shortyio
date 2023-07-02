@@ -9,17 +9,7 @@ import (
 	"github.com/labstack/echo/v4"
 	pb "github.com/shorty-io/go-shorty/Shared/proto"
 	"google.golang.org/grpc"
-	"google.golang.org/protobuf/encoding/protojson"
 )
-
-var marshaller = protojson.MarshalOptions{
-	Multiline:       true,
-	Indent:          "  ",
-	AllowPartial:    true,
-	UseProtoNames:   false,
-	UseEnumNumbers:  false,
-	EmitUnpopulated: true,
-}
 
 // Get Block Like Crazy
 //
@@ -46,7 +36,6 @@ func getBlock(c echo.Context) error {
 	}
 
 	return c.JSONBlob(http.StatusOK, json)
-
 }
 
 func getBlockContent(c echo.Context) error {

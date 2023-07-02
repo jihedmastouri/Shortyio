@@ -21,7 +21,7 @@ type BlockMeta struct {
 	BlockID     string   `bson:"block_id"`
 	Name        string   `bson:"name"`
 	Description string   `bson:"description"`
-	Type        string   `bson:"type"`
+	Type        string   `bson:"block_type"`
 	Tags        []string `bson:"tags"`
 	Categories  []string `bson:"categories"`
 	// Authors     []Author `bson:"authors"`

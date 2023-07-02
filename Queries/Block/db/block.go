@@ -10,7 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func GetBlockMeta(ctx context.Context, bq *pb.BlockRequest) (*pb.BlockMeta, error) {
+func GetBlockMeta(ctx context.Context, bq *pb.BlockRequest) (*BlockMeta, error) {
 	client, err := connectMongo(ctx)
 	if err != nil {
 		log.Println(err)
@@ -21,7 +21,7 @@ func GetBlockMeta(ctx context.Context, bq *pb.BlockRequest) (*pb.BlockMeta, erro
 
 	query, option := buildQuery(bq)
 	cusror := collection.FindOne(ctx, query, option)
-	meta := &pb.BlockMeta{}
+	var meta *BlockMeta
 	if err := cusror.Decode(meta); err != nil {
 		return nil, err
 	}
@@ -142,9 +142,16 @@ func buildQuery(bq *pb.BlockRequest) (bson.M, *options.FindOneOptions) {
 		}, nil
 	}
 
-	opts := options.FindOne().SetSort(bson.D{{Key: "version", Value: -1}})
-	return bson.M{
-		"block_id":  bq.GetId(),
-		"lang_code": bq.GetLang(),
-	}, opts
+	opts := options.FindOne().SetSort(bson.D{
+		{Key: "version", Value: -1},
+		{Key: "updated_at", Value: -1},
+	})
+
+	var query bson.M
+	if bq.GetLang() != "" {
+		query = bson.M{"block_id": bq.GetId()}
+	}
+	query["block_id"] = bq.GetId()
+
+	return query, opts
 }

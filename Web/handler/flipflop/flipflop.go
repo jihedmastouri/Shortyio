@@ -46,10 +46,10 @@ func New(e *echo.Echo, fn handler.Dialfn) {
 	// Tags
 	cmd.POST("/tag", createTag)
 	cmd.DELETE("/tag/:name", deleteTag)
-	cmd.POST("/block/:id/tag/:name", addTagToBlock)
+	cmd.POST("/block/:id/tag/:names", addTagToBlock)
 
 	// Categories
 	cmd.POST("/categ", createCateg)
 	cmd.DELETE("/categ/:name", deleteCateg)
-	cmd.POST("/block/:id/categ/:name", addCategToBlock)
+	cmd.POST("/block/:id/categ/:names", addCategToBlock)
 }
