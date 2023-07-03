@@ -52,7 +52,7 @@ func addTagToBlock(c echo.Context) error {
 	client := c.Get("client").(pb.FlipFlopClient)
 
 	blockID := c.Param("id")
-	taxParam := c.QueryParam("names")
+	taxParam := c.Param("names")
 	var taxNames []string
 	if taxParam != "" {
 		taxNames = strings.Split(taxParam, ",")
@@ -113,7 +113,7 @@ func addCategToBlock(c echo.Context) error {
 	client := c.Get("client").(pb.FlipFlopClient)
 
 	blockID := c.Param("id")
-	taxParam := c.QueryParam("names")
+	taxParam := c.Param("names")
 	var taxNames []string
 	if taxParam != "" {
 		taxNames = strings.Split(taxParam, ",")

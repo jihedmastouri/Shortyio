@@ -110,7 +110,7 @@ func (c *CommandService) DeleteBlock(ctx context.Context, rq *pb.DeleteRequest) 
 
 	publishEvent(Msg{
 		Id:        rq.GetId(),
-		LangCode:  "en_US",
+		LangCode:  "",
 		ChangeLog: "Deleted Block",
 	}, "BlockDeleted")
 

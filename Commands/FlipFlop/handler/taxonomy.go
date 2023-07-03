@@ -148,12 +148,20 @@ func (s *CommandService) JoinTag(ctx context.Context, rq *pb.JoinTaxonomy) (*pb.
 			continue
 		}
 
-		if _, err := q.GetTagByName(ctx, tag); err != nil {
+		row, err := q.GetTagByName(ctx, tag)
+		if err != nil {
 			log.Print("Failed to get tag by name:", err)
+		}
+
+		if row.Name == "" || err == sql.ErrNoRows {
 			_, err := q.CreateTag(ctx, db.CreateTagParams{
 				Name: tag,
+				Descr: sql.NullString{
+					String: "",
+					Valid:  false,
+				},
 			})
-			if err != nil && err != sql.ErrNoRows {
+			if err != nil {
 				return nil, errors.New("FAILED TO CREATE New TAG")
 			}
 		}
@@ -170,6 +178,13 @@ func (s *CommandService) JoinTag(ctx context.Context, rq *pb.JoinTaxonomy) (*pb.
 			return nil, errors.New("FAILED TO JOIN TAG")
 		}
 	}
+
+	publishEvent(Msg{
+		Id:        blockid.String(),
+		LangCode:  "",
+		ChangeLog: "Added Categs",
+	}, "BlockUpdated")
+
 	return &pb.ActionResponse{
 		IsSuceess: true,
 		Id:        "",
@@ -194,12 +209,20 @@ func (s *CommandService) JoinCategory(ctx context.Context, rq *pb.JoinTaxonomy) 
 
 	for _, categ := range rq.Names {
 
-		if _, err := q.GetCategoryByName(ctx, categ); err != nil {
+		row, err := q.GetCategoryByName(ctx, categ)
+		if err != nil {
 			log.Print("Failed to get categ by name:", err)
+		}
+
+		if row.Name == "" || err == sql.ErrNoRows {
 			_, err := q.CreateCateg(ctx, db.CreateCategParams{
 				Name: categ,
+				Descr: sql.NullString{
+					String: "",
+					Valid:  false,
+				},
 			})
-			if err != nil && err != sql.ErrNoRows {
+			if err != nil {
 				return nil, errors.New("FAILED TO CREATE New CATEG")
 			}
 		}
@@ -219,7 +242,7 @@ func (s *CommandService) JoinCategory(ctx context.Context, rq *pb.JoinTaxonomy) 
 	publishEvent(Msg{
 		Id:        blockid.String(),
 		LangCode:  "",
-		ChangeLog: "Added Taggs",
+		ChangeLog: "Added Categs",
 	}, "BlockUpdated")
 
 	return &pb.ActionResponse{

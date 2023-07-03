@@ -75,8 +75,6 @@ func BlockUpdated(m *nats.Msg) {
 		langs, err = getAllLanguages(id)
 		if err != nil {
 			log.Println("Error getting all languages: ", err)
-			m.Nak()
-			return
 		}
 	} else {
 		langs = []string{msg.LangCode}
@@ -85,11 +83,10 @@ func BlockUpdated(m *nats.Msg) {
 	if len(langs) == 0 {
 		log.Println("No languages found")
 		langs = []string{"en_US"}
-		m.Nak()
-		return
 	}
 
 	for _, lang := range langs {
+		log.Println("Aggregating data for language: ", lang)
 		data, err := aggregateDB(id, lang)
 		if err != nil {
 			log.Println("Error aggregating data: ", err)

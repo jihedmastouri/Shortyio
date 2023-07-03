@@ -83,8 +83,11 @@ func GetLanguages(ctx context.Context, bq *pb.LanguageRequest) (*pb.LanguageList
 
 	pipeline := bson.A{
 		bson.M{"$match": bson.M{"block_id": bq.GetId()}},
-		bson.M{"$group": bson.M{"_id": "$lang_code"}},
-		bson.M{"$project": bson.M{"_id": 0, "Code": "$_id", "Name": "$lang_name"}},
+		bson.M{"$group": bson.M{
+			"_id":       "$lang_code",
+			"lang_name": bson.M{"$first": "$lang_name"},
+		}},
+		bson.M{"$project": bson.M{"_id": 0, "code": "$_id", "name": "$lang_name"}},
 	}
 
 	cursor, err := collection.Aggregate(ctx, pipeline)

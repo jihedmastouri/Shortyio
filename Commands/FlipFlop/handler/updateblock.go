@@ -42,7 +42,7 @@ func (c *CommandService) UpdateBlockRules(ctx context.Context, rq *pb.BlockRules
 
 	publishEvent(Msg{
 		Id:        id.String(),
-		LangCode:  "en_US",
+		LangCode:  "",
 		ChangeLog: "Block Rules Updated",
 	}, "BlockUpdated")
 
@@ -97,7 +97,7 @@ func (c *CommandService) UpdateBlockMeta(ctx context.Context, rq *pb.BlockMeta) 
 
 	publishEvent(Msg{
 		Id:        id.String(),
-		LangCode:  "en_US",
+		LangCode:  "",
 		ChangeLog: "Block Info Updated",
 	}, "BlockUpdated")
 
@@ -145,7 +145,7 @@ func (c *CommandService) UpdateBlock(ctx context.Context, rq *pb.CreateRequest) 
 
 	publishEvent(Msg{
 		Id:        id.String(),
-		LangCode:  "en_US",
+		LangCode:  "",
 		ChangeLog: "Block Updated",
 	}, "BlockUpdated")
 
