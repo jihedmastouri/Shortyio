@@ -115,6 +115,7 @@ func GetVersions(ctx context.Context, bq *pb.VersionsRequest) (*pb.VersionRespon
 
 	pipeline := bson.A{
 		bson.M{"$match": bson.M{"block_id": bq.GetId(), "lang_code": bq.GetLang()}},
+		bson.M{"$sort": bson.M{"version": -1, "updated_at": -1}},
 		bson.M{"$group": bson.M{"_id": "$version", "changeLog": bson.M{"$first": "$changeLog"}}},
 		bson.M{"$project": bson.M{"_id": 0, "version": "$_id", "changeLog": 1}},
 	}
@@ -125,10 +126,22 @@ func GetVersions(ctx context.Context, bq *pb.VersionsRequest) (*pb.VersionRespon
 		return nil, err
 	}
 
-	var verList []*pb.Ver
-	if err := cursor.All(ctx, &verList); err != nil {
+	var vl []struct {
+		Version   int32  `bson:"version"`
+		ChangeLog string `bson:"changeLog"`
+	}
+
+	if err := cursor.All(ctx, &vl); err != nil {
 		log.Println(err)
 		return nil, err
+	}
+
+	var verList []*pb.Ver
+	for _, v := range vl {
+		verList = append(verList, &pb.Ver{
+			Version:   v.Version,
+			ChangeLog: &v.ChangeLog,
+		})
 	}
 
 	return &pb.VersionResponse{
