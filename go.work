@@ -1,9 +1,10 @@
 go 1.19
 
 use (
-	./Web/
-    ./Queries/Block/
-    ./Shared/
-    ./Aggregator/
-    ./Commands/FlipFlop/
+	Web
+    Queries/Block
+    Shared
+    Aggregator
+    Commands/FlipFlop
+	Commands/Metamorphosis
 )

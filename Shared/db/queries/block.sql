@@ -72,6 +72,20 @@ VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id;
 INSERT INTO block_langs (lang_name, lang_code, block_id)
 VALUES ($1, $2, $3) RETURNING id;
 
+-- name: CreateText :one
+INSERT INTO block_texts (block_lang_id, name, hint, content)
+VALUES (
+    (SELECT id FROM block_langs WHERE lang_code = $1 AND block_id = $2)
+    , $3, $4, $5
+) RETURNING id;
+
+-- name: CreateRichText :one
+INSERT INTO block_rich_texts (block_lang_id, name, hint, content)
+VALUES (
+    (SELECT id FROM block_langs WHERE lang_code = $1 AND block_id = $2)
+    , $3, $4, $5
+) RETURNING id;
+
 ------------------
 -- 3- Joins
 ------------------

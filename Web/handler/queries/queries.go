@@ -2,15 +2,17 @@ package queries
 
 import (
 	"github.com/labstack/echo/v4"
+	"google.golang.org/grpc"
 	"google.golang.org/protobuf/encoding/protojson"
 
 	pb "github.com/shorty-io/go-shorty/Shared/proto"
 	"github.com/shorty-io/go-shorty/Shared/service/namespace"
-	"github.com/shorty-io/go-shorty/web/handler"
 
 	_ "github.com/shorty-io/go-shorty/web/docs"
 	echoSwagger "github.com/swaggo/echo-swagger"
 )
+
+type Dialfn func(serviceName namespace.DefaultServices, tag *[]string) (*grpc.ClientConn, error)
 
 var marshaller = protojson.MarshalOptions{
 	Multiline:       true,
@@ -35,7 +37,7 @@ var marshaller = protojson.MarshalOptions{
 
 // @host petstore.swagger.io
 // @BasePath /v2
-func New(e *echo.Echo, fn handler.Dialfn) {
+func New(e *echo.Echo, fn Dialfn) {
 
 	createClient := func(next echo.HandlerFunc) echo.HandlerFunc {
 

@@ -13,11 +13,6 @@ import (
 )
 
 func (c *CommandService) CreateRuleGroup(ctx context.Context, rq *pb.BlockRulesRq) (*pb.ActionResponse, error) {
-	conn, err := newConn()
-	if err != nil {
-		return nil, errors.New("FAILED TO CONNECT TO DATABASE")
-	}
-	defer conn.Close()
 	q := db.New(conn)
 
 	if rq.GetRules() == nil {
@@ -71,12 +66,6 @@ func (c *CommandService) CreateRuleGroup(ctx context.Context, rq *pb.BlockRulesR
 }
 
 func (*CommandService) UpdateRuleGroup(ctx context.Context, rq *pb.BlockRulesRq) (*pb.ActionResponse, error) {
-	conn, err := newConn()
-	if err != nil {
-		return nil, errors.New("FAILED TO CONNECT TO DATABASE")
-	}
-
-	defer conn.Close()
 	q := db.New(conn)
 
 	if rq.GetRules() == nil {
@@ -116,7 +105,7 @@ func (*CommandService) UpdateRuleGroup(ctx context.Context, rq *pb.BlockRulesRq)
 		Descr: rq.GetRules().Description,
 	}
 
-	if err = q.UpdateRuleGroup(ctx, params); err != nil {
+	if err := q.UpdateRuleGroup(ctx, params); err != nil {
 		log.Print(err)
 		return nil, errors.New("FAILED TO CREATE RULE")
 	}
@@ -128,11 +117,6 @@ func (*CommandService) UpdateRuleGroup(ctx context.Context, rq *pb.BlockRulesRq)
 }
 
 func (*CommandService) DeleteRuleGroup(ctx context.Context, rq *pb.BlockRulesRq) (*pb.ActionResponse, error) {
-	conn, err := newConn()
-	if err != nil {
-		return nil, errors.New("FAILED TO CONNECT TO DATABASE")
-	}
-	defer conn.Close()
 	q := db.New(conn)
 
 	var ruleName string
@@ -142,7 +126,7 @@ func (*CommandService) DeleteRuleGroup(ctx context.Context, rq *pb.BlockRulesRq)
 		ruleName = rq.GetRules().RuleName
 	}
 
-	if err = q.DeleteRuleGroup(ctx, ruleName); err != nil {
+	if err := q.DeleteRuleGroup(ctx, ruleName); err != nil {
 		log.Print(err)
 		return nil, errors.New("FAILED TO DELETE RULE")
 	}

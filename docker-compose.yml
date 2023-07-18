@@ -14,16 +14,16 @@ services:
     volumes:
       - ./kv.json:/kv.json
 
-  # keycloak:
-  #   command: "start-dev"
-  #   container_name: keycloak
-  #   environment:
-  #     - KEYCLOAK_ADMIN=admin
-  #     - KEYCLOAK_ADMIN_PASSWORD=admin
-  #   image: quay.io/keycloak/keycloak:21.1.1
-  #   ports:
-  #     - "2020:8080"
-  #   restart: always
+  keycloak:
+    command: "start-dev"
+    container_name: keycloak
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+    image: quay.io/keycloak/keycloak:21.1.1
+    ports:
+      - "2020:8080"
+    restart: always
 
   flipflop:
     build:

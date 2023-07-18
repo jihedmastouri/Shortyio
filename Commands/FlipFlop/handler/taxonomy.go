@@ -15,12 +15,6 @@ import (
 
 // CreateTag creates a new tag
 func (s *CommandService) CreateTag(ctx context.Context, in *pb.CreateTaxonomy) (*pb.ActionResponse, error) {
-	conn, err := newConn()
-	if err != nil {
-		return nil, errors.New("FAILED TO CONNECT TO DATABASE")
-	}
-
-	defer conn.Close()
 	q := db.New(conn)
 
 	if in.Name == "" {
@@ -49,12 +43,6 @@ func (s *CommandService) CreateTag(ctx context.Context, in *pb.CreateTaxonomy) (
 
 // CreateCategory creates a new category
 func (s *CommandService) CreateCategory(ctx context.Context, in *pb.CreateTaxonomy) (*pb.ActionResponse, error) {
-	conn, err := newConn()
-	if err != nil {
-		return nil, errors.New("FAILED TO CONNECT TO DATABASE")
-	}
-
-	defer conn.Close()
 	q := db.New(conn)
 
 	if in.Name == "" {
@@ -84,12 +72,6 @@ func (s *CommandService) CreateCategory(ctx context.Context, in *pb.CreateTaxono
 
 // DeleteTag deletes a tag
 func (s *CommandService) DeleteTag(ctx context.Context, rq *pb.DeleteTaxonomy) (*pb.ActionResponse, error) {
-	conn, err := newConn()
-	if err != nil {
-		return nil, errors.New("FAILED TO CONNECT TO DATABASE")
-	}
-
-	defer conn.Close()
 	q := db.New(conn)
 
 	id, err := q.DeleteTag(ctx, rq.Name)
@@ -107,12 +89,6 @@ func (s *CommandService) DeleteTag(ctx context.Context, rq *pb.DeleteTaxonomy) (
 
 // DeleteCategory deletes a category
 func (s *CommandService) DeleteCategory(ctx context.Context, rq *pb.DeleteTaxonomy) (*pb.ActionResponse, error) {
-	conn, err := newConn()
-	if err != nil {
-		return nil, errors.New("FAILED TO CONNECT TO DATABASE")
-	}
-
-	defer conn.Close()
 	q := db.New(conn)
 
 	id, err := q.DeleteCateg(ctx, rq.Name)
@@ -129,12 +105,6 @@ func (s *CommandService) DeleteCategory(ctx context.Context, rq *pb.DeleteTaxono
 }
 
 func (s *CommandService) JoinTag(ctx context.Context, rq *pb.JoinTaxonomy) (*pb.ActionResponse, error) {
-	conn, err := newConn()
-	if err != nil {
-		return nil, errors.New("FAILED TO CONNECT TO DATABASE")
-	}
-
-	defer conn.Close()
 	q := db.New(conn)
 
 	blockid, err := uuid.Parse(rq.BlockId)
@@ -193,12 +163,6 @@ func (s *CommandService) JoinTag(ctx context.Context, rq *pb.JoinTaxonomy) (*pb.
 }
 
 func (s *CommandService) JoinCategory(ctx context.Context, rq *pb.JoinTaxonomy) (*pb.ActionResponse, error) {
-	conn, err := newConn()
-	if err != nil {
-		return nil, errors.New("FAILED TO CONNECT TO DATABASE")
-	}
-
-	defer conn.Close()
 	q := db.New(conn)
 
 	blockid, err := uuid.Parse(rq.BlockId)

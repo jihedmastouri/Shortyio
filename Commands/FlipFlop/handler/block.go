@@ -19,12 +19,6 @@ type CommandService struct {
 }
 
 func (c *CommandService) CreateBlock(ctx context.Context, rq *pb.CreateRequest) (*pb.ActionResponse, error) {
-	conn, err := newConn()
-	if err != nil {
-		return nil, errors.New("FAILED TO CONNECT TO DATABASE")
-	}
-
-	defer conn.Close()
 	q := db.New(conn)
 
 	log.Print("Creating block:", rq.Author)
@@ -89,12 +83,6 @@ func (c *CommandService) CreateBlock(ctx context.Context, rq *pb.CreateRequest) 
 }
 
 func (c *CommandService) DeleteBlock(ctx context.Context, rq *pb.DeleteRequest) (*pb.ActionResponse, error) {
-	conn, err := newConn()
-	if err != nil {
-		return nil, errors.New("FAILED TO CONNECT TO DATABASE")
-	}
-
-	defer conn.Close()
 	q := db.New(conn)
 
 	id, err := uuid.Parse(rq.GetId())
@@ -122,12 +110,6 @@ func (c *CommandService) DeleteBlock(ctx context.Context, rq *pb.DeleteRequest) 
 }
 
 func (c *CommandService) CreateBlockLang(ctx context.Context, rq *pb.CreateLangRequest) (*pb.ActionResponse, error) {
-	conn, err := newConn()
-	if err != nil {
-		return nil, errors.New("FAILED TO CONNECT TO DATABASE")
-	}
-
-	defer conn.Close()
 	q := db.New(conn)
 
 	blockid, err := uuid.Parse(rq.BlockId)
@@ -162,12 +144,6 @@ func (c *CommandService) CreateBlockLang(ctx context.Context, rq *pb.CreateLangR
 }
 
 func (c *CommandService) DeleteBlockLang(ctx context.Context, rq *pb.DeleteLangRequest) (*pb.ActionResponse, error) {
-	conn, err := newConn()
-	if err != nil {
-		return nil, errors.New("FAILED TO CONNECT TO DATABASE")
-	}
-
-	defer conn.Close()
 	q := db.New(conn)
 
 	id, err := uuid.Parse(rq.GetId())

@@ -12,12 +12,6 @@ import (
 )
 
 func (c *CommandService) UpdateBlockRules(ctx context.Context, rq *pb.BlockRulesRq) (*pb.ActionResponse, error) {
-	conn, err := newConn()
-	if err != nil {
-		return nil, errors.New("FAILED TO CONNECT TO DATABASE")
-	}
-
-	defer conn.Close()
 	q := db.New(conn)
 
 	id, err := uuid.Parse(rq.GetBlockId())
@@ -54,12 +48,6 @@ func (c *CommandService) UpdateBlockRules(ctx context.Context, rq *pb.BlockRules
 }
 
 func (c *CommandService) UpdateBlockMeta(ctx context.Context, rq *pb.BlockMeta) (*pb.ActionResponse, error) {
-	conn, err := newConn()
-	if err != nil {
-		return nil, errors.New("FAILED TO CONNECT TO DATABASE")
-	}
-
-	defer conn.Close()
 	q := db.New(conn)
 
 	id, err := uuid.Parse(rq.GetBlockId())
@@ -109,12 +97,6 @@ func (c *CommandService) UpdateBlockMeta(ctx context.Context, rq *pb.BlockMeta) 
 }
 
 func (c *CommandService) UpdateBlock(ctx context.Context, rq *pb.CreateRequest) (*pb.ActionResponse, error) {
-	conn, err := newConn()
-	if err != nil {
-		return nil, errors.New("FAILED TO CONNECT TO DATABASE")
-	}
-
-	defer conn.Close()
 	q := db.New(conn)
 
 	id, err := uuid.Parse(rq.GetId())

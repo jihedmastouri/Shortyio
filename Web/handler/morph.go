@@ -5,32 +5,30 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
-
-	mq "github.com/shorty-io/go-shorty/Shared/msgq"
-	pb "github.com/shorty-io/go-shorty/Shared/proto"
+	"github.com/nats-io/nats.go"
 )
 
-func UpdateContent(c echo.Context) error {
-	var brq *pb.BlockContent
+type MsgU struct {
+	Id        string `json:"id"`
+	LangCode  string `json:"lang_code"`
+	Content   string `json:"content"`
+	ChangeLog string `json:"change_log"`
+}
+
+func UpdateContent(c echo.Context, nc *nats.Conn) error {
+	var brq MsgU
 	if err := c.Bind(brq); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	id := c.Param("id")
-
-	ev := mq.NewEvent("blockToUpdate", mq.BlockToUpdateData{
-		Id:           id,
-		BlockContent: brq,
-	})
-
-	out, err := json.Marshal(ev)
+	out, err := json.Marshal(brq)
 	if err != nil {
 		c.Logger().Error(err)
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
 	nc.Publish(
-		string(ev.Name),
+		"BlockUpdate",
 		out,
 	)
 

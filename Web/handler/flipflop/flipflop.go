@@ -4,11 +4,13 @@ import (
 	"github.com/labstack/echo/v4"
 	pb "github.com/shorty-io/go-shorty/Shared/proto"
 	"github.com/shorty-io/go-shorty/Shared/service/namespace"
-
-	"github.com/shorty-io/go-shorty/web/handler"
+	"google.golang.org/grpc"
 )
 
-func New(e *echo.Echo, fn handler.Dialfn) {
+type Dialfn func(serviceName namespace.DefaultServices, tag *[]string) (*grpc.ClientConn, error)
+
+func New(e *echo.Echo, fn Dialfn, authMiddleware echo.MiddlewareFunc) {
+
 	CreateClient := func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			conn, err := fn(namespace.FlipFlop, nil)
@@ -27,7 +29,10 @@ func New(e *echo.Echo, fn handler.Dialfn) {
 		}
 	}
 
-	cmd := e.Group("/cmd", CreateClient)
+	cmd := e.Group("/cmd",
+		CreateClient,
+		authMiddleware,
+	)
 
 	// Blocks
 	cmd.POST("/block", createBlock)

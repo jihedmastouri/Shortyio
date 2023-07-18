@@ -18,6 +18,13 @@ import (
 
 var srv *service.Service
 var nc *nats.Conn
+var conn *sql.DB
+
+type Msg struct {
+	Id        string
+	LangCode  string
+	ChangeLog string
+}
 
 func NewSrv(service *service.Service) {
 	if service == nil {
@@ -30,7 +37,7 @@ func NewSrv(service *service.Service) {
 	srv = service
 }
 
-func newConn() (*sql.DB, error) {
+func NewConn() (*sql.DB, error) {
 
 	params := []string{
 		"POSTGRES_HOST",
@@ -61,7 +68,7 @@ func newConn() (*sql.DB, error) {
 	password := config["POSTGRES_PASSWORD"]
 	dbname := config["POSTGRES_DB"]
 
-	conn, err := sql.Open("postgres", fmt.Sprintf(
+	tempConn, err := sql.Open("postgres", fmt.Sprintf(
 		"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
 		host,
 		port,
@@ -71,11 +78,12 @@ func newConn() (*sql.DB, error) {
 	))
 
 	if err != nil {
-		log.Print("Database Connection Failed", err)
-		return conn, err
+		log.Fatal("Database Connection Failed", err)
+		return nil, err
 	}
 
-	return conn, nil
+	conn = tempConn
+	return tempConn, nil
 }
 
 // Takes a BlockRules (Name or rules) and returns a BlockRules_Rules
@@ -100,12 +108,6 @@ func getBlockRules(q *db.Queries, br *pb.BlockRulesRq) pb.BlockRules {
 		CommentsEditable:  rules.CommentEditable.Bool,
 		CommentsMaxNested: int32(rules.CommentsMaxNest.Int16),
 	}
-}
-
-type Msg struct {
-	Id        string
-	LangCode  string
-	ChangeLog string
 }
 
 func publishEvent(msg Msg, queue string) {

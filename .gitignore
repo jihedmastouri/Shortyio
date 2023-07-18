@@ -21,3 +21,4 @@ vendor/
 # dotenv & Consul configuration files
 consul-config/
 .env
+kv.json
