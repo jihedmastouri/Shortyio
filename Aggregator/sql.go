@@ -13,6 +13,10 @@ import (
 
 type foo []byte
 
+type Language struct {
+	Code string `db:"lang_code"`
+}
+
 func aggregateDB(id uuid.UUID, lang string) (foo, error) {
 	query, err := os.ReadFile("./temp.sql")
 	if err != nil {
@@ -28,15 +32,8 @@ func aggregateDB(id uuid.UUID, lang string) (foo, error) {
 }
 
 func executeJSONQuery(id uuid.UUID, lang, query string) (foo, error) {
-	db, err := newConn()
-	if err != nil {
-		return nil, err
-	}
-
-	defer db.Close()
-
 	var json []byte
-	if err = db.QueryRow(query, id, lang).Scan(&json); err != nil {
+	if err := db.QueryRow(query, id, lang).Scan(&json); err != nil {
 		log.Println(err)
 		return nil, err
 	}
@@ -44,16 +41,7 @@ func executeJSONQuery(id uuid.UUID, lang, query string) (foo, error) {
 	return json, nil
 }
 
-type Language struct {
-	Code string `db:"lang_code"`
-}
-
 func getAllLanguages(id uuid.UUID) ([]string, error) {
-	db, err := newConn()
-	if err != nil {
-		return nil, err
-	}
-	defer db.Close()
 
 	var langs []string
 	query := `SELECT lang_code FROM block_langs WHERE block_id = $1`
@@ -76,14 +64,14 @@ func getAllLanguages(id uuid.UUID) ([]string, error) {
 	return langs, nil
 }
 
-func newConn() (*sql.DB, error) {
-	host := os.Getenv("PG_HOST")
-	port := "5432"
-	user := "postgres"
-	password := "root"
-	dbname := "shortyio"
+func connectSQL(config map[string]string) *sql.DB {
+	host := config["POSTGRES_HOST"]
+	port := config["POSTGRES_PORT"]
+	user := config["POSTGRES_USER"]
+	password := config["POSTGRES_PASSWORD"]
+	dbname := config["POSTGRES_DB"]
 
-	conn, err := sql.Open("postgres", fmt.Sprintf(
+	tempConn, err := sql.Open("postgres", fmt.Sprintf(
 		"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
 		host,
 		port,
@@ -93,8 +81,8 @@ func newConn() (*sql.DB, error) {
 	))
 
 	if err != nil {
-		return conn, err
+		log.Fatal("Database Connection Failed", err)
 	}
 
-	return conn, nil
+	return tempConn
 }

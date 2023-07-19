@@ -1,12 +1,14 @@
 package main
 
 import (
-	"encoding/json"
+	"context"
+	"database/sql"
 	"log"
-	"os"
 
-	"github.com/google/uuid"
 	"github.com/nats-io/nats.go"
+	"github.com/shorty-io/go-shorty/Shared/service"
+	"github.com/shorty-io/go-shorty/Shared/service/namespace"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type Msg struct {
@@ -15,11 +17,29 @@ type Msg struct {
 	ChangeLog string
 }
 
+var collection *mongo.Collection
+var db *sql.DB
+
 func main() {
-	natsUrl := os.Getenv("NATS")
+	srv := service.New(namespace.Aggregator)
+	srv.Start()
+	config := initConfig(srv)
+
+	go func(config map[string]string) {
+		collection = connectMongo(config)
+	}(config)
+
+	go func(config map[string]string) {
+		db = connectSQL(config)
+	}(config)
+
+	natsUrl := config["NATS_URL"]
 	if natsUrl == "" {
 		natsUrl = nats.DefaultURL
 	}
+
+	defer db.Close()
+	defer collection.Database().Client().Disconnect(context.Background())
 
 	nc, err := nats.Connect(natsUrl)
 	if err != nil {
@@ -37,106 +57,39 @@ func main() {
 		log.Fatal(err)
 	}
 
-	nc.Flush()
-	if err := nc.LastError(); err != nil {
+	if err := nc.Drain(); err != nil {
 		log.Fatal(err)
 	}
-	log.Println("Waiting for messages...")
 
+	log.Println("Waiting for messages...")
 	select {}
 }
 
-func BlockUpdated(m *nats.Msg) {
-	if m == nil {
-		log.Println("Error receiving message")
-		m.Nak()
-		return
+func initConfig(srv *service.Service) map[string]string {
+	params := []string{
+		"MONGO_HOST",
+		"MONGO_PASSWORD",
+		"MONGO_USER",
+		"NATS",
+		"POSTGRES_HOST",
+		"POSTGRES_PORT",
+		"POSTGRES_USER",
+		"POSTGRES_PASSWORD",
+		"POSTGRES_DB",
 	}
 
-	log.Println("Received a message: ", string(m.Data))
-
-	var msg Msg
-	err := json.Unmarshal(m.Data, &msg)
-	if err != nil {
-		log.Println("failed to unmarshal message:", err)
-		m.Nak()
-		return
-	}
-
-	id, err := uuid.Parse(msg.Id)
-	if err != nil {
-		log.Println("Error parsing uuid: ", err)
-		m.Nak()
-		return
-	}
-
-	var langs []string
-	if msg.LangCode == "" {
-		langs, err = getAllLanguages(id)
+	config := make(map[string]string)
+	for _, param := range params {
+		value, err := srv.GetKV(param)
 		if err != nil {
-			log.Println("Error getting all languages: ", err)
+			log.Fatalf(
+				"Failed to retrieve %s from Consul key-value store: %s",
+				param,
+				err,
+			)
 		}
-	} else {
-		langs = []string{msg.LangCode}
+		config[param] = value
 	}
 
-	if len(langs) == 0 {
-		log.Println("No languages found")
-		langs = []string{"en_US"}
-	}
-
-	for _, lang := range langs {
-		log.Println("Aggregating data for language: ", lang)
-		data, err := aggregateDB(id, lang)
-		if err != nil {
-			log.Println("Error aggregating data: ", err)
-			m.Nak()
-			return
-		}
-
-		err = saveToMongo(data, msg.ChangeLog)
-		if err != nil {
-			log.Println("Error saving data: ", err)
-			m.Nak()
-			return
-		}
-	}
-
-	log.Println("Data Saved!")
-	m.Ack()
-}
-
-func BlockDeleted(m *nats.Msg) {
-	if m == nil {
-		log.Println("Error receiving message")
-		m.Nak()
-		return
-	}
-
-	log.Println("Received a message: ", string(m.Data))
-
-	var msg Msg
-	err := json.Unmarshal(m.Data, &msg)
-	if err != nil {
-		log.Println("failed to unmarshal message:", err)
-		m.Nak()
-		return
-	}
-
-	id, err := uuid.Parse(msg.Id)
-	if err != nil {
-		log.Println("Error parsing uuid: ", err)
-		m.Nak()
-		return
-	}
-
-	err = deleteFromMongo(id.String())
-	if err != nil {
-		log.Println("Error deleting data: ", err)
-		m.Nak()
-		return
-	}
-
-	log.Println("Data Deleted!")
-	m.Ack()
+	return config
 }

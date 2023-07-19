@@ -12,13 +12,8 @@ import (
 )
 
 func deleteFromMongo(id string) error {
-	collection, err := connectMongo()
-	if err != nil {
-		log.Print(err)
-		return err
-	}
 	ctx := context.Background()
-	_, err = collection.DeleteMany(ctx, bson.M{"block_id": id})
+	_, err := collection.DeleteMany(ctx, bson.M{"block_id": id})
 	if err != nil {
 		log.Println(err)
 		return err
@@ -27,14 +22,8 @@ func deleteFromMongo(id string) error {
 }
 
 func saveToMongo(data foo, changelog string) error {
-	collection, err := connectMongo()
-	if err != nil {
-		log.Print(err)
-		return err
-	}
-
 	var bar []any
-	if err = json.Unmarshal(data, &bar); err != nil {
+	if err := json.Unmarshal(data, &bar); err != nil {
 		log.Print(err)
 		return err
 	}
@@ -59,34 +48,30 @@ func saveToMongo(data foo, changelog string) error {
 	return nil
 }
 
-func connectMongo() (*mongo.Collection, error) {
-	host := "cluster0.ptlgsef.mongodb.net/?retryWrites=true&w=majority"
-	username := "reader"
-	psswd := "DWldoNa8losWte27"
+func connectMongo(config map[string]string) *mongo.Collection {
+	host := config["MONGO_HOST"]
+	username := config["MONGO_USER"]
+	password := config["MONGO_PASSWORD"]
 
 	connString := fmt.Sprintf(
 		"mongodb+srv://%s:%s@%s",
 		username,
-		psswd,
+		password,
 		host,
 	)
-	log.Print(connString)
 
 	clientOptions := options.Client().ApplyURI(connString)
 	ctx := context.Background()
 
 	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
-		log.Println(err)
-		return nil, err
+		log.Fatal(err)
 	}
 
 	err = client.Ping(ctx, nil)
 	if err != nil {
-		log.Println(err)
-		return nil, err
+		log.Fatal(err)
 	}
 
-	collection := client.Database("shortyio").Collection("blocks")
-	return collection, nil
+	return client.Database("shortyio").Collection("blocks")
 }
