@@ -11,13 +11,11 @@ import (
 	_ "github.com/lib/pq"
 )
 
-type foo []byte
-
 type Language struct {
 	Code string `db:"lang_code"`
 }
 
-func aggregateDB(id uuid.UUID, lang string) (foo, error) {
+func aggregateDB(id uuid.UUID, lang string) ([]byte, error) {
 	query, err := os.ReadFile("./temp.sql")
 	if err != nil {
 		return nil, err
@@ -31,32 +29,44 @@ func aggregateDB(id uuid.UUID, lang string) (foo, error) {
 	return data, nil
 }
 
-func executeJSONQuery(id uuid.UUID, lang, query string) (foo, error) {
+func executeJSONQuery(id uuid.UUID, lang, query string) ([]byte, error) {
+	db, err := connectSQL()
+	if err != nil {
+		return nil, err
+	}
+	defer db.Close()
+
 	var json []byte
 	if err := db.QueryRow(query, id, lang).Scan(&json); err != nil {
-		log.Println(err)
-		return nil, err
+		return nil, fmt.Errorf("Error querying database: %v", err)
 	}
 
 	return json, nil
 }
 
 func getAllLanguages(id uuid.UUID) ([]string, error) {
+	db, err := connectSQL()
+	if err != nil {
+		return nil, err
+	}
+	defer db.Close()
 
-	var langs []string
 	query := `SELECT lang_code FROM block_langs WHERE block_id = $1`
 
 	rows, err := db.Query(query, id)
 	if err != nil {
-		return langs, err
+		return nil, fmt.Errorf("Error querying database: %v", err)
 	}
+
 	defer rows.Close()
 
+	var langs []string
 	for rows.Next() {
 		var lang Language
 		err := rows.Scan(&lang.Code)
 		if err != nil {
-			return langs, err
+			log.Println("Error scanning row: ", err)
+			continue
 		}
 		langs = append(langs, lang.Code)
 	}
@@ -64,14 +74,14 @@ func getAllLanguages(id uuid.UUID) ([]string, error) {
 	return langs, nil
 }
 
-func connectSQL(config map[string]string) *sql.DB {
-	host := config["POSTGRES_HOST"]
-	port := config["POSTGRES_PORT"]
-	user := config["POSTGRES_USER"]
-	password := config["POSTGRES_PASSWORD"]
-	dbname := config["POSTGRES_DB"]
+func connectSQL() (*sql.DB, error) {
+	host := globalConfig["POSTGRES_HOST"]
+	port := globalConfig["POSTGRES_PORT"]
+	user := globalConfig["POSTGRES_USER"]
+	password := globalConfig["POSTGRES_PASSWORD"]
+	dbname := globalConfig["POSTGRES_DB"]
 
-	tempConn, err := sql.Open("postgres", fmt.Sprintf(
+	db, err := sql.Open("postgres", fmt.Sprintf(
 		"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
 		host,
 		port,
@@ -79,10 +89,13 @@ func connectSQL(config map[string]string) *sql.DB {
 		password,
 		dbname,
 	))
-
-	if err != nil {
-		log.Fatal("Database Connection Failed", err)
+	if err != nil || db == nil {
+		return nil, fmt.Errorf("Failed to connect to database: %v", err)
 	}
 
-	return tempConn
+	if err = db.Ping(); err != nil {
+		return nil, fmt.Errorf("Failed to ping the database: %v", err)
+	}
+
+	return db, nil
 }

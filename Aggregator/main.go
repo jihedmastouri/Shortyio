@@ -1,45 +1,25 @@
 package main
 
 import (
-	"context"
-	"database/sql"
 	"log"
 
 	"github.com/nats-io/nats.go"
 	"github.com/shorty-io/go-shorty/Shared/service"
 	"github.com/shorty-io/go-shorty/Shared/service/namespace"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type Msg struct {
-	Id        string
-	LangCode  string
-	ChangeLog string
-}
-
-var collection *mongo.Collection
-var db *sql.DB
+var globalConfig map[string]string
 
 func main() {
 	srv := service.New(namespace.Aggregator)
 	srv.Start()
-	config := initConfig(srv)
 
-	go func(config map[string]string) {
-		collection = connectMongo(config)
-	}(config)
+	globalConfig = initConfig(srv)
 
-	go func(config map[string]string) {
-		db = connectSQL(config)
-	}(config)
-
-	natsUrl := config["NATS_URL"]
+	natsUrl := globalConfig["NATS_URL"]
 	if natsUrl == "" {
 		natsUrl = nats.DefaultURL
 	}
-
-	defer db.Close()
-	defer collection.Database().Client().Disconnect(context.Background())
 
 	nc, err := nats.Connect(natsUrl)
 	if err != nil {

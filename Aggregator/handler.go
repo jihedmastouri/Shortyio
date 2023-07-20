@@ -8,6 +8,12 @@ import (
 	"github.com/nats-io/nats.go"
 )
 
+type Msg struct {
+	Id        string
+	LangCode  string
+	ChangeLog string
+}
+
 func BlockUpdated(m *nats.Msg) {
 	if m == nil {
 		log.Println("Error receiving message")
@@ -32,14 +38,14 @@ func BlockUpdated(m *nats.Msg) {
 		return
 	}
 
-	var langs []string
+	langs := []string{msg.LangCode}
+
 	if msg.LangCode == "" {
 		langs, err = getAllLanguages(id)
+
 		if err != nil {
 			log.Println("Error getting all languages: ", err)
 		}
-	} else {
-		langs = []string{msg.LangCode}
 	}
 
 	if len(langs) == 0 {
@@ -47,8 +53,11 @@ func BlockUpdated(m *nats.Msg) {
 		langs = []string{"en_US"}
 	}
 
+	var datas [][]byte
+
 	for _, lang := range langs {
 		log.Println("Aggregating data for language: ", lang)
+
 		data, err := aggregateDB(id, lang)
 		if err != nil {
 			log.Println("Error aggregating data: ", err)
@@ -56,11 +65,14 @@ func BlockUpdated(m *nats.Msg) {
 			return
 		}
 
+		datas = append(datas, data)
+	}
+
+	for _, data := range datas {
 		err = saveToMongo(data, msg.ChangeLog)
 		if err != nil {
+			// TODO: Publish an event to retry
 			log.Println("Error saving data: ", err)
-			m.Nak()
-			return
 		}
 	}
 
