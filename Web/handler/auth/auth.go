@@ -1,75 +1,50 @@
 package auth
 
 import (
-	"context"
+	"os"
 
-	"github.com/labstack/echo/v4"
+	"github.com/Nerzal/gocloak/v13"
 )
 
-func New(e *echo.Echo) {
-	e.GET("/login", login)
-	e.GET("/logout", logout)
+var keyCloak *KeyCloak
+
+type KeyCloak struct {
+	Conn     *gocloak.GoCloak
+	Realm    string
+	Secret   string
+	ClientId string
 }
 
-func login(c echo.Context) error {
-	rq := new(LoginRq)
-	if err := c.Bind(rq); err != nil {
-		return echo.NewHTTPError(400, err.Error())
-	}
-
-	ctx := context.Background()
-	jwt, err := keyCloak.Conn.Login(
-		ctx,
-		keyCloak.ClientId,
-		keyCloak.Secret,
-		keyCloak.Realm,
-		rq.Username,
-		rq.Password,
-	)
-	if err != nil {
-		return echo.NewHTTPError(400, err.Error())
-	}
-
-	return c.JSON(200, LoginRs{
-		Token:        jwt.AccessToken,
-		RefreshToken: jwt.RefreshToken,
-		ExpiresIn:    jwt.ExpiresIn,
-	})
+type LoginRq struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
 }
 
-func logout(c echo.Context) error {
-	token := c.Request().Header.Get("Authorization")
-	if token == "" {
-		return echo.NewHTTPError(401, "Unauthorized")
-	}
-
-	ctx := context.Background()
-	err := keyCloak.Conn.Logout(ctx, token, keyCloak.ClientId, keyCloak.Secret, keyCloak.Realm)
-	if err != nil {
-		return echo.NewHTTPError(401, "Unauthorized")
-	}
-
-	return c.JSON(200, "Logout success")
+type LoginRs struct {
+	Token        string `json:"token"`
+	RefreshToken string `json:"refresh_token"`
+	ExpiresIn    int    `json:"expires_in"`
 }
 
-func Middleware(next echo.HandlerFunc) echo.HandlerFunc {
-	return func(c echo.Context) error {
-		token := c.Request().Header.Get("Authorization")
-		if token == "" {
-			return echo.NewHTTPError(401, "Unauthorized")
-		}
+func Init() {
+	config := map[string]string{
+		"realm":     "master",
+		"url":       "http://localhost:2020/",
+		"secret":    "e0b0b0a0-9d1a-4b7a-8b0a-0a9d1a4b7a8b",
+		"client_id": "api",
+	}
 
-		ctx := context.Background()
-		res, err := keyCloak.Conn.RetrospectToken(ctx, token, keyCloak.ClientId, keyCloak.Secret, keyCloak.Realm)
-		if err != nil {
-			return echo.NewHTTPError(401, "Unauthorized")
+	for k := range config {
+		temp := os.Getenv("KEYCLOAK_" + k)
+		if temp != "" {
+			config[k] = temp
 		}
+	}
 
-		if !*res.Active {
-			return echo.NewHTTPError(401, "Unauthorized")
-		}
-
-		err = next(c)
-		return err
+	keyCloak = &KeyCloak{
+		Conn:     gocloak.NewClient(config["url"]),
+		Realm:    config["realm"],
+		Secret:   config["secret"],
+		ClientId: config["client_id"],
 	}
 }
