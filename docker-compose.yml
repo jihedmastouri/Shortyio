@@ -81,8 +81,8 @@ services:
 
   aggregator:
     build:
-      context: ./Aggregator
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./Aggregator/Dockerfile
     depends_on:
       - consulserver
     environment:

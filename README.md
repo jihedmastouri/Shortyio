@@ -1,9 +1,11 @@
 # Shorty | Go-Shorty
 
-> **This project is still under construction :building_construction:**
+> ~~**This project is still under construction :building_construction:**~~
+
+> **:no_entry: This project is on hold**
 
 ## LICENSE
-The backend for the Headless CMS Shorty.
+Shortyio: A Headless CMS
 
 Copyright (C) 2023 Jihed MASTOURI
 

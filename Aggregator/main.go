@@ -5,16 +5,16 @@ import (
 
 	"github.com/nats-io/nats.go"
 	"github.com/shorty-io/go-shorty/Shared/service"
-	"github.com/shorty-io/go-shorty/Shared/service/namespace"
 )
 
 var globalConfig map[string]string
 
 func main() {
-	srv := service.New(namespace.Aggregator)
+	srv := service.New("Aggregator")
 	srv.Start()
 
 	globalConfig = initConfig(srv)
+	log.Println("Config done")
 
 	natsUrl := globalConfig["NATS_URL"]
 	if natsUrl == "" {
@@ -29,16 +29,16 @@ func main() {
 
 	_, err = nc.QueueSubscribe("BlockUpdated", "BlockUpdatedQ", BlockUpdated)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Subscription Failed:", err)
 	}
 
 	_, err = nc.QueueSubscribe("BlockDeleted", "BlockDeletedQ", BlockDeleted)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Subscription Failed:", err)
 	}
 
 	if err := nc.Drain(); err != nil {
-		log.Fatal(err)
+		log.Fatal("Draining!", err)
 	}
 
 	log.Println("Waiting for messages...")

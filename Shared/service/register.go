@@ -79,10 +79,10 @@ func (s *Service) Init(c InitConfig) {}
 // - Register The service with Consul
 // - Listen on a tcp connection for Health updates
 func (s *Service) Start() {
-	ownAddress, err := os.Hostname()
 
+	ownAddress, err := os.Hostname()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Service Failed to read host add", err)
 	}
 
 	serviceDef := &api.AgentServiceRegistration{
