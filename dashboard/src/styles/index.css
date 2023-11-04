@@ -1,0 +1,84 @@
+@import "tailwindcss/base";
+
+@import "tailwindcss/components";
+
+@import "tailwindcss/utilities";
+@import "./editorMainTheme.css";
+
+@layer base {
+  body {
+    @apply bg-s-gopher-l flex h-screen overflow-hidden outline-transparent;
+  }
+
+  svg {
+    @apply w-[75%] h-[75%] m-auto;
+  }
+
+  ::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
+  }
+
+  /* Set the track (background) of the scrollbar */
+  ::-webkit-scrollbar-track {
+    background-color: #f1f1f1;
+  }
+
+  /* Set the handle (thumb) of the scrollbar */
+  ::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 5px;
+  }
+
+  /* Change the appearance of the scrollbar when hovering over it */
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
+  }
+
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"] {
+    -webkit-appearance: none;
+    -moz-appearance: textfield !important;
+    appearance: none;
+    margin: 0;
+  }
+}
+
+@layer components {
+  #root {
+    @apply w-[98vw] h-[98vh] m-auto  rounded-lg bg-gray-50 dark:bg-gray-500 dark:border-gray-100 dark:text-white;
+  }
+}
+
+@layer utilities {
+  .tabs {
+    @apply mx-2 px-5 rounded-full border-black border-2 text-black font-bold text-lg data-[state='active']:border-amber-400 data-[state='active']:text-amber-400;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: rgb(203 213 225);
+  }
+}
+
+.rti--container {
+  --rti-bg: white;
+  --rti-border: none;
+  --rti-main: rgb(31 82 162 0.5);
+  --rti-radius: 0.375rem;
+  --rti-s: 0.5rem;
+  --rti-tag: #9ca3af;
+  --rti-tag-remove: white;
+  color: white;
+}
+
+.rti--input {
+  flex: 0 0 100%;
+  color: black;
+}
+
+.container-snap::-webkit-scrollbar {
+  display: none;
+}

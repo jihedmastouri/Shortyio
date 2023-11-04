@@ -1,0 +1,23 @@
+[
+  {
+    "id": 0,
+    "image": "https://www.gravatar.com/avatar/2c7d99fe281ecd3bcd65ab915bac6dd5?s=250",
+    "name": "john doe",
+    "data_joined": "2020-01-20",
+    "role": "ADMIN"
+  },
+  {
+    "id": 1,
+    "image": "https://i.pravatar.cc/250?u=mail@ashallendesign.co.uk",
+    "name": "Mohamed Salah",
+    "data_joined": "2020-03-25",
+    "role": "MODERATOR"
+  },
+  {
+    "id": 2,
+    "image": "https://images.unsplash.com/photo-1492633423870-43d1cd2775eb?&w=128&h=128&dpr=2&q=80",
+    "name": "Farid",
+    "data_joined": "2022-03-25",
+    "role": "DEVELOPER"
+  }
+]
