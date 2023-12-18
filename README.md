@@ -14,6 +14,13 @@ A `Block` can be anything and most importantly it can contain other `blocks`, bu
 
 ![blocks: database schema](assets/schema.png)
 
+### Content
+
+- [Backend Structure](#backend-structure)
+  - [Microservices](#microservices)
+- [Frontend](#frontend)
+- [License](#license)
+
 ## Backend Structure
 
 The backend is implemented in `Go` and employs various design patterns including CQRS (Command Query Responsibility Segregation) and Event-Driven architecture.
