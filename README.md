@@ -1,8 +1,6 @@
 # Shortyio
 
-> ~~**This project is still under construction :building_construction:**~~
-
-> **:no_entry: This project is on hold :no_entry:**
+> **:no_entry: This project is on hold**
 
 This repository contains the codebase for my end-of-studies project.
 
